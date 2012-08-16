@@ -15,8 +15,9 @@ describe Celluloid::DNS::Server do
     end
     
     begin
-      resolver = Resolv::DNS.new(nameserver_port: [[example_host, example_port]])
-      resolver.getaddress(example_name).should eq example_p
+      Resolv::DNS.open(nameserver_port: [[example_host, example_port]]) do |resolv|
+        resolv.getaddress(example_name).should eq example_p
+      end
     ensure
       server.terminate
     end

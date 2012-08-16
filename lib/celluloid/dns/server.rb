@@ -16,7 +16,9 @@ module Celluloid
       
       def run
         loop do
-          p @socket.recvfrom(MAX_PACKET_SIZE)
+          data, (_, port, addr) = @socket.recvfrom(MAX_PACKET_SIZE)
+          message = Resolv::DNS::Message.decode(data)
+          p message
         end
       end
     end

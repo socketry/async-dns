@@ -6,7 +6,9 @@ module Celluloid
       
       include Celluloid::IO
       
-      def initialize(addr, port)
+      def initialize(addr, port, &block)
+        @block = block
+        
         # Create a non-blocking Celluloid::IO::UDPSocket
         @socket = UDPSocket.new
         @socket.bind(addr, port)
@@ -17,8 +19,7 @@ module Celluloid
       def run
         loop do
           data, (_, port, addr) = @socket.recvfrom(MAX_PACKET_SIZE)
-          message = Resolv::DNS::Message.decode(data)
-          p message
+          @block.call Request.new(addr, port, @socket, data)
         end
       end
     end

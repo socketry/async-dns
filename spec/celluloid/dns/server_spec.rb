@@ -9,14 +9,15 @@ describe Celluloid::DNS::Server do
   
   it "answers DNS requests" do
     server = Celluloid::DNS::Server.new(example_host, example_port) do |request|
-      # Totally bogus TDD-while-spiking bullshit
-      request.name.should == example_name
-      request.respond example_ip
+      question = request.questions.first
+
+      question.name.should == example_name
+      request.answer(question => example_ip)
     end
     
     begin
       Resolv::DNS.open(nameserver_port: [[example_host, example_port]]) do |resolv|
-        resolv.getaddress(example_name).should eq example_p
+        resolv.getaddress(example_name).to_s.should eq example_ip
       end
     ensure
       server.terminate

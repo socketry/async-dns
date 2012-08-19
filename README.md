@@ -7,6 +7,9 @@ It's implemented using Celluloid::IO and is great for programatic DNS servers
 which dynamically generate DNS responses, particularly within Celluloid-based
 programs.
 
+A nonblocking DNS client is already built into Celluloid::IO itself.
+Celluloid::DNS is just for servers.
+
 Installation
 ------------
 

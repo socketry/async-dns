@@ -13,7 +13,7 @@ module Celluloid
         @socket = UDPSocket.new
         @socket.bind(addr, port)
         
-        run!
+        async.run
       end
       
       def run

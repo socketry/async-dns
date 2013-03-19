@@ -1,6 +1,9 @@
 ![Celluloid::DNS](https://github.com/celluloid/celluloid-dns/raw/master/logo.png)
 =================
 [![Build Status](https://secure.travis-ci.org/celluloid/celluloid-dns.png?branch=master)](http://travis-ci.org/celluloid/celluloid-dns)
+[![Dependency Status](https://gemnasium.com/celluloid/celluloid-dns.png)](https://gemnasium.com/celluloid/celluloid-dns)
+[![Code Climate](https://codeclimate.com/github/celluloid/celluloid-dns.png)](https://codeclimate.com/github/celluloid/celluloid-dns)
+[![Coverage Status](https://coveralls.io/repos/celluloid/celluloid-dns/badge.png?branch=master)](https://coveralls.io/r/celluloid/celluloid-dns)
 
 Celluloid::DNS is a programmable Celluloid "cell" for answering DNS requests.
 It's implemented using Celluloid::IO and is great for programatic DNS servers

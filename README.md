@@ -1,5 +1,6 @@
 ![Celluloid::DNS](https://github.com/celluloid/celluloid-dns/raw/master/logo.png)
 =================
+[![Gem Version](https://badge.fury.io/rb/celluloid-dns.png)](http://rubygems.org/gems/celluloid-dns)
 [![Build Status](https://secure.travis-ci.org/celluloid/celluloid-dns.png?branch=master)](http://travis-ci.org/celluloid/celluloid-dns)
 [![Dependency Status](https://gemnasium.com/celluloid/celluloid-dns.png)](https://gemnasium.com/celluloid/celluloid-dns)
 [![Code Climate](https://codeclimate.com/github/celluloid/celluloid-dns.png)](https://codeclimate.com/github/celluloid/celluloid-dns)

@@ -12,9 +12,13 @@ module Celluloid
       end
       
       def answer(responses)
-        response_message = Resolv::DNS::Message.new
-        response_message.id = @message.id
-        response_message.rd = 1 # FIXME
+        response_message = Resolv::DNS::Message.new @message.id
+        response_message.qr = 1
+        response_message.opcode = @message.opcode
+        response_message.aa = 1
+        response_message.rd = @message.rd
+        response_message.ra = 0
+        response_message.rcode = 0
         
         responses.each do |question, response|
           response_object = question.resource.new(response)

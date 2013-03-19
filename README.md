@@ -34,7 +34,22 @@ Inside of your Ruby project, use:
 Usage
 -----
 
-TODO: Write usage instructions here
+Start a DNS server that always resolves to `127.0.0.1`:
+
+```ruby
+require "celluloid/dns"
+
+Celluloid::DNS::Server.new("127.0.0.1", 1234) do |request|
+  request.answer request.questions.map { |q| [q, "127.0.0.1"] }
+end
+
+sleep
+```
+
+Query the server:
+
+    $ dig @localhost -p 1234 anything.com
+
 
 Contributing to Celluloid::DNS
 ------------------------------

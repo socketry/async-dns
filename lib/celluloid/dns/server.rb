@@ -6,6 +6,8 @@ module Celluloid
       
       include Celluloid::IO
       
+      execute_block_on_receiver :initialize
+      
       def initialize(addr, port, &block)
         @block = block
         

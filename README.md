@@ -6,6 +6,8 @@
 [![Code Climate](https://codeclimate.com/github/celluloid/celluloid-dns.png)](https://codeclimate.com/github/celluloid/celluloid-dns)
 [![Coverage Status](https://coveralls.io/repos/celluloid/celluloid-dns/badge.png?branch=master)](https://coveralls.io/r/celluloid/celluloid-dns)
 
+### Celluloid::DNS is defunct. [Please use RubyDNS instead](https://github.com/ioquatix/rubydns)
+
 Celluloid::DNS is a programmable Celluloid "cell" for answering DNS requests.
 It's implemented using Celluloid::IO and is great for programatic DNS servers
 which dynamically generate DNS responses, particularly within Celluloid-based

@@ -18,18 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'celluloid/current'
-require 'celluloid/io'
+require_relative '../chunked'
 
-require_relative 'dns/version'
-
-require_relative 'dns/message'
-require_relative 'dns/server'
-require_relative 'dns/resolver'
-require_relative 'dns/handler'
-require_relative 'dns/logger'
-
-module Celluloid
-	module DNS
+class String
+	# Chunk a string which is required for the TEXT `resource_class`.
+	def chunked(chunk_size = 255)
+		Celluloid::DNS::chunked(self)
 	end
 end

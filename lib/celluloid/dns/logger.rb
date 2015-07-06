@@ -18,18 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'celluloid/current'
-require 'celluloid/io'
+require 'logger'
 
-require_relative 'dns/version'
-
-require_relative 'dns/message'
-require_relative 'dns/server'
-require_relative 'dns/resolver'
-require_relative 'dns/handler'
-require_relative 'dns/logger'
-
-module Celluloid
-	module DNS
+module Celluloid::DNS
+	# Logs an exception nicely to a standard `Logger`.
+	def self.log_exception(logger, exception)
+		logger.error "#{exception.class}: #{exception.message}"
+		if exception.backtrace
+			Array(exception.backtrace).each { |at| logger.error at }
+		end
 	end
 end

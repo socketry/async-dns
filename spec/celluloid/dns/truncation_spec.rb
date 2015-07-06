@@ -1,4 +1,6 @@
-# Copyright, 2009, 2012, by Samuel G. D. Williams. <http://www.codeotaku.com>
+#!/usr/bin/env ruby
+
+# Copyright, 2012, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,18 +20,43 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'celluloid/current'
-require 'celluloid/io'
+require 'celluloid/dns'
+require 'celluloid/dns/extensions/string'
 
-require_relative 'dns/version'
+module Celluloid::DNS::TruncationSpec
+	SERVER_PORTS = [[:udp, '127.0.0.1', 5520], [:tcp, '127.0.0.1', 5520]]
+	IN = Resolv::DNS::Resource::IN
+	
+	class TestServer < Celluloid::DNS::Server
+		def process(name, resource_class, transaction)
+			case [name, resource_class]
+			when ["truncation", IN::TXT]
+				text = "Hello World! " * 100
+				transaction.respond!(*text.chunked)
+			else
+				transaction.fail!(:NXDomain)
+			end
+		end
+	end
+	
+	describe "Celluloid::DNS Truncation Server" do
+		before(:all) do
+			@test_server = TestServer.new(listen: SERVER_PORTS)
+			@test_server.run
+		end
+		
+		after(:all) do
+			@test_server.terminate
+		end
 
-require_relative 'dns/message'
-require_relative 'dns/server'
-require_relative 'dns/resolver'
-require_relative 'dns/handler'
-require_relative 'dns/logger'
-
-module Celluloid
-	module DNS
+		it "should use tcp because of large response" do
+			resolver = Celluloid::DNS::Resolver.new(SERVER_PORTS)
+	
+			response = resolver.query("truncation", IN::TXT)
+	
+			text = response.answer.first
+	
+			expect(text[2].strings.join).to be == ("Hello World! " * 100)
+		end
 	end
 end

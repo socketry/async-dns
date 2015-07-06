@@ -1,16 +1,19 @@
+language: ruby
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y bind9
 rvm:
-  - 1.9.3
-  - 2.0.0
+  - 2.2
+  - 2.1
+  - 2.0
+  - rbx-2
   - ruby-head
-  - jruby-19mode
   - jruby-head
-  - rbx-19mode 
-
 matrix:
   allow_failures:
+    - rvm: rbx-2 
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: rbx-19mode # deadlocks :(
-
+env: COVERAGE=true
 notifications:
   irc: "irc.freenode.org#celluloid"

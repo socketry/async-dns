@@ -1,5 +1,11 @@
-#!/usr/bin/env rake
 require "bundler/gem_tasks"
-Dir["tasks/**/*.task"].each { |task| load task }
+require "rspec/core/rake_task"
+
+RSpec::Core::RakeTask.new(:spec) do |task|
+	task.rspec_opts = ["--require", "simplecov"] if ENV['COVERAGE']
+end
 
 task :default => :spec
+
+require 'celluloid'
+Celluloid.logger.level = Logger::ERROR

@@ -36,7 +36,7 @@ module Celluloid::DNS::IPv6Spec
 	
 	describe Celluloid::DNS::TCPSocketHandler do
 		before(:all) do
-			@server = TestServer.new(listen: [[:tcp, '::', 2002]])
+			@server = TestServer.new(listen: [[:tcp, '::', 2004]])
 			@server.run
 		end
 		
@@ -45,7 +45,7 @@ module Celluloid::DNS::IPv6Spec
 		end
 		
 		it "should connect to the server using TCP via IPv6" do
-			resolver = Celluloid::DNS::Resolver.new([[:tcp, '::1', 2002]])
+			resolver = Celluloid::DNS::Resolver.new([[:tcp, '::1', 2004]])
 			response = resolver.query('google.com')
 			expect(response.class).to be == Celluloid::DNS::Message
 		end
@@ -53,7 +53,7 @@ module Celluloid::DNS::IPv6Spec
 	
 	describe Celluloid::DNS::UDPSocketHandler do
 		before(:all) do
-			@server = TestServer.new(listen: [[:udp, '::', 2002]])
+			@server = TestServer.new(listen: [[:udp, '::', 2006]])
 			@server.run
 		end
 		
@@ -62,7 +62,7 @@ module Celluloid::DNS::IPv6Spec
 		end
 		
 		it "should connect to the server using UDP via IPv6" do
-			resolver = Celluloid::DNS::Resolver.new([[:udp, '::1', 2002]])
+			resolver = Celluloid::DNS::Resolver.new([[:udp, '::1', 2006]])
 			response = resolver.query('google.com')
 			expect(response.class).to be == Celluloid::DNS::Message
 		end

@@ -5,10 +5,10 @@ Celluloid::DNS is a high-performance DNS client resolver and server which can be
 [1]: https://github.com/ioquatix/rubydns
 
 [![Gem Version](https://badge.fury.io/rb/celluloid-dns.svg)](http://rubygems.org/gems/celluloid-dns)
-[![Build Status](https://secure.travis-ci.org/celluloid/celluloid-dns.png?branch=master)](http://travis-ci.org/celluloid/celluloid-dns)
-[![Dependency Status](https://gemnasium.com/celluloid/celluloid-dns.png)](https://gemnasium.com/celluloid/celluloid-dns)
-[![Code Climate](https://codeclimate.com/github/celluloid/celluloid-dns.png)](https://codeclimate.com/github/celluloid/celluloid-dns)
-[![Coverage Status](https://coveralls.io/repos/celluloid/celluloid-dns/badge.png?branch=master)](https://coveralls.io/r/celluloid/celluloid-dns)
+[![Build Status](https://secure.travis-ci.org/celluloid/celluloid-dns.svg?branch=master)](http://travis-ci.org/celluloid/celluloid-dns)
+[![Dependency Status](https://gemnasium.com/celluloid/celluloid-dns.svg)](https://gemnasium.com/celluloid/celluloid-dns)
+[![Code Climate](https://codeclimate.com/github/celluloid/celluloid-dns.svg)](https://codeclimate.com/github/celluloid/celluloid-dns)
+[![Coverage Status](https://coveralls.io/repos/celluloid/celluloid-dns/badge.svg?branch=master)](https://coveralls.io/r/celluloid/celluloid-dns)
 
 ## Installation
 

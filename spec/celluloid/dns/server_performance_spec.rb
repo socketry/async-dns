@@ -60,11 +60,16 @@ module Celluloid::DNS::ServerPerformanceSpec
 					@server = MillionServer.new(listen: [[:udp, '0.0.0.0', 5300]])
 					@server.run
 					
-					sleep
+					@output, @input = IO.pipe
+					
+					@output.read(1)
+					
+					@server.terminate
 				end
 				
 				def shutdown
-					@server.terminate
+					# Is there a potential race condition here?
+					@input.write('\0')
 				end
 			end
 

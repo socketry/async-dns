@@ -160,7 +160,7 @@ module Celluloid::DNS
 					if valid_response(message, response)
 						return response
 					end
-				rescue Task::TimeoutError
+				rescue TaskTimeout
 					@logger.debug "[#{message.id}] Request timed out!" if @logger
 				rescue InvalidResponseError
 					@logger.warn "[#{message.id}] Invalid response from network: #{$!}!" if @logger

@@ -109,8 +109,6 @@ module Celluloid::DNS
 						@logger.debug {"<#{query.id}> Skipping question #{question} #{resource_class} because #{$!}"}
 					end
 				end
-			rescue Celluloid::ResumableError
-				raise
 			rescue StandardError => error
 				@logger.error "<#{query.id}> Exception thrown while processing #{transaction}!"
 				Celluloid::DNS.log_exception(@logger, error)

@@ -70,9 +70,6 @@ module Celluloid::DNS
 				query = Celluloid::DNS::decode_message(data)
 				
 				return @server.process_query(query, options)
-			rescue Celluloid::ResumableError
-				# Celluloid terminates tasks, we may be stuck in a task when the server is terminated. We don't want to reply to the client in this case, because the server is being terminated. It might be an option to return a server failure
-				raise
 			rescue StandardError => error
 				@logger.error "<> Error processing request: #{error.inspect}!"
 				Celluloid::DNS::log_exception(@logger, error)

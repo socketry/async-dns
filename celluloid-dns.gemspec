@@ -2,7 +2,7 @@
 require File.expand_path('../lib/celluloid/dns/version', __FILE__)
 
 Gem::Specification.new do |spec|
-	spec.name          = "Celluloid::DNS"
+	spec.name          = "celluloid-dns"
 	spec.version       = Celluloid::DNS::VERSION
 	spec.authors       = ["Samuel Williams"]
 	spec.email         = ["samuel.williams@oriontransfer.co.nz"]

@@ -78,10 +78,10 @@ module Celluloid::DNS::CelluloidBugSpec
 				Jimdo.com
 			)
 			
-			it 'should be faster than native resolver' do
+			it 'should resolve domains using futures' do
 				Celluloid.logger.level = Logger::ERROR
 				
-				resolver = Celluloid::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]], timeout: 0.1)
+				resolver = Celluloid::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]], timeout: 1.0)
 				
 				futures = domains.map { |domain| resolver.future.addresses_for(domain) }
 				

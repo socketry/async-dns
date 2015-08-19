@@ -34,13 +34,13 @@ module Celluloid::DNS
 	end
 	
 	class Resolver
-		# Wait for up to 2 seconds for a response. Override with `options[:timeout]`
+		# Wait for up to 5 seconds for a response. Override with `options[:timeout]`
 		DEFAULT_TIMEOUT = 5.0
 		
 		# 10ms wait between making requests. Override with `options[:delay]`
 		DEFAULT_DELAY = 0.01
 		
-		# Try a given request 5 times before failing. Override with `options[:retries]`.
+		# Try a given request 10 times before failing. Override with `options[:retries]`.
 		DEFAULT_RETRIES = 10
 		
 		include Celluloid::IO

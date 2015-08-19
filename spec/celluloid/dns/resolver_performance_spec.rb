@@ -83,7 +83,7 @@ module Celluloid::DNS::ResolverPerformanceSpec
 			end
 		
 			it 'should be faster than native resolver' do
-				Celluloid.logger.level = Logger::ERROR
+				# Celluloid.logger.level = Logger::ERROR
 			
 				Benchmark.bm(30) do |x|
 					a = x.report("Celluloid::DNS::Resolver") do

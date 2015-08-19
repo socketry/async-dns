@@ -119,7 +119,7 @@ module Celluloid::DNS::ServerPerformanceSpec
 			end
 		
 			it 'takes time' do
-				Celluloid.logger.level = Logger::ERROR
+				# Celluloid.logger.level = Logger::ERROR
 			
 				Benchmark.bm(30) do |x|
 					@servers.each do |name, port|

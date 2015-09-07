@@ -27,6 +27,10 @@ module Celluloid::DNS::ReplaceSpec
 	describe Celluloid::DNS::Replace do
 		let(:default_resolver) {Celluloid::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])}
 		
+		after(:all) do
+			Celluloid::DNS::Replace.resolver = nil
+		end
+		
 		it "should replace TCPSocket hostname lookup" do
 			Celluloid::DNS::Replace.resolver = default_resolver
 			

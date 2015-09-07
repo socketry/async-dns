@@ -47,7 +47,7 @@ module Celluloid::DNS
 			if Replace.resolver?
 				Replace.get_address(host)
 			else
-				super
+				original_resolv_getaddress(host)
 			end
 		end
 	end

@@ -58,18 +58,12 @@ module Celluloid::DNS::ServerPerformanceSpec
 					
 					puts "Starting DNS server..."
 					@server = MillionServer.new(listen: [[:udp, '0.0.0.0', 5300]])
-					@server.run
 					
-					@output, @input = IO.pipe
-					
-					@output.read(1)
-					
-					@server.terminate
+					@server.async.run
 				end
 				
 				def shutdown
-					# Is there a potential race condition here?
-					@input.write('\0')
+					@server.terminate
 				end
 			end
 
@@ -78,7 +72,7 @@ module Celluloid::DNS::ServerPerformanceSpec
 					File.expand_path("../server/bind9", __FILE__)
 				end
 	
-				def startup
+				def run
 					exec(self.class.named_executable, "-c", "named.conf", "-f", "-p", "5400", "-g")
 				end
 	

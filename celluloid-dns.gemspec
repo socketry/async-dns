@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
 
 	spec.add_dependency("celluloid", "~> 0.17.1")
 	spec.add_dependency("celluloid-io", "~> 0.17.0")
-	spec.add_dependency("timers", "~> 4.0.1")
+	spec.add_dependency("timers", "~> 4.1.0")
 	
 	spec.add_development_dependency "bundler", "~> 1.3"
 	spec.add_development_dependency "process-daemon", "~> 0.6.1"

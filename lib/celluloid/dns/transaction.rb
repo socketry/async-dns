@@ -126,9 +126,7 @@ module Celluloid::DNS
 				raise ArgumentError.new("Could not instantiate resource #{resource_class}!")
 			end
 			
-			@server.logger.info "Resource class: #{resource_class.inspect}"
 			resource = resource_class.new(*args)
-			@server.logger.info "Resource: #{resource.inspect}"
 			
 			add([resource], options)
 		end

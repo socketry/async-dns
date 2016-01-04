@@ -38,12 +38,12 @@ module Celluloid::DNS
 		end
 		
 		finalizer def stop
-			Celluloid.logger.debug(self.class.name) {"-> Shutdown..."}
+			# Celluloid.logger.debug(self.class.name) {"-> Shutdown..."}
 
 			@socket.close if @socket
 			@socket = nil
 
-			Celluloid.logger.debug(self.class.name) {"<- Shutdown..."}
+			# Celluloid.logger.debug(self.class.name) {"<- Shutdown..."}
 		end
 		
 		def error_response(query = nil, code = Resolv::DNS::RCode::ServFail)

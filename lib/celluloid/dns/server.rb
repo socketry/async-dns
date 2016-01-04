@@ -67,11 +67,11 @@ module Celluloid::DNS
 		end
 		
 		finalizer def stop
-			Celluloid.logger.debug(self.class.name) {"-> Shutdown..."}
+			# Celluloid.logger.debug(self.class.name) {"-> Shutdown..."}
 			
 			fire(:stop)
 			
-			Celluloid.logger.debug(self.class.name) {"<- Shutdown..."}
+			# Celluloid.logger.debug(self.class.name) {"<- Shutdown..."}
 		end
 		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.

@@ -20,6 +20,6 @@
 
 module Celluloid
 	module DNS
-		VERSION = '0.17.0'
+		VERSION = '0.17.3'
 	end
 end

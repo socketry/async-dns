@@ -24,18 +24,6 @@ require_relative 'transaction'
 require_relative 'logger'
 
 module Celluloid::DNS
-	class UDPSocketWrapper < Celluloid::IO::UDPSocket
-		def initialize(socket)
-			@socket = socket
-		end
-	end
-	
-	class TCPServerWrapper < Celluloid::IO::TCPServer
-		def initialize(server)
-			@server = server
-		end
-	end
-	
 	class Server
 		include Celluloid::IO
 		
@@ -139,10 +127,10 @@ module Celluloid::DNS
 					case protocol
 					when Socket::SOCK_DGRAM
 						@logger.info "<> Attaching to pre-existing UDP socket #{ip}:#{port}"
-						link UDPSocketHandler.new(self, UDPSocketWrapper.new(spec))
+						link UDPSocketHandler.new(self, Celluloid::IO::Socket.try_convert(spec))
 					when Socket::SOCK_STREAM
 						@logger.info "<> Attaching to pre-existing TCP socket #{ip}:#{port}"
-						link TCPSocketHandler.new(self, TCPServerWrapper.new(spec))
+						link TCPSocketHandler.new(self, Celluloid::IO::Socket.try_convert(spec))
 					else
 						raise ArgumentError.new("Unknown socket protocol: #{protocol}")
 					end

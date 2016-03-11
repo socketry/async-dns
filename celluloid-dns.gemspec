@@ -21,14 +21,14 @@ Gem::Specification.new do |spec|
 	spec.require_paths = ["lib"]
 	spec.has_rdoc = "yard"
 	
-	spec.required_ruby_version = '>= 1.9.3'
+	spec.required_ruby_version = '>= 2.0.0'
 
-	spec.add_dependency("celluloid", "~> 0.17.2")
-	spec.add_dependency("celluloid-io", "~> 0.17.2")
+	spec.add_dependency("celluloid", "~> 0.17.3")
+	spec.add_dependency("celluloid-io", "~> 0.17.3")
 	spec.add_dependency("timers", "~> 4.1.0")
 	
 	spec.add_development_dependency "bundler", "~> 1.3"
 	spec.add_development_dependency "process-daemon", "~> 1.0.0"
-	spec.add_development_dependency "rspec", "~> 3.2.0"
+	spec.add_development_dependency "rspec", "~> 3.4.0"
 	spec.add_development_dependency "rake"
 end

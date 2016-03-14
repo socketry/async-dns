@@ -179,6 +179,8 @@ module Celluloid::DNS
 			@logger.debug "<#{response.id}> Wrote #{length} bytes via TCP..."
 		rescue EOFError => error
 			@logger.warn "<> TCP session ended prematurely!"
+		rescue Errno::ECONNRESET => error
+			@logger.warn "<> TCP connection reset by peer!"
 		rescue DecodeError
 			@logger.warn "<> Could not decode incoming TCP data!"
 		ensure

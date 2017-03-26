@@ -66,6 +66,7 @@ module Celluloid::DNS
 		end
 		
 		def self.write_chunk(socket, output_data)
+			# TODO: We need to check that the data was written completely and didn't fail!
 			socket.write([output_data.bytesize].pack('n'))
 			socket.write(output_data)
 			

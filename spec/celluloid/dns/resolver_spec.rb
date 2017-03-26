@@ -75,9 +75,6 @@ module Celluloid::DNS::ResolverSpec
 		end
 
 		before(:all) do
-			Celluloid.shutdown
-			Celluloid.boot
-	
 			JunkUDPServer.supervise
 			JunkTCPServer.supervise
 		end

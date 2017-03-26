@@ -83,8 +83,6 @@ module Celluloid::DNS::ServerPerformanceSpec
 			end
 		
 			before(:all) do
-				Celluloid.shutdown
-			
 				@servers = []
 				@servers << ["Celluloid::DNS::Server", 5300]
 			
@@ -98,10 +96,6 @@ module Celluloid::DNS::ServerPerformanceSpec
 					Bind9ServerDaemon.start
 					@servers << ["Bind9", 5400]
 				end
-				
-				sleep 2
-				
-				Celluloid.boot
 			end
 		
 			after(:all) do
@@ -113,8 +107,8 @@ module Celluloid::DNS::ServerPerformanceSpec
 			end
 		
 			it 'takes time' do
-				# Celluloid.logger.level = Logger::ERROR
-			
+				Celluloid.logger.level = Logger::ERROR
+				
 				Benchmark.bm(30) do |x|
 					@servers.each do |name, port|
 						resolver = Celluloid::DNS::Resolver.new([[:udp, '127.0.0.1', port]])

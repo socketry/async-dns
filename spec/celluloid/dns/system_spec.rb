@@ -25,11 +25,6 @@ require 'celluloid/dns/system'
 
 module Celluloid::DNS::SystemSpec
 	describe Celluloid::DNS::System do
-		before(:all) do
-			Celluloid.shutdown
-			Celluloid.boot
-		end
-	
 		it "should have at least one namesever" do
 			expect(Celluloid::DNS::System::nameservers.length).to be > 0
 		end

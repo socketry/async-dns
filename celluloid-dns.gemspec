@@ -23,8 +23,8 @@ Gem::Specification.new do |spec|
 	
 	spec.required_ruby_version = '>= 2.0.0'
 
-	spec.add_dependency("celluloid", "~> 0.17.3")
-	spec.add_dependency("celluloid-io", "~> 0.17.3")
+	spec.add_dependency("celluloid", "~> 0.17")
+	spec.add_dependency("celluloid-io", "~> 0.17")
 	spec.add_dependency("timers", "~> 4.1.0")
 	
 	spec.add_development_dependency "bundler", "~> 1.3"

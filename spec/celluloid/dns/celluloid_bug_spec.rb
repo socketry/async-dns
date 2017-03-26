@@ -55,7 +55,6 @@ module Celluloid::DNS::CelluloidBugSpec
 				Statcounter.com
 				Feedburner.com
 				TradeMe.co.nz
-				Delicious.com
 				Nytimes.com
 				Reddit.com
 				Weebly.com

@@ -1,4 +1,4 @@
-![Celluloid::DNS](https://github.com/celluloid/celluloid-dns/raw/master/logo.png)
+![Socketry::DNS](https://raw.githubusercontent.com/socketry/logos/master/socketry-dns.png)
 
 **This is a work in progress as we migrate from `Celluloid` to `Socketry::Async`**
 

@@ -7,4 +7,4 @@ end
 
 task :default => :spec
 
-require 'celluloid/current'
+require 'async/current'

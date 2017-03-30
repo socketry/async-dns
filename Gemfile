@@ -2,8 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem "celluloid", github: 'celluloid/celluloid'
-# gem "celluloid-io", github: 'celluloid/celluloid-io'
+gem "async"
 
 group :test do
 	gem 'simplecov'

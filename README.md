@@ -1,6 +1,6 @@
 ![Socketry::DNS](https://raw.githubusercontent.com/socketry/logos/master/socketry-dns.png)
 
-**This is a work in progress as we migrate from `Celluloid` to `Socketry::Async`**
+**This is a work in progress as we migrate from `Async` to `Socketry::Async`**
 
 Socketry::DNS is a high-performance DNS client resolver and server which can be easily integrated into other projects or used as a stand-alone daemon. It was forked from [RubyDNS][1] which is now implemented in terms of this library.
 

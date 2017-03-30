@@ -23,11 +23,11 @@ if ENV['COVERAGE'] || ENV['TRAVIS']
 end
 
 require "bundler/setup"
-require "celluloid/dns"
+require "async/dns"
 
 abort "Warning, ulimit is too low!" if `ulimit -n`.to_i < 10000
 
-require 'celluloid/autostart'
+require 'async/autostart'
 
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure

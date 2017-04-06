@@ -30,9 +30,8 @@ module Async::DNS
 	UDP_TRUNCATION_SIZE = 512
 	
 	# The DNS message container.
-	Message = Resolv::DNS::Message
-
-	DecodeError = Resolv::DNS::DecodeError
+	Message = ::Resolv::DNS::Message
+	DecodeError = ::Resolv::DNS::DecodeError
 
 	@@dump_bad_message = nil
 	

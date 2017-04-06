@@ -35,15 +35,17 @@ module Async::DNS::SocketSpec
 	end
 	
 	describe Async::DNS::TCPSocketHandler do
+		include_context "reactor"
+		
+		let(:server_interfaces) {[TCPServer.new('127.0.0.1', 2002)]}
+		let(:server) {TestServer.new(listen: server_interfaces)}
+		
 		after(:each) do
-			@server.terminate
+			server.stop
 		end
 		
 		it "should create server with existing TCP socket" do
-			socket = TCPServer.new('127.0.0.1', 2002)
-			
-			@server = TestServer.new(listen: [socket])
-			@server.run
+			server.run
 			
 			resolver = Async::DNS::Resolver.new([[:tcp, '127.0.0.1', 2002]])
 			response = resolver.query('google.com')
@@ -52,16 +54,17 @@ module Async::DNS::SocketSpec
 	end
 	
 	describe Async::DNS::UDPSocketHandler do
+		include_context "reactor"
+		
+		let(:server_interfaces) {[UDPSocket.new.tap{|socket| socket.bind('127.0.0.1', 2002)}]}
+		let(:server) {TestServer.new(listen: server_interfaces)}
+		
 		after(:each) do
-			@server.terminate
+			server.stop
 		end
 		
 		it "should create server with existing UDP socket" do
-			socket = UDPSocket.new
-			socket.bind('127.0.0.1', 2002)
-			
-			@server = TestServer.new(listen: [socket])
-			@server.run
+			server.run
 			
 			resolver = Async::DNS::Resolver.new([[:udp, '127.0.0.1', 2002]])
 			response = resolver.query('google.com')

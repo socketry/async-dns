@@ -21,7 +21,7 @@
 require_relative 'handler'
 
 require 'securerandom'
-require 'async/io'
+require 'async'
 
 module Async::DNS
 	class InvalidProtocolError < StandardError
@@ -43,19 +43,15 @@ module Async::DNS
 		# Try a given request 10 times before failing. Override with `options[:retries]`.
 		DEFAULT_RETRIES = 10
 		
-		include Async::IO
-		
 		# Servers are specified in the same manor as options[:listen], e.g.
 		#   [:tcp/:udp, address, port]
 		# In the case of multiple servers, they will be checked in sequence.
-		def initialize(servers, options = {})
+		def initialize(servers, origin: nil, logger: Async.logger, timeout: DEFAULT_TIMEOUT)
 			@servers = servers
 			
-			@options = options
-			
-			@origin = options[:origin] || nil
-			
-			@logger = options[:logger] || Async.logger
+			@origin = origin
+			@logger = logger
+			@timeout = timeout
 		end
 		
 		attr_accessor :origin
@@ -113,7 +109,7 @@ module Async::DNS
 					break if response
 				end
 				
-				response or abort ResolutionFailure.new("Could not resolve #{name} after #{retries} attempt(s).")
+				response or raise ResolutionFailure.new("Could not resolve #{name} after #{retries} attempt(s).")
 			end
 			
 			addresses = []
@@ -132,17 +128,14 @@ module Async::DNS
 			if addresses.size > 0
 				return addresses
 			else
-				abort ResolutionFailure.new("Could not find any addresses for #{name}.")
+				raise ResolutionFailure.new("Could not find any addresses for #{name}.")
 			end
-		end
-		
-		def request_timeout
-			@options[:timeout] || DEFAULT_TIMEOUT
 		end
 		
 		# Send the message to available servers. If no servers respond correctly, nil is returned. This result indicates a failure of the resolver to correctly contact any server and get a valid response.
 		def dispatch_request(message)
 			request = Request.new(message, @servers)
+			context = Async::Task.current
 			
 			request.each do |server|
 				@logger.debug "[#{message.id}] Sending request #{message.question.inspect} to server #{server.inspect}" if @logger
@@ -150,17 +143,16 @@ module Async::DNS
 				begin
 					response = nil
 					
-					# This may be causing a problem, perhaps try:
-					# 	after(timeout) { socket.close }
-					# https://github.com/async/async-io/issues/121
-					timeout(request_timeout) do
+					context.timeout(@timeout) do
+						@logger.debug "[#{message.id}] -> Try server #{server}" if @logger
 						response = try_server(request, server)
+						@logger.debug "[#{message.id}] <- Try server #{server} = #{response}" if @logger
 					end
 					
 					if valid_response(message, response)
 						return response
 					end
-				rescue TaskTimeout
+				rescue Async::TimeoutError
 					@logger.debug "[#{message.id}] Request timed out!" if @logger
 				rescue InvalidResponseError
 					@logger.warn "[#{message.id}] Invalid response from network: #{$!}!" if @logger
@@ -216,41 +208,40 @@ module Async::DNS
 			return false
 		end
 		
+		def udp_socket(family)
+			@udp_sockets[family] ||= UDPSocket.new(family)
+		end
+		
 		def try_udp_server(request, host, port)
+			context = Async::Task.current
+			
 			family = Async::DNS::address_family(host)
-			socket = UDPSocket.new(family)
 			
-			socket.send(request.packet, 0, host, port)
-			
-			data, (_, remote_port) = socket.recvfrom(UDP_TRUNCATION_SIZE)
-			# Need to check host, otherwise security issue.
-			
-			# May indicate some kind of spoofing attack:
-			if port != remote_port
-				raise InvalidResponseError.new("Data was not received from correct remote port (#{port} != #{remote_port})")
+			context.with(UDPSocket.new(family)) do |socket|
+				socket.send(request.packet, 0, host, port)
+				
+				data, (_, remote_port) = socket.recvfrom(UDP_TRUNCATION_SIZE)
+				# Need to check host, otherwise security issue.
+				
+				# May indicate some kind of spoofing attack:
+				if port != remote_port
+					raise InvalidResponseError.new("Data was not received from correct remote port (#{port} != #{remote_port})")
+				end
+				
+				return Async::DNS::decode_message(data)
 			end
-			
-			message = Async::DNS::decode_message(data)
-		ensure
-			socket.close if socket
 		end
 		
 		def try_tcp_server(request, host, port)
-			socket = TCPSocket.new(host, port)
+			context = Async::Task.current
 			
-			StreamTransport.write_chunk(socket, request.packet)
-			
-			input_data = StreamTransport.read_chunk(socket)
-			
-			message = Async::DNS::decode_message(input_data)
-		rescue Errno::ECONNREFUSED => error
-			raise IOError.new(error.message)
-		rescue Errno::EPIPE => error
-			raise IOError.new(error.message)
-		rescue Errno::ECONNRESET => error
-			raise IOError.new(error.message)
-		ensure
-			socket.close if socket
+			context.with(TCPSocket.new(host, port)) do |socket|
+				StreamTransport.write_chunk(socket, request.packet)
+				
+				input_data = StreamTransport.read_chunk(socket)
+				
+				return Async::DNS::decode_message(input_data)
+			end
 		end
 		
 		# Manages a single DNS question message across one or more servers.
@@ -273,6 +264,7 @@ module Async::DNS
 			
 			def each(&block)
 				@servers.each do |server|
+					# TODO: This seems odd...
 					next if @packet.bytesize > UDP_TRUNCATION_SIZE
 					
 					yield server

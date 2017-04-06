@@ -35,36 +35,44 @@ module Async::DNS::IPv6Spec
 	end
 	
 	describe Async::DNS::TCPSocketHandler do
-		before(:all) do
-			@server = TestServer.new(listen: [[:tcp, '::', 2004]])
-			@server.run
-		end
+		let(:server_interfaces) {[[:tcp, '::', 2004]]}
+		let(:server) {TestServer.new(listen: server_interfaces)}
 		
-		after(:all) do
-			@server.terminate
-		end
+		include_context "reactor"
 		
 		it "should connect to the server using TCP via IPv6" do
+			server.run
+			
 			resolver = Async::DNS::Resolver.new([[:tcp, '::1', 2004]])
+			
 			response = resolver.query('google.com')
+			
 			expect(response.class).to be == Async::DNS::Message
+			expect(response.rcode).to be == 0
+			expect(response.answer).to_not be_empty
+			
+			server.stop
 		end
 	end
 	
 	describe Async::DNS::UDPSocketHandler do
-		before(:all) do
-			@server = TestServer.new(listen: [[:udp, '::', 2006]])
-			@server.run
-		end
+		let(:server_interfaces) {[[:udp, '::', 2006]]}
+		let(:server) {TestServer.new(listen: server_interfaces)}
 		
-		after(:all) do
-			@server.terminate
-		end
+		include_context "reactor"
 		
 		it "should connect to the server using UDP via IPv6" do
+			server.run
+			
 			resolver = Async::DNS::Resolver.new([[:udp, '::1', 2006]])
+			
 			response = resolver.query('google.com')
+			
 			expect(response.class).to be == Async::DNS::Message
+			expect(response.rcode).to be == 0
+			expect(response.answer).to_not be_empty
+			
+			server.stop
 		end
 	end
 end

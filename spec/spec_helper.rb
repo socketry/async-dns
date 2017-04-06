@@ -25,9 +25,24 @@ end
 require "bundler/setup"
 require "async/dns"
 
-abort "Warning, ulimit is too low!" if `ulimit -n`.to_i < 10000
+RSpec.shared_context "reactor" do
+	let(:reactor) {Async::Reactor.new}
+	
+	around(:each) do |example|
+		result = nil
+		
+		reactor.run do
+			result = example.run
+			
+			# Force the reactor to stop running if the result was an error.
+			if result.is_a? Exception
+				reactor.stop
+			end
+		end
+	end
+end
 
-require 'async/autostart'
+abort "Warning, ulimit is too low!" if `ulimit -n`.to_i < 10000
 
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure

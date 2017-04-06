@@ -147,7 +147,7 @@ module Async::DNS
 			method = "add_#{section}".to_sym
 			
 			resources.each do |resource|
-				@server.logger.debug "#{method}: #{resource.inspect} #{resource.class::TypeValue} #{resource.class::ClassValue}"
+				@server.logger.debug {"#{method}: #{resource.inspect} #{resource.class::TypeValue} #{resource.class::ClassValue}"}
 				
 				@response.send(method, name, ttl, resource)
 			end

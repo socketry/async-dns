@@ -26,6 +26,8 @@ require 'process/daemon'
 
 module Async::DNS::ServerPerformanceSpec
 	describe Async::DNS::Server do
+		include_context "reactor"
+		
 		context 'benchmark' do
 			class MillionServer < Async::DNS::Server
 				def initialize(*)
@@ -46,24 +48,29 @@ module Async::DNS::ServerPerformanceSpec
 			end
 			
 			class AsyncServerDaemon < Process::Daemon
-				IN = Resolv::DNS::Resource::IN
-	
 				def working_directory
 					File.expand_path("../tmp", __FILE__)
 				end
-	
+				
+				def reactor
+					@reactor ||= Async::Reactor.new
+				end
+				
 				def startup
-					puts "Booting async..."
-					Async.boot
-					
 					puts "Starting DNS server..."
 					@server = MillionServer.new(listen: [[:udp, '0.0.0.0', 5300]])
 					
-					@server.async.run
+					reactor.async do
+						@server.run
+					end
+				end
+				
+				def run
+					reactor.run
 				end
 				
 				def shutdown
-					@server.terminate
+					@server.stop
 				end
 			end
 
@@ -118,11 +125,9 @@ module Async::DNS::ServerPerformanceSpec
 							5.times do
 								pending = @domains.size
 							
-								futures = @domains.collect{|domain| resolver.future.addresses_for(domain)}
-							
-								futures.collect do |future|
-									expect(future.value).to_not be nil
-								end
+								resolved = @domains.collect{|domain| resolver.addresses_for(domain)}
+								
+								expect(resolved).to_not include(nil)
 							end
 						end
 					end

@@ -18,8 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/current'
-require 'async/io'
+require 'async'
+require 'async/tcp_socket'
+require 'async/udp_socket'
 
 require_relative 'dns/version'
 

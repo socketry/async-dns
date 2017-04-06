@@ -25,60 +25,60 @@ require 'async/dns'
 module Async::DNS::ResolverSpec
 	describe Async::DNS::Resolver do
 		class JunkUDPServer
-			include Async::IO
-	
 			def initialize
 				@socket = UDPSocket.new
 				@socket.bind("0.0.0.0", 6060)
-		
-				async.run
 			end
-	
-			finalizer :shutdown
-	
-			def finalize
+		
+			def stop
 				@socket.close if @socket
+				@socket = nil
 			end
 	
-			def run
-				data, (_, port, host) = @socket.recvfrom(1024)
-		
-				@socket.send("Foobar", 0, host, port)
+			def run(reactor: Async::Task.current.reactor)
+				reactor.async(@socket) do |socket|
+					data, (_, port, host) = socket.recvfrom(1024)
+					socket.send("Foobar", 0, host, port)
+				end
 			end
 		end
 
 		class JunkTCPServer
-			include Async::IO
-	
 			def initialize
 				@socket = TCPServer.new("0.0.0.0", 6060)
-		
-				async.run
 			end
-	
-			finalizer :shutdown
-	
-			def finalize
+			
+			def stop
 				@socket.close if @socket
+				@socket = nil
 			end
-	
-			def run
+			
+			def stopped?
+				@socket.nil?
+			end
+			
+			def run(reactor: Async::Task.current.reactor)
 				# @logger.debug "Waiting for incoming TCP connections #{@socket.inspect}..."
-				loop { async.handle_connection @socket.accept }
+				reactor.async(@socket) do |socket|
+					begin
+						reactor.async(socket.accept) do |client|
+							handle_connection(client)
+						end until stopped?
+					rescue IOError
+						raise unless stopped?
+					end
+				end
 			end
-	
+			
 			def handle_connection(socket)
 				socket.write("\0\0obar")
 			ensure
 				socket.close
 			end
 		end
-
-		before(:all) do
-			JunkUDPServer.supervise
-			JunkTCPServer.supervise
-		end
-
+		
+		include_context "reactor"
+		
 		it "should result in non-existent domain" do
 			resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 	
@@ -109,21 +109,33 @@ module Async::DNS::ResolverSpec
 	
 			expect{resolver.addresses_for('google.com')}.to raise_error(Async::DNS::ResolutionFailure)
 		end
-
+		
+		let(:udp_server) {JunkUDPServer.new}
+		
 		it "should fail with decode error from bad udp server" do
+			udp_server.run
+			
 			resolver = Async::DNS::Resolver.new([[:udp, "0.0.0.0", 6060]])
 			
 			response = resolver.query('google.com')
 			
 			expect(response).to be == nil
+			
+			udp_server.stop
 		end
-
+		
+		let(:tcp_server) {JunkTCPServer.new}
+		
 		it "should fail with decode error from bad tcp server" do
+			tcp_server.run
+			
 			resolver = Async::DNS::Resolver.new([[:tcp, "0.0.0.0", 6060]])
 			
 			response = resolver.query('google.com')
 			
 			expect(response).to be == nil
+			
+			tcp_server.stop
 		end
 
 		it "should return some IPv4 and IPv6 addresses" do

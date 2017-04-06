@@ -40,16 +40,13 @@ module Async::DNS::TruncationSpec
 	end
 	
 	describe "Async::DNS Truncation Server" do
-		before(:all) do
-			@test_server = TestServer.new(listen: SERVER_PORTS)
-			@test_server.run
-		end
+		include_context "reactor"
 		
-		after(:all) do
-			@test_server.terminate
-		end
-
+		let(:server) {TestServer.new(listen: SERVER_PORTS)}
+		
 		it "should use tcp because of large response" do
+			server.run
+			
 			resolver = Async::DNS::Resolver.new(SERVER_PORTS)
 	
 			response = resolver.query("truncation", IN::TXT)
@@ -57,6 +54,8 @@ module Async::DNS::TruncationSpec
 			text = response.answer.first
 	
 			expect(text[2].strings.join).to be == ("Hello World! " * 100)
+			
+			server.stop
 		end
 	end
 end

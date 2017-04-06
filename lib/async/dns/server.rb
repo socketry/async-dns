@@ -18,15 +18,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/io'
+require 'async'
 
 require_relative 'transaction'
 require_relative 'logger'
 
 module Async::DNS
 	class Server
-		include Async::IO
-		
 		# The default server interfaces
 		DEFAULT_INTERFACES = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
 		
@@ -38,11 +36,12 @@ module Async::DNS
 		#		end
 		#	end
 		#
-		def initialize(options = {})
-			@logger = options[:logger] || Async.logger
-			@interfaces = options[:listen] || DEFAULT_INTERFACES
+		def initialize(listen: DEFAULT_INTERFACES, origin: '.', logger: Async.logger)
+			@interfaces = listen
+			@origin = origin
+			@logger = logger
 			
-			@origin = options[:origin] || '.'
+			@handlers = []
 		end
 
 		# Records are relative to this origin:
@@ -54,12 +53,14 @@ module Async::DNS
 		def fire(event_name)
 		end
 		
-		finalizer def stop
-			# Async.logger.debug(self.class.name) {"-> Shutdown..."}
+		def stop
+			Async.logger.debug(self.class.name) {"-> Stopping #{@handlers.count} handlers..."}
 			
 			fire(:stop)
 			
-			# Async.logger.debug(self.class.name) {"<- Shutdown..."}
+			@handlers.each(&:stop)
+			
+			Async.logger.debug(self.class.name) {"<- Stopped."}
 		end
 		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.
@@ -111,9 +112,21 @@ module Async::DNS
 		end
 		
 		# Setup all specified interfaces and begin accepting incoming connections.
-		def run
+		def run(*args)
 			@logger.info "Starting Async::DNS server (v#{Async::DNS::VERSION})..."
 			
+			setup_handlers if @handlers.empty?
+			
+			@handlers.each do |handler|
+				handler.run(*args)
+			end
+			
+			fire(:start)
+		end
+		
+		private
+		
+		def setup_handlers
 			fire(:setup)
 			
 			# Setup server sockets
@@ -127,25 +140,23 @@ module Async::DNS
 					case protocol
 					when Socket::SOCK_DGRAM
 						@logger.info "<> Attaching to pre-existing UDP socket #{ip}:#{port}"
-						link UDPSocketHandler.new(self, Async::IO::Socket.try_convert(spec))
+						@handlers << UDPSocketHandler.new(self, spec)
 					when Socket::SOCK_STREAM
 						@logger.info "<> Attaching to pre-existing TCP socket #{ip}:#{port}"
-						link TCPSocketHandler.new(self, Async::IO::Socket.try_convert(spec))
+						@handlers << TCPSocketHandler.new(self, spec)
 					else
 						raise ArgumentError.new("Unknown socket protocol: #{protocol}")
 					end
 				elsif spec[0] == :udp
 					@logger.info "<> Listening on #{spec.join(':')}"
-					link UDPHandler.new(self, spec[1], spec[2])
+					@handlers << UDPServerHandler.new(self, spec[1], spec[2])
 				elsif spec[0] == :tcp
 					@logger.info "<> Listening on #{spec.join(':')}"
-					link TCPHandler.new(self, spec[1], spec[2])
+					@handlers << TCPServerHandler.new(self, spec[1], spec[2])
 				else
 					raise ArgumentError.new("Invalid connection specification: #{spec.inspect}")
 				end
 			end
-			
-			fire(:start)
 		end
 	end
 end

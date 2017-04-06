@@ -23,68 +23,74 @@
 require 'async/dns'
 
 module Async::DNS::SlowServerSpec
-	SERVER_PORTS = [[:udp, '127.0.0.1', 5330], [:tcp, '127.0.0.1', 5330]]
 	IN = Resolv::DNS::Resource::IN
 	
-	class TestServer < Async::DNS::Server
+	class SlowServer < Async::DNS::Server
 		def process(name, resource_class, transaction)
 			@resolver ||= Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 			
-			sleep(2) if name.end_with?('.com')
+			Async::Task.current.sleep(2) if name.end_with?('.com')
 			
 			transaction.fail!(:NXDomain)
 		end
 	end
 	
 	describe "Async::DNS Slow Server" do
-		before(:all) do
-			@server = TestServer.new(listen: SERVER_PORTS)
-			@server.run
+		include_context "reactor"
+		
+		let(:server_interfaces) {[[:udp, '127.0.0.1', 5330], [:tcp, '127.0.0.1', 5330]]}
+		let(:server) {SlowServer.new(listen: server_interfaces)}
+		
+		after(:each) do
+			server.stop
 		end
 		
-		after(:all) do
-			@server.terminate
-		end
-	
 		it "get no answer after 2 seconds" do
+			server.run
+			
 			start_time = Time.now
-		
-			resolver = Async::DNS::Resolver.new(SERVER_PORTS, :timeout => 10)
-		
+			
+			resolver = Async::DNS::Resolver.new(server_interfaces, :timeout => 10)
+			
 			response = resolver.query("apple.com", IN::A)
-		
+			
 			expect(response.answer.length).to be == 0
-		
+			
 			end_time = Time.now
-		
+			
 			expect(end_time - start_time).to be_within(0.1).of(2.0)
 		end
 	
 		it "times out after 1 second" do
+			server.run
+			
 			start_time = Time.now
-		
-			resolver = Async::DNS::Resolver.new(SERVER_PORTS, :timeout => 0.5)
-		
+			
+			# Two server interfaces, timeout of 0.5s each:
+			resolver = Async::DNS::Resolver.new(server_interfaces, :timeout => 0.5)
+			
 			response = resolver.query("apple.com", IN::A)
-		
+			
 			expect(response).to be nil
-		
+			
 			end_time = Time.now
-		
+			
 			expect(end_time - start_time).to be_within(0.1).of(1.0)
 		end
 	
 		it "gets no answer immediately" do
+			server.run
+			
 			start_time = Time.now
-		
-			resolver = Async::DNS::Resolver.new(SERVER_PORTS, :timeout => 0.5)
-		
+			
+			resolver = Async::DNS::Resolver.new(server_interfaces, :timeout => 0.5)
+			
 			response = resolver.query("oriontransfer.org", IN::A)
-		
+			
 			expect(response.answer.length).to be 0
-		
+			
 			end_time = Time.now
-		
+			
 			expect(end_time - start_time).to be_within(0.1).of(0.0)
 		end
 	end

@@ -44,7 +44,7 @@ module Async::DNS
 			
 			# First we need to read in the length of the packet
 			while buffer.size < 2
-				buffer.write socket.readpartial(1)
+				buffer.write socket.read(1)
 			end
 			
 			# Read in the length, the first two bytes:
@@ -55,7 +55,7 @@ module Async::DNS
 				required = (2 + length) - buffer.size
 				
 				# Read precisely the required amount:
-				buffer.write socket.readpartial(required)
+				buffer.write socket.read(required)
 			end
 			
 			return buffer.string.byteslice(2, length)
@@ -66,9 +66,11 @@ module Async::DNS
 		end
 		
 		def self.write_chunk(socket, output_data)
-			# TODO: We need to check that the data was written completely and didn't fail!
-			socket.write([output_data.bytesize].pack('n'))
-			socket.write(output_data)
+			size_data = [output_data.bytesize].pack('n')
+			
+			# TODO: Validate/check for data written correctly
+			count = socket.write(size_data)
+			count = socket.write(output_data)
 			
 			return output_data.bytesize
 		end

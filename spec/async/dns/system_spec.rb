@@ -25,6 +25,8 @@ require 'async/dns/system'
 
 module Async::DNS::SystemSpec
 	describe Async::DNS::System do
+		include_context "reactor"
+		
 		it "should have at least one namesever" do
 			expect(Async::DNS::System::nameservers.length).to be > 0
 		end

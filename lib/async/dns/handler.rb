@@ -22,28 +22,19 @@ require_relative 'transport'
 
 module Async::DNS
 	class GenericHandler
-		include Async::IO
-		
 		def initialize(server)
 			@server = server
 			@logger = @server.logger || Async.logger
 			
-			@connections = Async::Condition.new
+			@context = nil
+		end
+		
+		def stopped?
+			@context.nil?
 		end
 		
 		def stop
-			shutdown
-			
-			@connections.wait
-		end
-		
-		finalizer def stop
-			# Async.logger.debug(self.class.name) {"-> Shutdown..."}
-
-			@socket.close if @socket
-			@socket = nil
-
-			# Async.logger.debug(self.class.name) {"<- Shutdown..."}
+			@context.stop!
 		end
 		
 		def error_response(query = nil, code = Resolv::DNS::RCode::ServFail)
@@ -80,24 +71,24 @@ module Async::DNS
 	end
 	
 	# Handling incoming UDP requests, which are single data packets, and pass them on to the given server.
-	class UDPSocketHandler < GenericHandler
-		def initialize(server, socket)
-			super(server)
+	class UDPHandler < GenericHandler
+		def run(reactor: Async::Task.current.reactor)
+			Async.logger.debug(self.class.name) {"-> Run on #{self.socket}..."}
 			
-			@socket = socket
-			
-			async.run
+			@context = reactor.async(self.socket) do |socket|
+				while true
+					input_data, (_, remote_port, remote_host) = socket.recvfrom(UDP_TRUNCATION_SIZE)
+					
+					reactor.async do
+						respond(socket, input_data, remote_host, remote_port)
+					end
+				end
+				
+				Async.logger.debug(self.class.name) {"<- Run..."}
+			end
 		end
 		
-		def run
-			Async.logger.debug(self.class.name) {"-> Run..."}
-
-			handle_connection while @socket
-			
-			Async.logger.debug(self.class.name) {"<- Run..."}
-		end
-		
-		def respond(input_data, remote_host, remote_port)
+		def respond(socket, input_data, remote_host, remote_port)
 			options = {peer: remote_host, port: remote_port, proto: :udp}
 			
 			response = process_query(input_data, options)
@@ -116,7 +107,7 @@ module Async::DNS
 				output_data = truncation_error.encode
 			end
 			
-			@socket.send(output_data, 0, remote_host, remote_port)
+			socket.send(output_data, 0, remote_host, remote_port)
 		rescue IOError => error
 			@logger.warn "<> UDP response failed: #{error.inspect}!"
 		rescue EOFError => error
@@ -124,75 +115,118 @@ module Async::DNS
 		rescue DecodeError
 			@logger.warn "<> Could not decode incoming UDP data!"
 		end
-		
-		def handle_connection
-			# @logger.debug "Waiting for incoming UDP packet #{@socket.inspect}..."
-			
-			input_data, (_, remote_port, remote_host) = @socket.recvfrom(UDP_TRUNCATION_SIZE)
-			
-			async.respond(input_data, remote_host, remote_port)
-		rescue IOError => error
-			@logger.warn "<> UDP connection failed: #{error.inspect}!"
-		rescue EOFError => error
-			@logger.warn "<> UDP session ended prematurely!"
-		end
 	end
 	
-	class UDPHandler < UDPSocketHandler
-		def initialize(server, host, port)
-			family = Async::DNS::address_family(host)
-			socket = UDPSocket.new(family)
-			
-			socket.bind(host, port)
-			
-			super(server, socket)
-		end
-	end
-	
-	class TCPSocketHandler < GenericHandler
+	class UDPSocketHandler < UDPHandler
 		def initialize(server, socket)
-			super(server)
-			
 			@socket = socket
 			
-			async.run
+			super(server)
 		end
 		
-		def run
-			Async.logger.debug(self.class.name) {"-> Run..."}
-
-			async.handle_connection(@socket.accept) while @socket
-
-			Async.logger.debug(self.class.name) {"<- Run..."}
+		attr :socket
+	end
+	
+	class UDPServerHandler < UDPHandler
+		def initialize(server, host, port)
+			@host = host
+			@family = nil
+			@port = port
+			@socket = nil
+			
+			super(server)
+		end
+		
+		def socket
+			unless @socket
+				@family ||= Async::DNS::address_family(@host)
+				
+				@socket = ::UDPSocket.new(@family)
+				@socket.bind(@host, @port)
+			end
+			
+			return @socket
+		end
+		
+		def stop
+			super
+			
+			if @socket
+				@socket.close
+				@socket = nil
+			end
+		end
+	end
+	
+	class TCPHandler < GenericHandler
+		def run(reactor: Async::Task.current.reactor)
+			Async.logger.debug(self.class.name) {"-> Run on #{self.socket}..."}
+			
+			@context = reactor.async(self.socket) do |socket|
+				reactor.with(socket.accept) do |client|
+					handle_connection(client)
+				end while true
+				
+				Async.logger.debug(self.class.name) {"<- Run..."}
+			end
 		end
 		
 		def handle_connection(socket)
-			_, remote_port, remote_host = socket.peeraddr
+			context = Async::Task.current
+			
+			Async.logger.debug(self.class.name) {"-> [#{context}] Handle connection: #{socket}..."}
+			
+			_, remote_port, remote_host = socket.io.peeraddr
 			options = {peer: remote_host, port: remote_port, proto: :tcp}
 			
+			Async.logger.debug(self.class.name) {"-> [#{context}] Reading data from: #{socket}..."}
 			input_data = StreamTransport.read_chunk(socket)
 			
+			Async.logger.debug(self.class.name) {"-> [#{context}] Processing data: #{input_data}..."}
 			response = process_query(input_data, options)
 			
 			length = StreamTransport.write_message(socket, response)
 			
 			@logger.debug "<#{response.id}> Wrote #{length} bytes via TCP..."
 		rescue EOFError => error
-			@logger.warn "<> TCP session ended prematurely!"
+			@logger.warn "<> Error: TCP session ended prematurely!"
 		rescue Errno::ECONNRESET => error
-			@logger.warn "<> TCP connection reset by peer!"
+			@logger.warn "<> Error: TCP connection reset by peer!"
 		rescue DecodeError
-			@logger.warn "<> Could not decode incoming TCP data!"
-		ensure
-			socket.close
+			@logger.warn "<> Error: Could not decode incoming TCP data!"
 		end
 	end
 	
-	class TCPHandler < TCPSocketHandler
-		def initialize(server, host, port)
-			socket = TCPServer.new(host, port)
+	class TCPSocketHandler < TCPHandler
+		def initialize(server, socket)
+			@socket = socket
 			
-			super(server, socket)
+			super(server)
+		end
+		
+		attr :socket
+	end
+	
+	class TCPServerHandler < TCPHandler
+		def initialize(server, host, port)
+			@host = host
+			@port = port
+			@socket = nil
+			
+			super(server)
+		end
+		
+		def socket
+			@socket ||= ::TCPServer.new(@host, @port)
+		end
+		
+		def stop
+			super
+			
+			if @socket
+				@socket.close
+				@socket = nil
+			end
 		end
 	end
 end

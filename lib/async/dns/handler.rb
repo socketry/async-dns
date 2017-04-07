@@ -192,6 +192,8 @@ module Async::DNS
 			@logger.warn "<> Error: TCP session ended prematurely!"
 		rescue Errno::ECONNRESET => error
 			@logger.warn "<> Error: TCP connection reset by peer!"
+		rescue Errno::EPIPE
+			@logger.warn "<> Error: TCP session failed due to broken pipe!"
 		rescue DecodeError
 			@logger.warn "<> Error: Could not decode incoming TCP data!"
 		end

@@ -31,12 +31,12 @@ module Async::DNS::ResolverSpec
 			end
 		
 			def stop
-				@socket.close if @socket
-				@socket = nil
+				@task.stop!
+				@socket.close
 			end
 	
 			def run(reactor: Async::Task.current.reactor)
-				reactor.async(@socket) do |socket|
+				@task = reactor.async(@socket) do |socket|
 					data, (_, port, host) = socket.recvfrom(1024)
 					socket.send("Foobar", 0, host, port)
 				end
@@ -49,31 +49,21 @@ module Async::DNS::ResolverSpec
 			end
 			
 			def stop
-				@socket.close if @socket
-				@socket = nil
-			end
-			
-			def stopped?
-				@socket.nil?
+				@task.stop!
+				@socket.close
 			end
 			
 			def run(reactor: Async::Task.current.reactor)
 				# @logger.debug "Waiting for incoming TCP connections #{@socket.inspect}..."
-				reactor.async(@socket) do |socket|
-					begin
-						reactor.async(socket.accept) do |client|
-							handle_connection(client)
-						end until stopped?
-					rescue IOError
-						raise unless stopped?
-					end
+				@task = reactor.async(@socket) do |socket|
+					reactor.with(socket.accept) do |client|
+						handle_connection(client)
+					end while true
 				end
 			end
 			
 			def handle_connection(socket)
 				socket.write("\0\0obar")
-			ensure
-				socket.close
 			end
 		end
 		

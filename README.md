@@ -1,22 +1,18 @@
-![Socketry::DNS](https://raw.githubusercontent.com/socketry/logos/master/socketry-dns.png)
+# Async::DNS
 
-**This is a work in progress as we migrate from `Async` to `Socketry::Async`**
+Async::DNS is a high-performance DNS client resolver and server which can be easily integrated into other projects or used as a stand-alone daemon. It was forked from [RubyDNS] which is now implemented in terms of this library.
 
-Socketry::DNS is a high-performance DNS client resolver and server which can be easily integrated into other projects or used as a stand-alone daemon. It was forked from [RubyDNS][1] which is now implemented in terms of this library.
+[RubyDNS]: https://github.com/ioquatix/rubydns
 
-[1]: https://github.com/ioquatix/rubydns
-
-[![Gem Version](https://badge.fury.io/rb/socketry-dns.svg)](http://rubygems.org/gems/socketry-dns)
-[![Build Status](https://secure.travis-ci.org/socketry/socketry-dns.svg?branch=master)](http://travis-ci.org/socketry/socketry-dns)
-[![Dependency Status](https://gemnasium.com/socketry/socketry-dns.svg)](https://gemnasium.com/socketry/socketry-dns)
-[![Code Climate](https://codeclimate.com/github/socketry/socketry-dns.svg)](https://codeclimate.com/github/socketry/socketry-dns)
-[![Coverage Status](https://coveralls.io/repos/socketry/socketry-dns/badge.svg?branch=master)](https://coveralls.io/r/socketry/socketry-dns)
+[![Build Status](https://secure.travis-ci.org/socketry/async-dns.svg)](http://travis-ci.org/socketry/async-dns)
+[![Code Climate](https://codeclimate.com/github/socketry/async-dns.svg)](https://codeclimate.com/github/socketry/async-dns)
+[![Coverage Status](https://coveralls.io/repos/socketry/async-dns/badge.svg)](https://coveralls.io/r/socketry/async-dns)
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-	gem 'socketry-dns'
+	gem 'async-dns'
 
 And then execute:
 
@@ -24,7 +20,7 @@ And then execute:
 
 Or install it yourself as:
 
-	$ gem install socketry-dns
+	$ gem install async-dns
 
 ## Usage
 
@@ -32,32 +28,32 @@ Or install it yourself as:
 
 Here is a simple example showing how to use the resolver:
 
-	resolver = Socketry::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
+	Async::Reactor.run do
+		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 
-	addresses = resolver.addresses_for("www.google.com.")
+		addresses = resolver.addresses_for("www.google.com.")
 
-	expect(addresses.size).to be > 0
-
-	addresses.each do |address|
-		expect(address).to be_kind_of(Resolv::IPv4) | be_kind_of(Resolv::IPv6)
+		puts addresses.inspect
 	end
+	=> [#<Resolv::IPv4 202.124.127.240>, #<Resolv::IPv4 202.124.127.216>, #<Resolv::IPv4 202.124.127.223>, #<Resolv::IPv4 202.124.127.227>, #<Resolv::IPv4 202.124.127.234>, #<Resolv::IPv4 202.124.127.230>, #<Resolv::IPv4 202.124.127.208>, #<Resolv::IPv4 202.124.127.249>, #<Resolv::IPv4 202.124.127.219>, #<Resolv::IPv4 202.124.127.218>, #<Resolv::IPv4 202.124.127.212>, #<Resolv::IPv4 202.124.127.241>, #<Resolv::IPv4 202.124.127.238>, #<Resolv::IPv4 202.124.127.245>, #<Resolv::IPv4 202.124.127.251>, #<Resolv::IPv4 202.124.127.229>]
 
 ### Server
 
 Here is a simple example showing how to use the server:
 
-	class TestServer < Socketry::DNS::Server
+	class TestServer < Async::DNS::Server
 		def process(name, resource_class, transaction)
-			@resolver ||= Socketry::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
+			@resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
 			
 			transaction.passthrough!(@resolver)
 		end
 	end
 	
-	server = TestServer.new(listen: [[:udp, 'localhost', 2346]])
-	server.run
+	server = TestServer.new(listen: [[:udp, '127.0.0.1', 2346]])
 	
-	sleep
+	Async::Reactor.run do
+		server.run
+	end
 
 Then to test you could use `dig` like so:
 
@@ -73,10 +69,10 @@ On some platforms (e.g. Mac OS X) the number of file descriptors is relatively l
 
 ### Server
 
-The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Socketry::DNS::Resolver` gives the following:
+The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Async::DNS::Resolver` gives the following:
 
 	                              user     system      total        real
-	Socketry::DNS::Server         4.280000   0.450000   4.730000 (  4.854862)
+	Async::DNS::Server         4.280000   0.450000   4.730000 (  4.854862)
 	Bind9                         4.970000   0.520000   5.490000 (  5.541213)
 
 These benchmarks are included in the unit tests. To test bind9 performance, it must be installed and `which named` must return the executable.
@@ -84,24 +80,24 @@ These benchmarks are included in the unit tests. To test bind9 performance, it m
 
 ## Performance
 
-We welcome additional benchmarks and feedback regarding Socketry::DNS performance. To check the current performance results, consult the [travis build job output](https://travis-ci.org/socketry/socketry-dns).
+We welcome additional benchmarks and feedback regarding Async::DNS performance. To check the current performance results, consult the [travis build job output](https://travis-ci.org/socketry/async-dns).
 
 ### Resolver
 
-The `Socketry::DNS::Resolver` is highly concurrent and can resolve individual names as fast as the built in `Resolv::DNS` resolver. Because the resolver is asynchronous, when dealing with multiple names, it can work more efficiently:
+The `Async::DNS::Resolver` is highly concurrent and can resolve individual names as fast as the built in `Resolv::DNS` resolver. Because the resolver is asynchronous, when dealing with multiple names, it can work more efficiently:
 
 	                              user     system      total        real
-	Socketry::DNS::Resolver       0.020000   0.010000   0.030000 (  0.030507)
+	Async::DNS::Resolver       0.020000   0.010000   0.030000 (  0.030507)
 	Resolv::DNS                   0.070000   0.010000   0.080000 (  1.465975)
 
 These benchmarks are included in the unit tests.
 
 ### Server
 
-The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Socketry::DNS::Resolver` gives the following:
+The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Async::DNS::Resolver` gives the following:
 
 	                              user     system      total        real
-	Socketry::DNS::Server         4.280000   0.450000   4.730000 (  4.854862)
+	Async::DNS::Server         4.280000   0.450000   4.730000 (  4.854862)
 	Bind9                         4.970000   0.520000   5.490000 (  5.541213)
 
 These benchmarks are included in the unit tests. To test bind9 performance, it must be installed and `which named` must return the executable.

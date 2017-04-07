@@ -42,7 +42,7 @@ RSpec.shared_context "reactor" do
 	end
 end
 
-abort "Warning, ulimit is too low!" if `ulimit -n`.to_i < 10000
+# abort "Warning, ulimit is too low!" if `ulimit -n`.to_i < 10000
 
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure

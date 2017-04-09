@@ -42,6 +42,8 @@ RSpec.shared_context "reactor" do
 			end
 		end
 		
+		reactor.close
+		
 		result
 	end
 end

@@ -1,6 +1,4 @@
-#!/usr/bin/env ruby
-
-# Copyright, 2012, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +19,40 @@
 # THE SOFTWARE.
 
 require 'async/dns'
-require 'async/dns/extensions/string'
+require 'async/dns/system'
 
-module Async::DNS::TruncationSpec
-	SERVER_PORTS = [[:udp, '127.0.0.1', 5520], [:tcp, '127.0.0.1', 5520]]
-	IN = Resolv::DNS::Resource::IN
+describe Async::DNS::TCPServerHandler do
+	let(:server) {Async::DNS::Server.new}
+	let(:host) {'127.0.0.1'}
+	let(:port) {6665}
 	
-	class TestServer < Async::DNS::Server
-		def process(name, resource_class, transaction)
-			case [name, resource_class]
-			when ["truncation", IN::TXT]
-				text = "Hello World! " * 100
-				transaction.respond!(*text.chunked)
-			else
-				transaction.fail!(:NXDomain)
-			end
+	subject {described_class.new(server, host, port)}
+	
+	it "can rebind port" do
+		2.times do
+			socket = subject.send(:make_socket)
+			expect(socket).to_not be_closed
+			
+			socket.close
+			expect(socket).to be_closed
 		end
 	end
+end
+
+describe Async::DNS::UDPServerHandler do
+	let(:server) {Async::DNS::Server.new}
+	let(:host) {'127.0.0.1'}
+	let(:port) {6665}
 	
-	describe "Async::DNS Truncation Server" do
-		include_context "reactor"
-		
-		let(:server) {TestServer.new(listen: SERVER_PORTS)}
-		
-		it "should use tcp because of large response" do
-			task = server.run
+	subject {described_class.new(server, host, port)}
+	
+	it "can rebind port" do
+		2.times do
+			socket = subject.send(:make_socket)
+			expect(socket).to_not be_closed
 			
-			resolver = Async::DNS::Resolver.new(SERVER_PORTS)
-	
-			response = resolver.query("truncation", IN::TXT)
-	
-			text = response.answer.first
-	
-			expect(text[2].strings.join).to be == ("Hello World! " * 100)
-			
-			task.stop
+			socket.close
+			expect(socket).to be_closed
 		end
 	end
 end

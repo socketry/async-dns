@@ -38,16 +38,20 @@ module Async::DNS::SlowServerSpec
 	describe "Async::DNS Slow Server" do
 		include_context "reactor"
 		
-		let(:server_interfaces) {[[:udp, '127.0.0.1', 5330], [:tcp, '127.0.0.1', 5330]]}
+		let(:server_interfaces) {[[:udp, '0.0.0.0', 5330], [:tcp, '0.0.0.0', 5330]]}
 		let(:server) {SlowServer.new(listen: server_interfaces)}
 		
-		after(:each) do
-			server.stop
+		around(:each) do |example|
+			begin
+				task = server.run
+				
+				example.run
+			ensure
+				task.stop
+			end
 		end
 		
 		it "get no answer after 2 seconds" do
-			server.run
-			
 			start_time = Time.now
 			
 			resolver = Async::DNS::Resolver.new(server_interfaces, :timeout => 10)
@@ -62,8 +66,6 @@ module Async::DNS::SlowServerSpec
 		end
 	
 		it "times out after 1 second" do
-			server.run
-			
 			start_time = Time.now
 			
 			# Two server interfaces, timeout of 0.5s each:
@@ -79,8 +81,6 @@ module Async::DNS::SlowServerSpec
 		end
 	
 		it "gets no answer immediately" do
-			server.run
-			
 			start_time = Time.now
 			
 			resolver = Async::DNS::Resolver.new(server_interfaces, :timeout => 0.5)

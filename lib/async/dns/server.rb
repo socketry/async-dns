@@ -53,16 +53,6 @@ module Async::DNS
 		def fire(event_name)
 		end
 		
-		def stop
-			Async.logger.debug(self.class.name) {"-> Stopping #{@handlers.count} handlers..."}
-			
-			fire(:stop)
-			
-			@handlers.each(&:stop)
-			
-			Async.logger.debug(self.class.name) {"<- Stopped."}
-		end
-		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.
 		def process(name, resource_class, transaction)
 			raise NotImplementedError.new
@@ -117,11 +107,13 @@ module Async::DNS
 			
 			setup_handlers if @handlers.empty?
 			
-			@handlers.each do |handler|
-				handler.run(*args)
+			Async::Reactor.run do
+				@handlers.each do |handler|
+					handler.run(*args)
+				end
+				
+				fire(:start)
 			end
-			
-			fire(:start)
 		end
 		
 		private

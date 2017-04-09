@@ -41,7 +41,7 @@ module Async::DNS::IPv6Spec
 		include_context "reactor"
 		
 		it "should connect to the server using TCP via IPv6" do
-			server.run
+			task = server.run
 			
 			resolver = Async::DNS::Resolver.new([[:tcp, '::1', 2004]])
 			
@@ -51,7 +51,7 @@ module Async::DNS::IPv6Spec
 			expect(response.rcode).to be == 0
 			expect(response.answer).to_not be_empty
 			
-			server.stop
+			task.stop
 		end
 	end
 	
@@ -62,7 +62,7 @@ module Async::DNS::IPv6Spec
 		include_context "reactor"
 		
 		it "should connect to the server using UDP via IPv6" do
-			server.run
+			task = server.run
 			
 			resolver = Async::DNS::Resolver.new([[:udp, '::1', 2006]])
 			
@@ -72,7 +72,7 @@ module Async::DNS::IPv6Spec
 			expect(response.rcode).to be == 0
 			expect(response.answer).to_not be_empty
 			
-			server.stop
+			task.stop
 		end
 	end
 end

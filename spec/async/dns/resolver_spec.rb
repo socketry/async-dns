@@ -31,7 +31,7 @@ module Async::DNS::ResolverSpec
 			end
 		
 			def stop
-				@task.stop!
+				@task.stop
 				@socket.close
 			end
 	
@@ -49,7 +49,7 @@ module Async::DNS::ResolverSpec
 			end
 			
 			def stop
-				@task.stop!
+				@task.stop
 				@socket.close
 			end
 			

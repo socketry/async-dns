@@ -61,7 +61,7 @@ module Async::DNS::ServerPerformanceSpec
 					@server = MillionServer.new(listen: [[:udp, '0.0.0.0', 5300]])
 					
 					reactor.async do
-						@server.run
+						@task = @server.run
 					end
 				end
 				
@@ -70,7 +70,7 @@ module Async::DNS::ServerPerformanceSpec
 				end
 				
 				def shutdown
-					@server.stop
+					@task.stop if @task
 				end
 			end
 

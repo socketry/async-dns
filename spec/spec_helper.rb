@@ -23,7 +23,9 @@ if ENV['COVERAGE'] || ENV['TRAVIS']
 end
 
 require "bundler/setup"
+require "pry"
 require "async/dns"
+require "pp"
 
 RSpec.shared_context "reactor" do
 	let(:reactor) {Async::Reactor.new}
@@ -39,6 +41,8 @@ RSpec.shared_context "reactor" do
 				reactor.stop
 			end
 		end
+		
+		result
 	end
 end
 

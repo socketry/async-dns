@@ -40,16 +40,14 @@ module Async::DNS::SocketSpec
 		let(:server_interfaces) {[TCPServer.new('127.0.0.1', 2002)]}
 		let(:server) {TestServer.new(listen: server_interfaces)}
 		
-		after(:each) do
-			server.stop
-		end
-		
 		it "should create server with existing TCP socket" do
-			server.run
+			task = server.run
 			
 			resolver = Async::DNS::Resolver.new([[:tcp, '127.0.0.1', 2002]])
 			response = resolver.query('google.com')
 			expect(response.class).to be == Async::DNS::Message
+			
+			task.stop
 		end
 	end
 	
@@ -59,16 +57,14 @@ module Async::DNS::SocketSpec
 		let(:server_interfaces) {[UDPSocket.new.tap{|socket| socket.bind('127.0.0.1', 2002)}]}
 		let(:server) {TestServer.new(listen: server_interfaces)}
 		
-		after(:each) do
-			server.stop
-		end
-		
 		it "should create server with existing UDP socket" do
-			server.run
+			task = server.run
 			
 			resolver = Async::DNS::Resolver.new([[:udp, '127.0.0.1', 2002]])
 			response = resolver.query('google.com')
 			expect(response.class).to be == Async::DNS::Message
+			
+			task.stop
 		end
 	end
 end

@@ -25,16 +25,6 @@ module Async::DNS
 		def initialize(server)
 			@server = server
 			@logger = @server.logger || Async.logger
-			
-			@context = nil
-		end
-		
-		def stopped?
-			@context.nil?
-		end
-		
-		def stop
-			@context.stop!
 		end
 		
 		def error_response(query = nil, code = Resolv::DNS::RCode::ServFail)
@@ -72,20 +62,20 @@ module Async::DNS
 	
 	# Handling incoming UDP requests, which are single data packets, and pass them on to the given server.
 	class UDPHandler < GenericHandler
-		def run(reactor: Async::Task.current.reactor)
-			Async.logger.debug(self.class.name) {"-> Run on #{self.socket}..."}
+		def run(socket, reactor:)
+			Async.logger.debug(self.class.name) {"-> Run on #{socket}..."}
 			
-			@context = reactor.async(self.socket) do |socket|
-				while true
-					input_data, (_, remote_port, remote_host) = socket.recvfrom(UDP_TRUNCATION_SIZE)
-					
-					reactor.async do
-						respond(socket, input_data, remote_host, remote_port)
-					end
-				end
+			while true
+				Async.logger.debug(self.class.name) {"-> socket.recvfrom"}
+				input_data, (_, remote_port, remote_host) = socket.recvfrom(UDP_TRUNCATION_SIZE)
+				Async.logger.debug(self.class.name) {"<- socket.recvfrom"}
 				
-				Async.logger.debug(self.class.name) {"<- Run..."}
+				reactor.async do
+					respond(socket, input_data, remote_host, remote_port)
+				end
 			end
+		ensure
+			Async.logger.debug(self.class.name) {"<- Run ensure... #{$!}"}
 		end
 		
 		def respond(socket, input_data, remote_host, remote_port)
@@ -125,64 +115,62 @@ module Async::DNS
 		end
 		
 		attr :socket
+		
+		def run(reactor: Async::Task.current.reactor)
+			reactor.async(self.socket) do |socket|
+				super(socket, reactor: reactor)
+			end
+		end
 	end
 	
 	class UDPServerHandler < UDPHandler
 		def initialize(server, host, port)
 			@host = host
-			@family = nil
 			@port = port
-			@socket = nil
 			
 			super(server)
 		end
 		
-		def socket
-			unless @socket
-				@family ||= Async::DNS::address_family(@host)
-				
-				@socket = ::UDPSocket.new(@family)
-				@socket.bind(@host, @port)
+		attr :host
+		attr :port
+		
+		def run(reactor: Async::Task.current.reactor)
+			reactor.with(make_socket) do |socket|
+				super(socket, reactor: reactor)
 			end
-			
-			return @socket
 		end
 		
-		def stop
-			super
+		private
+		
+		def make_socket
+			family ||= Async::DNS::address_family(@host)
 			
-			if @socket
-				@socket.close
-				@socket = nil
-			end
+			socket = ::UDPSocket.new(family)
+			socket.bind(@host, @port)
+			
+			return socket
 		end
 	end
 	
 	class TCPHandler < GenericHandler
-		def run(reactor: Async::Task.current.reactor)
-			Async.logger.debug(self.class.name) {"-> Run on #{self.socket}..."}
+		def run(socket, reactor:)
+			Async.logger.debug(self.class.name) {"-> Run on #{socket}..."}
 			
-			@context = reactor.async(self.socket) do |socket|
-				reactor.with(socket.accept) do |client|
-					handle_connection(client)
-				end while true
-				
-				Async.logger.debug(self.class.name) {"<- Run..."}
-			end
+			reactor.with(socket.accept) do |client|
+				handle_connection(client)
+			end while true
+		ensure
+			Async.logger.debug(self.class.name) {"<- Run ensure... #{$!}"}
 		end
 		
 		def handle_connection(socket)
 			context = Async::Task.current
 			
-			Async.logger.debug(self.class.name) {"-> [#{context}] Handle connection: #{socket}..."}
-			
 			_, remote_port, remote_host = socket.io.peeraddr
 			options = {peer: remote_host, port: remote_port, proto: :tcp}
 			
-			Async.logger.debug(self.class.name) {"-> [#{context}] Reading data from: #{socket}..."}
 			input_data = StreamTransport.read_chunk(socket)
 			
-			Async.logger.debug(self.class.name) {"-> [#{context}] Processing data: #{input_data}..."}
 			response = process_query(input_data, options)
 			
 			length = StreamTransport.write_message(socket, response)
@@ -207,28 +195,35 @@ module Async::DNS
 		end
 		
 		attr :socket
+		
+		def run(reactor: Async::Task.current.reactor)
+			reactor.async(@socket) do |socket|
+				super(socket, reactor: reactor)
+			end
+		end
 	end
 	
 	class TCPServerHandler < TCPHandler
 		def initialize(server, host, port)
 			@host = host
 			@port = port
-			@socket = nil
 			
 			super(server)
 		end
 		
-		def socket
-			@socket ||= ::TCPServer.new(@host, @port)
+		attr :host
+		attr :port
+		
+		def run(reactor: Async::Task.current.reactor)
+			reactor.with(make_socket) do |socket|
+				super(socket, reactor: reactor)
+			end
 		end
 		
-		def stop
-			super
-			
-			if @socket
-				@socket.close
-				@socket = nil
-			end
+		private
+		
+		def make_socket
+			::TCPServer.new(@host, @port)
 		end
 	end
 end

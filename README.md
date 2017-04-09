@@ -41,6 +41,8 @@ Here is a simple example showing how to use the resolver:
 
 Here is a simple example showing how to use the server:
 
+	require 'async/dns'
+	
 	class TestServer < Async::DNS::Server
 		def process(name, resource_class, transaction)
 			@resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
@@ -51,9 +53,7 @@ Here is a simple example showing how to use the server:
 	
 	server = TestServer.new(listen: [[:udp, '127.0.0.1', 2346]])
 	
-	Async::Reactor.run do
-		server.run
-	end
+	server.run
 
 Then to test you could use `dig` like so:
 

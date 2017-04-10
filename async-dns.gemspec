@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 	spec.require_paths = ["lib"]
 	spec.has_rdoc      = "yard"
 	
-	spec.add_dependency("async", "~> 0.10")
+	spec.add_dependency("async", "~> 0.11")
 	
 	spec.add_development_dependency "process-daemon", "~> 1.0.0"
 	

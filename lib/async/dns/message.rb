@@ -33,7 +33,7 @@ module Async::DNS
 	Message = ::Resolv::DNS::Message
 	DecodeError = ::Resolv::DNS::DecodeError
 
-	@@dump_bad_message = nil
+	@dump_bad_message = nil
 	
 	# Call this function with a path where bad messages will be saved. Any message that causes an exception to be thrown while decoding the binary will be saved in base64 for later inspection. The log file could grow quickly so be careful - not designed for long term use.
 	def self.log_bad_messages!(log_path)

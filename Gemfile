@@ -2,8 +2,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem "async"
-
 group :development do
 	gem "pry"
 end

@@ -23,10 +23,8 @@ if ENV['COVERAGE'] || ENV['TRAVIS']
 end
 
 require "bundler/setup"
-require 'async/rspec'
+require "async/rspec"
 require "async/dns"
-require "pry"
-require "pp"
 
 # abort "Warning, ulimit is too low!" if `ulimit -n`.to_i < 10000
 

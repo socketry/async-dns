@@ -136,16 +136,16 @@ module Async::DNS
 		def dispatch_request(message, task: Async::Task.current)
 			request = Request.new(message, @servers)
 			
-			request.each do |server|
-				@logger.debug "[#{message.id}] Sending request #{message.question.inspect} to server #{server.inspect}" if @logger
+			request.each do |address|
+				@logger.debug "[#{message.id}] Sending request #{message.question.inspect} to address #{address.inspect}" if @logger
 				
 				begin
 					response = nil
 					
 					task.timeout(@timeout) do
-						@logger.debug "[#{message.id}] -> Try server #{server}" if @logger
-						response = try_server(request, server)
-						@logger.debug "[#{message.id}] <- Try server #{server} = #{response}" if @logger
+						@logger.debug "[#{message.id}] -> Try address #{address}" if @logger
+						response = try_server(request, address)
+						@logger.debug "[#{message.id}] <- Try address #{address} = #{response}" if @logger
 					end
 					
 					if valid_response(message, response)
@@ -184,14 +184,14 @@ module Async::DNS
 			end
 		end
 		
-		def try_server(request, server)
-			case server[0]
-			when :udp
-				try_udp_server(request, server[1], server[2])
-			when :tcp
-				try_tcp_server(request, server[1], server[2])
+		def try_server(request, address)
+			case address.type
+			when Socket::SOCK_DGRAM
+				try_datagram_server(request, address)
+			when Socket::SOCK_STREAM
+				try_stream_server(request, address)
 			else
-				raise InvalidProtocolError.new(server)
+				raise InvalidProtocolError.new(address)
 			end
 		end
 		
@@ -209,32 +209,20 @@ module Async::DNS
 			return false
 		end
 		
-		def udp_socket(family)
-			@udp_sockets[family] ||= UDPSocket.new(family)
-		end
-		
-		def try_udp_server(request, host, port, task: Async::Task.current)
-			family = Async::DNS::address_family(host)
-			
-			Async::IO::UDPSocket.wrap(family) do |socket|
-				socket.send(request.packet, 0, host, port)
+		def try_datagram_server(request, address, task: Async::Task.current)
+			address.connect do |socket|
+				socket.sendmsg(request.packet, 0)
 				
-				data, (_, remote_port) = socket.recvfrom(UDP_TRUNCATION_SIZE)
-				# Need to check host, otherwise security issue.
-				
-				# May indicate some kind of spoofing attack:
-				if port != remote_port
-					raise InvalidResponseError.new("Data was not received from correct remote port (#{port} != #{remote_port})")
-				end
+				data, peer = socket.recvmsg(UDP_TRUNCATION_SIZE)
 				
 				return Async::DNS::decode_message(data)
 			end
 		end
 		
-		def try_tcp_server(request, host, port)
+		def try_stream_server(request, address)
 			context = Async::Task.current
 			
-			Async::IO::TCPSocket.wrap(host, port) do |socket|
+			address.connect do |socket|
 				StreamTransport.write_chunk(socket, request.packet)
 				
 				input_data = StreamTransport.read_chunk(socket)
@@ -262,12 +250,7 @@ module Async::DNS
 			attr :logger
 			
 			def each(&block)
-				@servers.each do |server|
-					# TODO: This seems odd...
-					next if @packet.bytesize > UDP_TRUNCATION_SIZE
-					
-					yield server
-				end
+				Async::IO::Address.each(@servers, &block)
 			end
 
 			def update_id!(id)

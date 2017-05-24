@@ -68,8 +68,6 @@ module Async::DNS
 	# Handling incoming UDP requests, which are single data packets, and pass them on to the given server.
 	class DatagramHandler < GenericHandler
 		def run(task: Async::Task.current)
-			Async.logger.debug(self.class.name) {"-> Run on #{socket}..."}
-			
 			@address.bind do |socket|
 				while true
 					Async.logger.debug(self.class.name) {"-> socket.recvfrom"}
@@ -81,8 +79,6 @@ module Async::DNS
 					end
 				end
 			end
-		ensure
-			Async.logger.debug(self.class.name) {"<- Run ensure... #{$!}"}
 		end
 		
 		def respond(socket, input_data, remote_address)
@@ -114,13 +110,9 @@ module Async::DNS
 	
 	class StreamHandler < GenericHandler
 		def run(task: Async::Task.current)
-			Async.logger.debug(self.class.name) {"-> Run on #{socket}..."}
-			
 			@address.accept do |client, address|
 				handle_connection(client)
 			end
-		ensure
-			Async.logger.debug(self.class.name) {"<- Run ensure... #{$!}"}
 		end
 		
 		def handle_connection(socket)

@@ -19,8 +19,8 @@
 # THE SOFTWARE.
 
 require 'async'
-require 'async/tcp_socket'
-require 'async/udp_socket'
+require 'async/io/tcp_socket'
+require 'async/io/udp_socket'
 
 require_relative 'dns/version'
 

@@ -133,9 +133,8 @@ module Async::DNS
 		end
 		
 		# Send the message to available servers. If no servers respond correctly, nil is returned. This result indicates a failure of the resolver to correctly contact any server and get a valid response.
-		def dispatch_request(message)
+		def dispatch_request(message, task: Async::Task.current)
 			request = Request.new(message, @servers)
-			context = Async::Task.current
 			
 			request.each do |server|
 				@logger.debug "[#{message.id}] Sending request #{message.question.inspect} to server #{server.inspect}" if @logger
@@ -143,7 +142,7 @@ module Async::DNS
 				begin
 					response = nil
 					
-					context.timeout(@timeout) do
+					task.timeout(@timeout) do
 						@logger.debug "[#{message.id}] -> Try server #{server}" if @logger
 						response = try_server(request, server)
 						@logger.debug "[#{message.id}] <- Try server #{server} = #{response}" if @logger
@@ -160,6 +159,8 @@ module Async::DNS
 					@logger.warn "[#{message.id}] Error while decoding data from network: #{$!}!" if @logger
 				rescue IOError
 					@logger.warn "[#{message.id}] Error while reading from network: #{$!}!" if @logger
+				rescue EOFError
+					@logger.warn "[#{message.id}] Could not read complete response from network: #{$!}" if @logger
 				end
 			end
 			
@@ -212,12 +213,10 @@ module Async::DNS
 			@udp_sockets[family] ||= UDPSocket.new(family)
 		end
 		
-		def try_udp_server(request, host, port)
-			context = Async::Task.current
-			
+		def try_udp_server(request, host, port, task: Async::Task.current)
 			family = Async::DNS::address_family(host)
 			
-			context.with(UDPSocket.new(family)) do |socket|
+			Async::IO::UDPSocket.wrap(family) do |socket|
 				socket.send(request.packet, 0, host, port)
 				
 				data, (_, remote_port) = socket.recvfrom(UDP_TRUNCATION_SIZE)
@@ -235,7 +234,7 @@ module Async::DNS
 		def try_tcp_server(request, host, port)
 			context = Async::Task.current
 			
-			context.with(TCPSocket.new(host, port)) do |socket|
+			Async::IO::TCPSocket.wrap(host, port) do |socket|
 				StreamTransport.write_chunk(socket, request.packet)
 				
 				input_data = StreamTransport.read_chunk(socket)

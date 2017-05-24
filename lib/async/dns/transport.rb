@@ -44,7 +44,11 @@ module Async::DNS
 			
 			# First we need to read in the length of the packet
 			while buffer.size < 2
-				buffer.write socket.read(1)
+				if data = socket.read(1)
+					buffer.write data
+				else
+					raise EOFError, "Could not read message size!"
+				end
 			end
 			
 			# Read in the length, the first two bytes:
@@ -55,7 +59,11 @@ module Async::DNS
 				required = (2 + length) - buffer.size
 				
 				# Read precisely the required amount:
-				buffer.write socket.read(required)
+				if data = socket.read(required)
+					buffer.write data
+				else
+					raise EOFError, "Could not read message data!"
+				end
 			end
 			
 			return buffer.string.byteslice(2, length)

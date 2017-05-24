@@ -81,7 +81,7 @@ module Async::DNS::ResolverPerformanceSpec
 				require 'benchmark'
 			end
 			
-			include_context "reactor"
+			include_context Async::RSpec::Reactor
 			
 			it 'should be faster than native resolver' do
 				# Async.logger.level = Logger::ERROR

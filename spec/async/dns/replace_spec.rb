@@ -25,7 +25,7 @@ require 'async/dns/replace'
 
 module Async::DNS::ReplaceSpec
 	describe Async::DNS::Replace do
-		include_context "reactor"
+		include_context Async::RSpec::Reactor
 		
 		let(:default_resolver) {Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])}
 		

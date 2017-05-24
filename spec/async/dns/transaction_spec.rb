@@ -34,7 +34,7 @@ module Async::DNS::TransactionSpec
 		let(:response) { Async::DNS::Message.new(0) }
 		let(:resolver) { Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])}
 		
-		include_context "reactor"
+		include_context Async::RSpec::Reactor
 		
 		it "should append an address" do
 			transaction = Async::DNS::Transaction.new(server, query, question, IN::A, response)

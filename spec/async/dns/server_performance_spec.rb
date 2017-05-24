@@ -26,7 +26,7 @@ require 'process/daemon'
 
 module Async::DNS::ServerPerformanceSpec
 	describe Async::DNS::Server do
-		include_context "reactor"
+		include_context Async::RSpec::Reactor
 		
 		context 'benchmark' do
 			class MillionServer < Async::DNS::Server

@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require 'async'
+require 'async/io/address'
 
 require_relative 'transaction'
 require_relative 'logger'
@@ -107,9 +108,11 @@ module Async::DNS
 			
 			setup_handlers if @handlers.empty?
 			
-			Async::Reactor.run do
+			Async::Reactor.run do |task|
 				@handlers.each do |handler|
-					handler.run(*args)
+					task.async do
+						handler.run(*args)
+					end
 				end
 				
 				fire(:start)
@@ -121,32 +124,16 @@ module Async::DNS
 		def setup_handlers
 			fire(:setup)
 			
-			# Setup server sockets
-			@interfaces.each do |spec|
-				if spec.is_a?(BasicSocket)
-					spec.do_not_reverse_lookup
-					protocol = spec.getsockopt(Socket::SOL_SOCKET, Socket::SO_TYPE).unpack("i")[0]
-					ip = spec.local_address.ip_address
-					port = spec.local_address.ip_port
-					
-					case protocol
-					when Socket::SOCK_DGRAM
-						@logger.info "<> Attaching to pre-existing UDP socket #{ip}:#{port}"
-						@handlers << UDPSocketHandler.new(self, spec)
-					when Socket::SOCK_STREAM
-						@logger.info "<> Attaching to pre-existing TCP socket #{ip}:#{port}"
-						@handlers << TCPSocketHandler.new(self, spec)
-					else
-						raise ArgumentError.new("Unknown socket protocol: #{protocol}")
-					end
-				elsif spec[0] == :udp
-					@logger.info "<> Listening on #{spec.join(':')}"
-					@handlers << UDPServerHandler.new(self, spec[1], spec[2])
-				elsif spec[0] == :tcp
-					@logger.info "<> Listening on #{spec.join(':')}"
-					@handlers << TCPServerHandler.new(self, spec[1], spec[2])
+			Async::IO::Address.each(@interfaces) do |address|
+				case address.type
+				when Socket::SOCK_DGRAM
+					@logger.info "<> Listening for datagrams on #{address.inspect}"
+					@handlers << DatagramHandler.new(self, address)
+				when Socket::SOCK_STREAM
+					@logger.info "<> Listening for connections on #{address.inspect}"
+					@handlers << StreamHandler.new(self, address)
 				else
-					raise ArgumentError.new("Invalid connection specification: #{spec.inspect}")
+					raise ArgumentError.new("Don't know how to handle #{address}")
 				end
 			end
 		end

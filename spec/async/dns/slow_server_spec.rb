@@ -36,7 +36,7 @@ module Async::DNS::SlowServerSpec
 	end
 	
 	describe "Async::DNS Slow Server" do
-		include_context "reactor"
+		include_context Async::RSpec::Reactor
 		
 		let(:server_interfaces) {[[:udp, '0.0.0.0', 5330], [:tcp, '0.0.0.0', 5330]]}
 		let(:server) {SlowServer.new(listen: server_interfaces)}

@@ -21,38 +21,40 @@
 require 'async/dns'
 require 'async/dns/system'
 
-describe Async::DNS::TCPServerHandler do
-	let(:server) {Async::DNS::Server.new}
-	let(:host) {'127.0.0.1'}
-	let(:port) {6665}
+describe Async::DNS::StreamHandler do
+	include_context Async::RSpec::Reactor
 	
-	subject {described_class.new(server, host, port)}
+	let(:server) {Async::DNS::Server.new}
+	let(:address) {Async::IO::Address.tcp('127.0.0.1', 6666)}
+	
+	subject {described_class.new(server, address)}
 	
 	it "can rebind port" do
 		2.times do
-			socket = subject.send(:make_socket)
-			expect(socket).to_not be_closed
+			task = reactor.async do
+				subject.run
+			end
 			
-			socket.close
-			expect(socket).to be_closed
+			task.stop
 		end
 	end
 end
 
-describe Async::DNS::UDPServerHandler do
-	let(:server) {Async::DNS::Server.new}
-	let(:host) {'127.0.0.1'}
-	let(:port) {6665}
+describe Async::DNS::DatagramHandler do
+	include_context Async::RSpec::Reactor
 	
-	subject {described_class.new(server, host, port)}
+	let(:server) {Async::DNS::Server.new}
+	let(:address) {Async::IO::Address.udp('127.0.0.1', 6666)}
+	
+	subject {described_class.new(server, address)}
 	
 	it "can rebind port" do
 		2.times do
-			socket = subject.send(:make_socket)
-			expect(socket).to_not be_closed
+			task = reactor.async do
+				subject.run
+			end
 			
-			socket.close
-			expect(socket).to be_closed
+			task.stop
 		end
 	end
 end

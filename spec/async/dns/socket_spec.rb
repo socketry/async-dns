@@ -34,8 +34,8 @@ module Async::DNS::SocketSpec
 		end
 	end
 	
-	describe Async::DNS::TCPSocketHandler do
-		include_context "reactor"
+	describe Async::DNS::StreamHandler do
+		include_context Async::RSpec::Reactor
 		
 		let(:server_interfaces) {[TCPServer.new('127.0.0.1', 2002)]}
 		let(:server) {TestServer.new(listen: server_interfaces)}
@@ -48,11 +48,12 @@ module Async::DNS::SocketSpec
 			expect(response.class).to be == Async::DNS::Message
 			
 			task.stop
+			server_interfaces.each(&:close)
 		end
 	end
 	
-	describe Async::DNS::UDPSocketHandler do
-		include_context "reactor"
+	describe Async::DNS::DatagramHandler do
+		include_context Async::RSpec::Reactor
 		
 		let(:server_interfaces) {[UDPSocket.new.tap{|socket| socket.bind('127.0.0.1', 2002)}]}
 		let(:server) {TestServer.new(listen: server_interfaces)}
@@ -65,6 +66,7 @@ module Async::DNS::SocketSpec
 			expect(response.class).to be == Async::DNS::Message
 			
 			task.stop
+			server_interfaces.each(&:close)
 		end
 	end
 end

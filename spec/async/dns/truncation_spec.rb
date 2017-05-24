@@ -40,7 +40,7 @@ module Async::DNS::TruncationSpec
 	end
 	
 	describe "Async::DNS Truncation Server" do
-		include_context "reactor"
+		include_context Async::RSpec::Reactor
 		
 		let(:server) {TestServer.new(listen: SERVER_PORTS)}
 		

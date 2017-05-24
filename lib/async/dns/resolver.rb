@@ -157,7 +157,7 @@ module Async::DNS
 					@logger.warn "[#{message.id}] Invalid response from network: #{$!}!" if @logger
 				rescue DecodeError
 					@logger.warn "[#{message.id}] Error while decoding data from network: #{$!}!" if @logger
-				rescue IOError
+				rescue IOError, Errno::ECONNRESET
 					@logger.warn "[#{message.id}] Error while reading from network: #{$!}!" if @logger
 				rescue EOFError
 					@logger.warn "[#{message.id}] Could not read complete response from network: #{$!}" if @logger

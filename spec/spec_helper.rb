@@ -26,7 +26,26 @@ require "bundler/setup"
 require "async/rspec"
 require "async/dns"
 
-# abort "Warning, ulimit is too low!" if `ulimit -n`.to_i < 10000
+begin
+	require 'ruby-prof'
+	
+	RSpec.shared_context "profile" do
+		around(:each) do |example|
+			profile = RubyProf.profile(merge_fibers: true) do
+				example.run
+			end
+			
+			printer = RubyProf::FlatPrinter.new(profile)
+			printer.print(STDOUT)
+		end
+	end
+rescue LoadError
+	RSpec.shared_context "profile" do
+		before(:all) do
+			puts "Profiling not supported on this platform."
+		end
+	end
+end
 
 RSpec.configure do |config|
 	# Enable flags like --only-failures and --next-failure

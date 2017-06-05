@@ -25,28 +25,49 @@ require 'benchmark'
 require 'process/daemon'
 
 module Async::DNS::ServerPerformanceSpec
-	describe Async::DNS::Server do
+	class MillionServer < Async::DNS::Server
+		def initialize(*)
+			super
+			
+			@domains = {}
+			
+			(1..5_000).each do |i|
+				domain = "domain#{i}.local"
+
+				@domains[domain] = "#{69}.#{(i >> 16)%256}.#{(i >> 8)%256}.#{i%256}"
+			end
+		end
+		
+		attr :domains
+		
+		def process(name, resource_class, transaction)
+			transaction.respond!(@domains[name])
+		end
+	end
+	
+	RSpec.describe MillionServer do
+		include_context "profile"
 		include_context Async::RSpec::Reactor
 		
-		context 'benchmark' do
-			class MillionServer < Async::DNS::Server
-				def initialize(*)
-					super
-					
-					@million = {}
-					
-					(1..5_000).each do |i|
-						domain = "domain#{i}.local"
-	
-						@million[domain] = "#{69}.#{(i >> 16)%256}.#{(i >> 8)%256}.#{i%256}"
-					end
-				end
-				
-				def process(name, resource_class, transaction)
-					transaction.respond!(@million[name])
-				end
+		let(:interfaces) {[[:udp, '127.0.0.1', 8899]]}
+		let(:server) {MillionServer.new(listen: interfaces)}
+		let(:resolver) {Async::DNS::Resolver.new(interfaces)}
+		
+		it "should be fast" do
+			task = server.run
+			
+			server.domains.each do |name, address|
+				resolved = resolver.addresses_for(name)
 			end
 			
+			task.stop
+		end
+	end
+
+	
+	RSpec.describe Async::DNS::Server do
+		
+		context 'benchmark' do
 			class AsyncServerDaemon < Process::Daemon
 				def working_directory
 					File.expand_path("../tmp", __FILE__)

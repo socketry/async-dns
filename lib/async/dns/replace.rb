@@ -24,7 +24,7 @@ require 'resolv-replace'
 module Async::DNS
 	module Replace
 		class << self
-			attr :resolver, true
+			attr_accessor :resolver
 			
 			def resolver?
 				resolver != nil

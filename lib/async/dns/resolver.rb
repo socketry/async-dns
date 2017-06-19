@@ -97,14 +97,14 @@ module Async::DNS
 			retries = options.fetch(:retries, DEFAULT_RETRIES)
 			delay = options.fetch(:delay, DEFAULT_DELAY)
 			
-			records = lookup(name, resource_class, cache) do |name, resource_class|
+			records = lookup(name, resource_class, cache) do |lookup_name, lookup_resource_class|
 				response = nil
 				
 				retries.times do |i|
 					# Wait 10ms before trying again:
 					sleep delay if delay and i > 0
 					
-					response = query(name, resource_class)
+					response = query(lookup_name, lookup_resource_class)
 					
 					break if response
 				end
@@ -175,8 +175,8 @@ module Async::DNS
 				response = yield(name, resource_class)
 				
 				if response
-					response.answer.each do |name, ttl, record|
-						(records[name] ||= []) << record
+					response.answer.each do |name_in_answer, ttl, record|
+						(records[name_in_answer] ||= []) << record
 					end
 				end
 				

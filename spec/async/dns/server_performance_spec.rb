@@ -46,7 +46,7 @@ module Async::DNS::ServerPerformanceSpec
 	end
 	
 	RSpec.describe MillionServer do
-		include_context "profile"
+		# include_context "profile"
 		include_context Async::RSpec::Reactor
 		
 		let(:interfaces) {[[:udp, '127.0.0.1', 8899]]}
@@ -66,7 +66,6 @@ module Async::DNS::ServerPerformanceSpec
 
 	
 	RSpec.describe Async::DNS::Server do
-		
 		context 'benchmark' do
 			class AsyncServerDaemon < Process::Daemon
 				def working_directory
@@ -142,13 +141,15 @@ module Async::DNS::ServerPerformanceSpec
 						resolver = Async::DNS::Resolver.new([[:udp, '127.0.0.1', port]])
 					
 						x.report(name) do
-							# Number of requests remaining since this is an asynchronous event loop:
-							5.times do
-								pending = @domains.size
-							
-								resolved = @domains.collect{|domain| resolver.addresses_for(domain)}
+							Async::Reactor.run do
+								# Number of requests remaining since this is an asynchronous event loop:
+								5.times do
+									pending = @domains.size
 								
-								expect(resolved).to_not include(nil)
+									resolved = @domains.collect{|domain| resolver.addresses_for(domain)}
+									
+									expect(resolved).to_not include(nil)
+								end
 							end
 						end
 					end

@@ -38,7 +38,7 @@ module Async::DNS::SocketSpec
 		include_context Async::RSpec::Reactor
 		
 		let(:server_interfaces) {[TCPServer.new('127.0.0.1', 2002)]}
-		let(:server) {TestServer.new(listen: server_interfaces)}
+		let(:server) {TestServer.new(server_interfaces)}
 		
 		it "should create server with existing TCP socket" do
 			task = server.run
@@ -56,7 +56,7 @@ module Async::DNS::SocketSpec
 		include_context Async::RSpec::Reactor
 		
 		let(:server_interfaces) {[UDPSocket.new.tap{|socket| socket.bind('127.0.0.1', 2002)}]}
-		let(:server) {TestServer.new(listen: server_interfaces)}
+		let(:server) {TestServer.new(server_interfaces)}
 		
 		it "should create server with existing UDP socket" do
 			task = server.run

@@ -24,7 +24,7 @@ task :server do
 		end
 	end
 	
-	server = TestServer.new(listen: [[:udp, '127.0.0.1', 2346]])
+	server = TestServer.new([[:udp, '127.0.0.1', 2346]])
 	
 	Async::Reactor.run do
 		server.run

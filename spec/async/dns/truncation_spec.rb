@@ -42,7 +42,7 @@ module Async::DNS::TruncationSpec
 	describe "Async::DNS Truncation Server" do
 		include_context Async::RSpec::Reactor
 		
-		let(:server) {TestServer.new(listen: SERVER_PORTS)}
+		let(:server) {TestServer.new(SERVER_PORTS)}
 		
 		it "should use tcp because of large response" do
 			task = server.run

@@ -54,7 +54,7 @@ Here is a simple example showing how to use the server:
 		end
 	end
 	
-	server = TestServer.new(listen: [[:udp, '127.0.0.1', 2346]])
+	server = TestServer.new([[:udp, '127.0.0.1', 2346]])
 	
 	server.run
 ```

@@ -50,7 +50,7 @@ module Async::DNS::ServerPerformanceSpec
 		include_context Async::RSpec::Reactor
 		
 		let(:interfaces) {[[:udp, '127.0.0.1', 8899]]}
-		let(:server) {MillionServer.new(listen: interfaces)}
+		let(:server) {MillionServer.new(interfaces)}
 		let(:resolver) {Async::DNS::Resolver.new(interfaces)}
 		
 		it "should be fast" do
@@ -63,9 +63,10 @@ module Async::DNS::ServerPerformanceSpec
 			task.stop
 		end
 	end
-
 	
 	RSpec.describe Async::DNS::Server do
+		include_context Async::RSpec::Reactor
+		
 		context 'benchmark' do
 			class AsyncServerDaemon < Process::Daemon
 				def working_directory
@@ -78,7 +79,7 @@ module Async::DNS::ServerPerformanceSpec
 				
 				def startup
 					puts "Starting DNS server..."
-					@server = MillionServer.new(listen: [[:udp, '0.0.0.0', 5300]])
+					@server = MillionServer.new([[:udp, '0.0.0.0', 5300]])
 					
 					reactor.async do
 						@task = @server.run

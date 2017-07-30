@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require 'async'
-require 'async/io/address'
+require 'async/io/endpoint'
 
 require_relative 'transaction'
 require_relative 'logger'
@@ -27,7 +27,7 @@ require_relative 'logger'
 module Async::DNS
 	class Server
 		# The default server interfaces
-		DEFAULT_INTERFACES = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
+		DEFAULT_ENDPOINTS = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
 		
 		# Instantiate a server with a block
 		#
@@ -37,8 +37,8 @@ module Async::DNS
 		#		end
 		#	end
 		#
-		def initialize(listen: DEFAULT_INTERFACES, origin: '.', logger: Async.logger)
-			@interfaces = listen
+		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Async.logger)
+			@endpoints = endpoints
 			@origin = origin
 			@logger = logger
 			
@@ -124,14 +124,14 @@ module Async::DNS
 		def setup_handlers
 			fire(:setup)
 			
-			Async::IO::Address.each(@interfaces) do |address|
-				case address.type
+			Async::IO::Endpoint.each(@endpoints) do |endpoint|
+				case endpoint.socket_type
 				when Socket::SOCK_DGRAM
-					@logger.info "<> Listening for datagrams on #{address.inspect}"
-					@handlers << DatagramHandler.new(self, address)
+					@logger.info "<> Listening for datagrams on #{endpoint.inspect}"
+					@handlers << DatagramHandler.new(self, endpoint)
 				when Socket::SOCK_STREAM
-					@logger.info "<> Listening for connections on #{address.inspect}"
-					@handlers << StreamHandler.new(self, address)
+					@logger.info "<> Listening for connections on #{endpoint.inspect}"
+					@handlers << StreamHandler.new(self, endpoint)
 				else
 					raise ArgumentError.new("Don't know how to handle #{address}")
 				end

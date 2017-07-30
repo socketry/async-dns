@@ -39,7 +39,7 @@ module Async::DNS::SlowServerSpec
 		include_context Async::RSpec::Reactor
 		
 		let(:server_interfaces) {[[:udp, '0.0.0.0', 5330], [:tcp, '0.0.0.0', 5330]]}
-		let(:server) {SlowServer.new(listen: server_interfaces)}
+		let(:server) {SlowServer.new(server_interfaces)}
 		
 		around(:each) do |example|
 			begin

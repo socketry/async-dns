@@ -22,15 +22,15 @@ require_relative 'transport'
 
 module Async::DNS
 	class GenericHandler
-		def initialize(server, address)
+		def initialize(server, endpoint)
 			@server = server
-			@address = address
+			@endpoint = endpoint
 			
 			@logger = @server.logger || Async.logger
 		end
 		
 		attr :server
-		attr :address
+		attr :endpoint
 		
 		def error_response(query = nil, code = Resolv::DNS::RCode::ServFail)
 			# Encoding may fail, so we need to handle this particular case:
@@ -68,7 +68,7 @@ module Async::DNS
 	# Handling incoming UDP requests, which are single data packets, and pass them on to the given server.
 	class DatagramHandler < GenericHandler
 		def run(task: Async::Task.current)
-			@address.bind do |socket|
+			@endpoint.bind do |socket|
 				while true
 					Async.logger.debug(self.class.name) {"-> socket.recvfrom"}
 					input_data, remote_address = socket.recvmsg(UDP_TRUNCATION_SIZE)
@@ -110,7 +110,7 @@ module Async::DNS
 	
 	class StreamHandler < GenericHandler
 		def run(task: Async::Task.current)
-			@address.accept do |client, address|
+			@endpoint.accept do |client, address|
 				handle_connection(client)
 			end
 		end

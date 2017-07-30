@@ -46,8 +46,8 @@ module Async::DNS
 		# Servers are specified in the same manor as options[:listen], e.g.
 		#   [:tcp/:udp, address, port]
 		# In the case of multiple servers, they will be checked in sequence.
-		def initialize(servers, origin: nil, logger: Async.logger, timeout: DEFAULT_TIMEOUT)
-			@servers = servers
+		def initialize(endpoints, origin: nil, logger: Async.logger, timeout: DEFAULT_TIMEOUT)
+			@endpoints = endpoints
 			
 			@origin = origin
 			@logger = logger
@@ -134,18 +134,18 @@ module Async::DNS
 		
 		# Send the message to available servers. If no servers respond correctly, nil is returned. This result indicates a failure of the resolver to correctly contact any server and get a valid response.
 		def dispatch_request(message, task: Async::Task.current)
-			request = Request.new(message, @servers)
+			request = Request.new(message, @endpoints)
 			
-			request.each do |address|
-				@logger.debug "[#{message.id}] Sending request #{message.question.inspect} to address #{address.inspect}" if @logger
+			request.each do |endpoint|
+				@logger.debug "[#{message.id}] Sending request #{message.question.inspect} to address #{endpoint.inspect}" if @logger
 				
 				begin
 					response = nil
 					
 					task.timeout(@timeout) do
-						@logger.debug "[#{message.id}] -> Try address #{address}" if @logger
-						response = try_server(request, address)
-						@logger.debug "[#{message.id}] <- Try address #{address} = #{response}" if @logger
+						@logger.debug "[#{message.id}] -> Try address #{endpoint}" if @logger
+						response = try_server(request, endpoint)
+						@logger.debug "[#{message.id}] <- Try address #{endpoint} = #{response}" if @logger
 					end
 					
 					if valid_response(message, response)
@@ -184,14 +184,14 @@ module Async::DNS
 			end
 		end
 		
-		def try_server(request, address)
-			case address.type
+		def try_server(request, endpoint)
+			case endpoint.socket_type
 			when Socket::SOCK_DGRAM
-				try_datagram_server(request, address)
+				try_datagram_server(request, endpoint)
 			when Socket::SOCK_STREAM
-				try_stream_server(request, address)
+				try_stream_server(request, endpoint)
 			else
-				raise InvalidProtocolError.new(address)
+				raise InvalidProtocolError.new(endpoint)
 			end
 		end
 		
@@ -209,8 +209,8 @@ module Async::DNS
 			return false
 		end
 		
-		def try_datagram_server(request, address, task: Async::Task.current)
-			address.connect do |socket|
+		def try_datagram_server(request, endpoint, task: Async::Task.current)
+		endpoint.connect do |socket|
 				socket.sendmsg(request.packet, 0)
 				
 				data, peer = socket.recvmsg(UDP_TRUNCATION_SIZE)
@@ -219,10 +219,10 @@ module Async::DNS
 			end
 		end
 		
-		def try_stream_server(request, address)
+		def try_stream_server(request, endpoint)
 			context = Async::Task.current
 			
-			address.connect do |socket|
+			endpoint.connect do |socket|
 				StreamTransport.write_chunk(socket, request.packet)
 				
 				input_data = StreamTransport.read_chunk(socket)
@@ -233,15 +233,15 @@ module Async::DNS
 		
 		# Manages a single DNS question message across one or more servers.
 		class Request
-			def initialize(message, servers)
+			def initialize(message, endpoints)
 				@message = message
 				@packet = message.encode
 				
-				@servers = servers.dup
+				@endpoints = endpoints.dup
 				
 				# We select the protocol based on the size of the data:
 				if @packet.bytesize > UDP_TRUNCATION_SIZE
-					@servers.delete_if{|server| server[0] == :udp}
+					@endpoints.delete_if{|server| server[0] == :udp}
 				end
 			end
 			
@@ -250,7 +250,7 @@ module Async::DNS
 			attr :logger
 			
 			def each(&block)
-				Async::IO::Address.each(@servers, &block)
+				Async::IO::Endpoint.each(@endpoints, &block)
 			end
 
 			def update_id!(id)

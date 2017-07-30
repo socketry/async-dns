@@ -25,7 +25,7 @@ describe Async::DNS::StreamHandler do
 	include_context Async::RSpec::Reactor
 	
 	let(:server) {Async::DNS::Server.new}
-	let(:address) {Async::IO::Address.tcp('127.0.0.1', 6666)}
+	let(:address) {Async::IO::Endpoint.tcp('127.0.0.1', 6666)}
 	
 	subject {described_class.new(server, address)}
 	
@@ -44,7 +44,7 @@ describe Async::DNS::DatagramHandler do
 	include_context Async::RSpec::Reactor
 	
 	let(:server) {Async::DNS::Server.new}
-	let(:address) {Async::IO::Address.udp('127.0.0.1', 6666)}
+	let(:address) {Async::IO::Endpoint.udp('127.0.0.1', 6666)}
 	
 	subject {described_class.new(server, address)}
 	

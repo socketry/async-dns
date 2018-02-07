@@ -70,9 +70,7 @@ module Async::DNS
 		def run(task: Async::Task.current)
 			@endpoint.bind do |socket|
 				while true
-					Async.logger.debug(self.class.name) {"-> socket.recvfrom"}
 					input_data, remote_address = socket.recvmsg(UDP_TRUNCATION_SIZE)
-					Async.logger.debug(self.class.name) {"<- socket.recvfrom"}
 					
 					task.async do
 						respond(socket, input_data, remote_address)

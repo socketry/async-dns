@@ -210,7 +210,7 @@ module Async::DNS
 		end
 		
 		def try_datagram_server(request, endpoint, task: Async::Task.current)
-		endpoint.connect do |socket|
+			endpoint.connect do |socket|
 				socket.sendmsg(request.packet, 0)
 				
 				data, peer = socket.recvmsg(UDP_TRUNCATION_SIZE)
@@ -220,8 +220,6 @@ module Async::DNS
 		end
 		
 		def try_stream_server(request, endpoint)
-			context = Async::Task.current
-			
 			endpoint.connect do |socket|
 				StreamTransport.write_chunk(socket, request.packet)
 				

@@ -116,8 +116,6 @@ module Async::DNS
 		end
 		
 		def handle_connection(socket)
-			context = Async::Task.current
-			
 			input_data = StreamTransport.read_chunk(socket)
 			
 			response = process_query(input_data, remote_address: socket.remote_address)

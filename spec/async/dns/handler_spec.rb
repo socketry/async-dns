@@ -25,14 +25,14 @@ describe Async::DNS::StreamHandler do
 	include_context Async::RSpec::Reactor
 	
 	let(:server) {Async::DNS::Server.new}
-	let(:address) {Async::IO::Endpoint.tcp('127.0.0.1', 6666)}
-	
-	subject {described_class.new(server, address)}
+	let(:endpoint) {Async::IO::Endpoint.tcp('127.0.0.1', 6666)}
 	
 	it "can rebind port" do
 		2.times do
 			task = reactor.async do
-				subject.run
+				endpoint.bind do |socket|
+					described_class.new(server, socket).run
+				end
 			end
 			
 			task.stop
@@ -44,14 +44,14 @@ describe Async::DNS::DatagramHandler do
 	include_context Async::RSpec::Reactor
 	
 	let(:server) {Async::DNS::Server.new}
-	let(:address) {Async::IO::Endpoint.udp('127.0.0.1', 6666)}
-	
-	subject {described_class.new(server, address)}
+	let(:endpoint) {Async::IO::Endpoint.udp('127.0.0.1', 6666)}
 	
 	it "can rebind port" do
 		2.times do
 			task = reactor.async do
-				subject.run
+				endpoint.bind do |socket|
+					described_class.new(server, socket).run
+				end
 			end
 			
 			task.stop

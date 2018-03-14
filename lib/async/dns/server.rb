@@ -41,8 +41,6 @@ module Async::DNS
 			@endpoints = endpoints
 			@origin = origin
 			@logger = logger
-			
-			@handlers = []
 		end
 
 		# Records are relative to this origin:
@@ -106,12 +104,23 @@ module Async::DNS
 		def run(*args)
 			@logger.info "Starting Async::DNS server (v#{Async::DNS::VERSION})..."
 			
-			setup_handlers if @handlers.empty?
-			
 			Async::Reactor.run do |task|
-				@handlers.each do |handler|
+				fire(:setup)
+				
+				Async::IO::Endpoint.each(@endpoints) do |endpoint|
 					task.async do
-						handler.run(*args)
+						endpoint.bind do |socket|
+							case socket.type
+							when Socket::SOCK_DGRAM
+								@logger.info "<> Listening for datagrams on #{socket.local_address.inspect}"
+								DatagramHandler.new(self, socket).run
+							when Socket::SOCK_STREAM
+								@logger.info "<> Listening for connections on #{socket.local_address.inspect}"
+								StreamHandler.new(self, socket).run
+							else
+								raise ArgumentError.new("Don't know how to handle #{address}")
+							end
+						end
 					end
 				end
 				
@@ -119,23 +128,5 @@ module Async::DNS
 			end
 		end
 		
-		private
-		
-		def setup_handlers
-			fire(:setup)
-			
-			Async::IO::Endpoint.each(@endpoints) do |endpoint|
-				case endpoint.socket_type
-				when Socket::SOCK_DGRAM
-					@logger.info "<> Listening for datagrams on #{endpoint.inspect}"
-					@handlers << DatagramHandler.new(self, endpoint)
-				when Socket::SOCK_STREAM
-					@logger.info "<> Listening for connections on #{endpoint.inspect}"
-					@handlers << StreamHandler.new(self, endpoint)
-				else
-					raise ArgumentError.new("Don't know how to handle #{address}")
-				end
-			end
-		end
 	end
 end

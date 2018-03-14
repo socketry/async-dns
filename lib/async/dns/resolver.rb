@@ -185,13 +185,15 @@ module Async::DNS
 		end
 		
 		def try_server(request, endpoint)
-			case endpoint.socket_type
-			when Socket::SOCK_DGRAM
-				try_datagram_server(request, endpoint)
-			when Socket::SOCK_STREAM
-				try_stream_server(request, endpoint)
-			else
-				raise InvalidProtocolError.new(endpoint)
+			endpoint.connect do |socket|
+				case socket.type
+				when Socket::SOCK_DGRAM
+					try_datagram_server(request, socket)
+				when Socket::SOCK_STREAM
+					try_stream_server(request, socket)
+				else
+					raise InvalidProtocolError.new(endpoint)
+				end
 			end
 		end
 		
@@ -209,24 +211,20 @@ module Async::DNS
 			return false
 		end
 		
-		def try_datagram_server(request, endpoint, task: Async::Task.current)
-			endpoint.connect do |socket|
-				socket.sendmsg(request.packet, 0)
-				
-				data, peer = socket.recvmsg(UDP_TRUNCATION_SIZE)
-				
-				return Async::DNS::decode_message(data)
-			end
+		def try_datagram_server(request, socket)
+			socket.sendmsg(request.packet, 0)
+			
+			data, peer = socket.recvmsg(UDP_TRUNCATION_SIZE)
+			
+			return Async::DNS::decode_message(data)
 		end
 		
-		def try_stream_server(request, endpoint)
-			endpoint.connect do |socket|
-				StreamTransport.write_chunk(socket, request.packet)
-				
-				input_data = StreamTransport.read_chunk(socket)
-				
-				return Async::DNS::decode_message(input_data)
-			end
+		def try_stream_server(request, socket)
+			StreamTransport.write_chunk(socket, request.packet)
+			
+			input_data = StreamTransport.read_chunk(socket)
+			
+			return Async::DNS::decode_message(input_data)
 		end
 		
 		# Manages a single DNS question message across one or more servers.

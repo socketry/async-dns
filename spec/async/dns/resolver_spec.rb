@@ -22,118 +22,83 @@
 
 require 'async/dns'
 
-module Async::DNS::ResolverSpec
-	describe Async::DNS::Resolver do
-		include_context Async::RSpec::Reactor
-		
-		class JunkUDPServer
-			def initialize(server_address = nil)
-				@server_address = server_address || Addrinfo.udp('0.0.0.0', 6060)
-			end
-		
-			def run(task: Async::Task.current)
-				task.async do
-					Async::IO::Socket.bind(@server_address) do |socket|
-						while true
-							data, address = socket.recvfrom(1024)
-							socket.send("foobar", 0, address)
-						end
-					end
-				end
-			end
-		end
+require_relative 'junk_server_context'
 
-		class JunkTCPServer
-			def initialize(server_address = nil)
-				@server_address = server_address || Addrinfo.tcp('0.0.0.0', 6060)
-			end
-		
-			def run(task: Async::Task.current)
-				task.async do
-					Async::IO::Socket.accept(@server_address, backlog: 10) do |socket|
-						socket.write("f\0\0bar")
-					end
-				end
-			end
-		end
-		
-		it "should result in non-existent domain" do
-			resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
+RSpec.describe Async::DNS::Resolver do
+	include_context Async::RSpec::Reactor
 	
-			response = resolver.query('foobar.oriontransfer.org')
-	
-			expect(response.rcode).to be == Resolv::DNS::RCode::NXDomain
-		end
+	it "should result in non-existent domain" do
+		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 
-		it "should result in some answers" do
-			resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-	
-			response = resolver.query('google.com')
-	
-			expect(response.class).to be == Async::DNS::Message
-			expect(response.answer.size).to be > 0
-		end
+		response = resolver.query('foobar.oriontransfer.org')
 
-		it "should return no results" do
-			resolver = Async::DNS::Resolver.new([])
-	
-			response = resolver.query('google.com')
-	
-			expect(response).to be == nil
-		end
+		expect(response.rcode).to be == Resolv::DNS::RCode::NXDomain
+	end
 
-		it "should fail to get addresses" do
-			resolver = Async::DNS::Resolver.new([])
+	it "should result in some answers" do
+		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
+
+		response = resolver.query('google.com')
+
+		expect(response.class).to be == Async::DNS::Message
+		expect(response.answer.size).to be > 0
+	end
+
+	it "should return no results" do
+		resolver = Async::DNS::Resolver.new([])
+
+		response = resolver.query('google.com')
+
+		expect(response).to be == nil
+	end
+
+	it "should fail to get addresses" do
+		resolver = Async::DNS::Resolver.new([])
+
+		expect{resolver.addresses_for('google.com')}.to raise_error(Async::DNS::ResolutionFailure)
+	end
 	
-			expect{resolver.addresses_for('google.com')}.to raise_error(Async::DNS::ResolutionFailure)
-		end
+	context 'with junk UDP server' do
+		include_context 'Junk UDP Server'
 		
-		let(:udp_server) {JunkUDPServer.new}
-		
-		it "should fail with decode error from bad udp server" do
-			server = udp_server.run
-			
+		it "should fail with decode error" do
 			resolver = Async::DNS::Resolver.new([[:udp, "0.0.0.0", 6060]])
 			
 			response = resolver.query('google.com')
 			
 			expect(response).to be == nil
-			
-			server.stop
 		end
+	end
+	
+	context 'with junk TCP server' do
+		include_context 'Junk TCP Server'
 		
-		let(:tcp_server) {JunkTCPServer.new}
-		
-		it "should fail with decode error from bad tcp server" do
-			server = tcp_server.run
-			
+		it "should fail with decode error" do
 			resolver = Async::DNS::Resolver.new([[:tcp, "0.0.0.0", 6060]])
 			
 			response = resolver.query('google.com')
 			
 			expect(response).to be == nil
-			
-			server.stop
 		end
+	end
+	
+	it "should return some IPv4 and IPv6 addresses" do
+		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 
-		it "should return some IPv4 and IPv6 addresses" do
-			resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-	
-			addresses = resolver.addresses_for("www.google.com.")
-	
-			expect(addresses.size).to be > 0
-	
-			addresses.each do |address|
-				expect(address).to be_kind_of(Resolv::IPv4) | be_kind_of(Resolv::IPv6)
-			end
+		addresses = resolver.addresses_for("www.google.com.")
+
+		expect(addresses.size).to be > 0
+
+		addresses.each do |address|
+			expect(address).to be_kind_of(Resolv::IPv4) | be_kind_of(Resolv::IPv6)
 		end
+	end
+	
+	it "should recursively resolve CNAME records" do
+		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 		
-		it "should recursively resolve CNAME records" do
-			resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-			
-			addresses = resolver.addresses_for('www.baidu.com')
-			
-			expect(addresses.size).to be > 0
-		end
+		addresses = resolver.addresses_for('www.baidu.com')
+		
+		expect(addresses.size).to be > 0
 	end
 end

@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,43 +18,45 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'async/dns'
-require 'async/dns/system'
-
-describe Async::DNS::StreamHandler do
-	include_context Async::RSpec::Reactor
+RSpec.shared_context "Junk UDP Server" do
+	let(:server_endpoint) {Async::IO::Endpoint.udp('0.0.0.0', 6060, reuse_port: true)}
 	
-	let(:server) {Async::DNS::Server.new}
-	let(:endpoint) {Async::IO::Endpoint.tcp('127.0.0.1', 6666, reuse_port: true)}
-	
-	it "can rebind port" do
-		2.times do
-			task = reactor.async do
-				endpoint.bind do |socket|
-					described_class.new(server, socket).run
+	let!(:server_task) do
+		reactor.async do
+			server_endpoint.bind do |socket|
+				begin
+					while true
+						data, address = socket.recvfrom(1024)
+						socket.send("foobar", 0, address)
+					end
+				rescue
+					socket.close
 				end
 			end
-			
-			task.stop
 		end
+	end
+	
+	after(:each) do
+		server_task.stop
 	end
 end
 
-describe Async::DNS::DatagramHandler do
-	include_context Async::RSpec::Reactor
+RSpec.shared_context "Junk TCP Server" do
+	let(:server_endpoint) {Async::IO::Endpoint.tcp('0.0.0.0', 6060, reuse_port: true)}
 	
-	let(:server) {Async::DNS::Server.new}
-	let(:endpoint) {Async::IO::Endpoint.udp('127.0.0.1', 6666)}
-	
-	it "can rebind port" do
-		2.times do
-			task = reactor.async do
-				endpoint.bind do |socket|
-					described_class.new(server, socket).run
+	let!(:server_task) do
+		reactor.async do
+			server_endpoint.accept do |socket|
+				begin
+					socket.write("f\0\0bar")
+				rescue
+					socket.close
 				end
 			end
-			
-			task.stop
 		end
+	end
+	
+	after(:each) do
+		server_task.stop
 	end
 end

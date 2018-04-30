@@ -11,10 +11,9 @@ before_script: sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
 
 matrix:
   include:
-    - rvm: 2.1
-    - rvm: 2.2
     - rvm: 2.3
     - rvm: 2.4
+    - rvm: 2.5
     - rvm: ruby-head
     - rvm: jruby-head
       env:

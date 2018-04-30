@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require 'async'
-require 'async/io/endpoint'
+require 'async/io'
 
 require_relative 'transaction'
 require_relative 'logger'

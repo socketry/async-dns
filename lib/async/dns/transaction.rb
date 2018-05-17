@@ -190,8 +190,6 @@ module Async::DNS
 			@server.process(name, @resource_class, self)
 		end
 		
-		protected
-		
 		# A typical response to a DNS request includes both the question and response. This helper appends the question unless it looks like the user is already managing that aspect of the response.
 		def append_question!
 			if @response.question.size == 0

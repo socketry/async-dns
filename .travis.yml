@@ -1,7 +1,8 @@
 language: ruby
-sudo: false
-dist: trusty
+dist: xenial
+
 cache: bundler
+
 addons:
   apt:
     packages:
@@ -9,18 +10,18 @@ addons:
 
 before_script:
   - sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
-  - gem update --system
-  - gem install bundler
 
 matrix:
   include:
     - rvm: 2.3
     - rvm: 2.4
     - rvm: 2.5
-    - rvm: ruby-head
+    - rvm: 2.6
+    - rvm: truffleruby
     - rvm: jruby-head
-      env:
-        - JRUBY_OPTS="--debug -X+O"
+      env: JRUBY_OPTS="--debug -X+O"
+    - rvm: ruby-head
   allow_failures:
     - rvm: ruby-head
+    - rvm: truffleruby
     - rvm: jruby-head

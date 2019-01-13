@@ -85,7 +85,7 @@ module Async::DNS
 			@logger.debug "<#{response.id}> Writing #{output_data.bytesize} bytes response to client via UDP..."
 			
 			if output_data.bytesize > UDP_TRUNCATION_SIZE
-				@logger.warn "<#{response.id}>Response via UDP was larger than #{UDP_TRUNCATION_SIZE}!"
+				@logger.warn "<#{response.id}> Response via UDP was larger than #{UDP_TRUNCATION_SIZE}!"
 				
 				# Reencode data with truncation flag marked as true:
 				truncation_error = Resolv::DNS::Message.new(response.id)

@@ -46,8 +46,6 @@ end
 
 StackProf.run(mode: :cpu, out: 'async/dns.stackprof') do
 	Async::DNS::run_server(:listen => [[:udp, '0.0.0.0', 5300]]) do
-		@logger.level = Logger::WARN
-	
 		match(//, IN::A) do |transaction|
 			transaction.respond!(million[transaction.name])
 		end

@@ -22,7 +22,6 @@ require 'async'
 require 'async/io'
 
 require_relative 'transaction'
-require_relative 'logger'
 
 module Async::DNS
 	class Server
@@ -77,25 +76,24 @@ module Async::DNS
 					begin
 						question = question.without_origin(@origin)
 						
-						@logger.debug {"<#{query.id}> Processing question #{question} #{resource_class}..."}
+						@logger.debug(query) {"Processing question #{question} #{resource_class}..."}
 						
 						transaction = Transaction.new(self, query, question, resource_class, response, options)
 						
 						transaction.process
 					rescue Resolv::DNS::OriginError
 						# This is triggered if the question is not part of the specified @origin:
-						@logger.debug {"<#{query.id}> Skipping question #{question} #{resource_class} because #{$!}"}
+						@logger.debug(query) {"Skipping question #{question} #{resource_class} because #{$!}"}
 					end
 				end
 			rescue StandardError => error
-				@logger.error "<#{query.id}> Exception thrown while processing #{transaction}!"
-				Async::DNS.log_exception(@logger, error)
-			
+				@logger.error(query) {error}
+				
 				response.rcode = Resolv::DNS::RCode::ServFail
 			end
 			
 			end_time = Time.now
-			@logger.debug {"<#{query.id}> Time to process request: #{end_time - start_time}s"}
+			@logger.debug(query) {"Time to process request: #{end_time - start_time}s"}
 			
 			return response
 		end

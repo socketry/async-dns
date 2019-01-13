@@ -28,7 +28,6 @@ require_relative 'dns/message'
 require_relative 'dns/server'
 require_relative 'dns/resolver'
 require_relative 'dns/handler'
-require_relative 'dns/logger'
 
 module Async
 	module DNS

@@ -84,8 +84,6 @@ module Async::DNS::ResolverPerformanceSpec
 			include_context Async::RSpec::Reactor
 			
 			it 'should be faster than native resolver' do
-				# Async.logger.level = Logger::ERROR
-			
 				Benchmark.bm(30) do |x|
 					a = x.report("Async::DNS::Resolver") do
 						resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])

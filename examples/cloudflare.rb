@@ -10,8 +10,6 @@ require 'async/http/url_endpoint'
 
 require 'trenni/uri'
 
-# Async.logger.level = Logger::DEBUG
-
 endpoint = Async::HTTP::URLEndpoint.parse("https://cloudflare-dns.com/dns-query")
 client = Async::HTTP::Client.new(endpoint)
 

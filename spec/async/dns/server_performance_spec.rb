@@ -135,8 +135,6 @@ module Async::DNS::ServerPerformanceSpec
 			end
 		
 			it 'takes time' do
-				Async.logger.level = Logger::ERROR
-				
 				Benchmark.bm(30) do |x|
 					@servers.each do |name, port|
 						resolver = Async::DNS::Resolver.new([[:udp, '127.0.0.1', port]])

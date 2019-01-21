@@ -142,7 +142,7 @@ module Async::DNS
 				begin
 					response = nil
 					
-					task.timeout(@timeout) do
+					task.with_timeout(@timeout) do
 						@logger.debug "[#{message.id}] -> Try address #{endpoint}" if @logger
 						response = try_server(request, endpoint)
 						@logger.debug "[#{message.id}] <- Try address #{endpoint} = #{response}" if @logger

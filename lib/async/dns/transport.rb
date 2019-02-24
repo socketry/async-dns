@@ -23,64 +23,40 @@ require 'ipaddr'
 
 require_relative 'message'
 
-module Async::DNS
-	def self.address_family(host)
-		return IPAddr.new(host).family
-	end
-	
-	# A helper class for processing incoming network data.
-	class BinaryStringIO < StringIO
-		def initialize
-			super
-		
-			set_encoding("BINARY")
+module Async
+	module DNS
+		def self.address_family(host)
+			return IPAddr.new(host).family
 		end
-	end
-	
-	module StreamTransport
-		def self.read_chunk(socket)
-			# The data buffer:
-			buffer = BinaryStringIO.new
+		
+		class Transport
+			def initialize(socket)
+				@stream = IO::Stream.new(socket)
+			end
 			
-			# First we need to read in the length of the packet
-			while buffer.size < 2
-				if data = socket.read(1)
-					buffer.write data
-				else
-					raise EOFError, "Could not read message size!"
+			def write_message(message)
+				write_chunk(message.encode)
+			end
+			
+			def read_chunk
+				if size_data = @stream.read(2)
+					# Read in the length, the first two bytes:
+					size = size_data.unpack('n')[0]
+					
+					return @stream.read(size)
 				end
 			end
 			
-			# Read in the length, the first two bytes:
-			length = buffer.string.byteslice(0, 2).unpack('n')[0]
-			
-			# Read data until we have the amount specified:
-			while (buffer.size - 2) < length
-				required = (2 + length) - buffer.size
+			def write_chunk(output_data)
+				size_data = [output_data.bytesize].pack('n')
 				
-				# Read precisely the required amount:
-				if data = socket.read(required)
-					buffer.write data
-				else
-					raise EOFError, "Could not read message data!"
-				end
+				@stream.write(size_data)
+				@stream.write(output_data)
+				
+				@stream.flush
+				
+				return output_data.bytesize
 			end
-			
-			return buffer.string.byteslice(2, length)
-		end
-		
-		def self.write_message(socket, message)
-			write_chunk(socket, message.encode)
-		end
-		
-		def self.write_chunk(socket, output_data)
-			size_data = [output_data.bytesize].pack('n')
-			
-			# TODO: Validate/check for data written correctly
-			count = socket.write(size_data)
-			count = socket.write(output_data)
-			
-			return output_data.bytesize
 		end
 	end
 end

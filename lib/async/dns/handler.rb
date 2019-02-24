@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'async/io/stream'
+
 require_relative 'transport'
 
 module Async::DNS
@@ -114,13 +116,14 @@ module Async::DNS
 		end
 		
 		def handle_connection(socket)
-			input_data = StreamTransport.read_chunk(socket)
+			transport = Transport.new(socket)
 			
-			response = process_query(input_data, remote_address: socket.remote_address)
-			
-			length = StreamTransport.write_message(socket, response)
-			
-			@logger.debug "<#{response.id}> Wrote #{length} bytes via TCP..."
+			while input_data = transport.read_chunk
+				response = process_query(input_data, remote_address: socket.remote_address)
+				length = transport.write_message(response)
+				
+				@logger.debug "<#{response.id}> Wrote #{length} bytes via TCP..."
+			end
 		rescue EOFError => error
 			@logger.warn "<> Error: TCP session ended prematurely!"
 		rescue Errno::ECONNRESET => error

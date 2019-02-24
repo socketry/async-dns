@@ -220,9 +220,11 @@ module Async::DNS
 		end
 		
 		def try_stream_server(request, socket)
-			StreamTransport.write_chunk(socket, request.packet)
+			transport = Transport.new(socket)
 			
-			input_data = StreamTransport.read_chunk(socket)
+			transport.write_chunk(request.packet)
+			
+			input_data = transport.read_chunk
 			
 			return Async::DNS::decode_message(input_data)
 		end

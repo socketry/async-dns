@@ -59,8 +59,7 @@ module Async::DNS
 				
 				return @server.process_query(query, options)
 			rescue StandardError => error
-				@logger.error "<> Error processing request: #{error.inspect}!"
-				Async::DNS::log_exception(@logger, error)
+				@logger.error(error)
 				
 				return error_response(query)
 			end

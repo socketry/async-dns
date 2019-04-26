@@ -26,7 +26,7 @@ class Resolv
 			# Merge the given message with this message. A number of heuristics are applied in order to ensure that the result makes sense. For example, If the current message is not recursive but is being merged with a message that was recursive, this bit is maintained. If either message is authoritive, then the result is also authoritive.
 			#
 			# Modifies the current message in place.
-			def merge! (other)
+			def merge!(other)
 				# Authoritive Answer
 				@aa = @aa && other.aa
 
@@ -66,7 +66,6 @@ class Resolv
 				
 				return self.class.new(@labels + origin, absolute)
 			end
-			
 			
 			# Return the name, typically relative, without the specified origin suffix. If the origin is nil, don't change the name, but change it to absolute (as specified).
 			def without_origin(origin, absolute = false)

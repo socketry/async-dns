@@ -20,6 +20,6 @@
 
 module Async
 	module DNS
-		VERSION = '1.2.3'
+		VERSION = '1.2.4'
 	end
 end

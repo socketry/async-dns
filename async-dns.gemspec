@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 		daemon.
 	EOF
 	spec.summary       = "An easy to use DNS client resolver and server for Ruby."
-	spec.homepage      = "https://github.com/async/async-dns"
+	spec.homepage      = "https://github.com/socketry/async-dns"
 	spec.license       = "MIT"
 	
 	spec.files         = `git ls-files`.split($/)

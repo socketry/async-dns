@@ -38,10 +38,10 @@ module Async::DNS::MessageSpec
 			expect(message.class).to be == Async::DNS::Message
 			expect(message.id).to be == 0x1d00
 	
-			expect(message.question.count).to be == 1
-			expect(message.answer.count).to be == 8
-			expect(message.authority.count).to be == 0
-			expect(message.additional.count).to be == 1
+			expect(message.question.size).to be == 1
+			expect(message.answer.size).to be == 8
+			expect(message.authority.size).to be == 0
+			expect(message.additional.size).to be == 1
 		end
 
 		it "should fail to decode due to bad AAAA length" do

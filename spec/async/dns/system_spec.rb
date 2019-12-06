@@ -30,12 +30,12 @@ module Async::DNS::SystemSpec
 		it "should have at least one namesever" do
 			expect(Async::DNS::System::nameservers.length).to be > 0
 		end
-	
+		
 		it "should respond to query for google.com" do
-			resolver = Async::DNS::Resolver.new(Async::DNS::System::nameservers)
-		
+			resolver = Async::DNS::Resolver.new(Async::DNS::System.nameservers)
+			
 			response = resolver.query('google.com')
-		
+			
 			expect(response.class).to be == Async::DNS::Message
 			expect(response.rcode).to be == Resolv::DNS::RCode::NoError
 		end

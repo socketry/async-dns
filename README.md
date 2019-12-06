@@ -4,7 +4,7 @@ Async::DNS is a high-performance DNS client resolver and server which can be eas
 
 [RubyDNS]: https://github.com/ioquatix/rubydns
 
-[![Build Status](https://secure.travis-ci.org/socketry/async-dns.svg)](http://travis-ci.org/socketry/async-dns)
+[![Build Status](https://secure.travis-ci.com/socketry/async-dns.svg)](http://travis-ci.com/socketry/async-dns)
 [![Code Climate](https://codeclimate.com/github/socketry/async-dns.svg)](https://codeclimate.com/github/socketry/async-dns)
 [![Coverage Status](https://coveralls.io/repos/socketry/async-dns/badge.svg)](https://coveralls.io/r/socketry/async-dns)
 

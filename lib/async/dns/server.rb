@@ -36,7 +36,7 @@ module Async::DNS
 		#		end
 		#	end
 		#
-		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Async.logger)
+		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)
 			@endpoints = endpoints
 			@origin = origin
 			@logger = logger

@@ -28,7 +28,7 @@ module Async::DNS
 			@server = server
 			@socket = socket
 			
-			@logger = @server.logger || Async.logger
+			@logger = @server.logger || Console.logger
 		end
 		
 		attr :server

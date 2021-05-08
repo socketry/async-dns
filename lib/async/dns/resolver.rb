@@ -46,7 +46,7 @@ module Async::DNS
 		# Servers are specified in the same manor as options[:listen], e.g.
 		#   [:tcp/:udp, address, port]
 		# In the case of multiple servers, they will be checked in sequence.
-		def initialize(endpoints, origin: nil, logger: Async.logger, timeout: DEFAULT_TIMEOUT)
+		def initialize(endpoints, origin: nil, logger: Console.logger, timeout: DEFAULT_TIMEOUT)
 			@endpoints = endpoints
 			
 			@origin = origin

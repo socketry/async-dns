@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Source</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../_static/icon.png"/>
+		<link rel="stylesheet" href="../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../_components/jquery/jquery.min.js"></script>
+		<script src="../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../index.html">Project</a> › <a class="link" href="index.html">Source</a></header>
+		
+		<main>
+			
+	<h1>Source</h1>
+	
+	<ul class="index"><li>
+					<a href="Async/index.html"><code class="language-ruby">module Async</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="Async/DNS/index.html"><code class="language-ruby">module DNS</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="Async/DNS/Transport/index.html"><code class="language-ruby">class Transport</code></a>
+					
+					
+					<ul class="index"></ul>				</li></ul>				</li></ul>				</li><li>
+					<a href="DNS/index.html"><code class="language-ruby">module DNS</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="DNS/Server/index.html"><code class="language-ruby">class Server</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%3A%3ADEFAULT_ENDPOINTS"><code class="language-ruby">DEFAULT_ENDPOINTS = [[:udp, &quot;0.0.0.0&quot;, 53], [:tcp, &quot;0.0.0.0&quot;, 53]]</code></a>
+					
+						<p>The default server interfaces</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23initialize"><code class="language-ruby">def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)</code></a>
+					
+						<p>Instantiate a server with a block</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23origin"><code class="language-ruby">attr_accessor :origin</code></a>
+					
+						<p>Records are relative to this origin:</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23fire"><code class="language-ruby">def fire(event_name)</code></a>
+					
+						<p>Fire the named event as part of running the server.</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23process"><code class="language-ruby">def process(name, resource_class, transaction)</code></a>
+					
+						<p>Give a name and a record type, try to match a rule and use it for processing the given arguments.</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23process_query"><code class="language-ruby">def process_query(query, options = {}, &amp;block)</code></a>
+					
+						<p>Process an incoming DNS message. Returns a serialized message to be sent back to the client.</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23run"><code class="language-ruby">def run(*args)</code></a>
+					
+						<p>Setup all specified interfaces and begin accepting incoming connections.</p>
+
+					
+									</li></ul>				</li><li>
+					<a href="DNS/Transaction/index.html"><code class="language-ruby">class Transaction</code></a>
+					
+						<p>This class provides all details of a single DNS question and response. This is used by the DSL to provide DNS related functionality.</p>
+
+					
+					<ul class="index"><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%3A%3ADEFAULT_TTL"><code class="language-ruby">DEFAULT_TTL = 86400</code></a>
+					
+						<p>The default time used for responses (24 hours).</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23resource_class"><code class="language-ruby">attr :resource_class</code></a>
+					
+						<p>The resource_class that was requested. This is typically used to generate a response.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23query"><code class="language-ruby">attr :query</code></a>
+					
+						<p>The incoming query which is a set of questions.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23question"><code class="language-ruby">attr :question</code></a>
+					
+						<p>The question that this transaction represents.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23response"><code class="language-ruby">attr :response</code></a>
+					
+						<p>The current full response to the incoming query.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23options"><code class="language-ruby">attr :options</code></a>
+					
+						<p>Any options or configuration associated with the given transaction.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23name"><code class="language-ruby">def name</code></a>
+					
+						<p>The name of the question, which is typically the requested hostname.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23to_s"><code class="language-ruby">def to_s</code></a>
+					
+						<p>Shows the question name and resource class. Suitable for debugging purposes.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23append%21"><code class="language-ruby">def append!(name, resource_class = nil, options = {})</code></a>
+					
+						<p>Run a new query through the rules with the given name and resource type. The results of this query are appended to the current transaction's <code>response</code>.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23passthrough%21"><code class="language-ruby">def passthrough!(resolver, options = {}, &amp;block)</code></a>
+					
+						<p>Use the given resolver to respond to the question. Uses <code>passthrough</code> to do the lookup and merges the result.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23passthrough"><code class="language-ruby">def passthrough(resolver, options = {})</code></a>
+					
+						<p>Use the given resolver to respond to the question.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23respond%21"><code class="language-ruby">def respond!(*args)</code></a>
+					
+						<p>The last argument can optionally be a hash of <code>options</code>. If <code>options[:resource_class]</code> is provided, it overrides the default resource class of transaction. Additional <code>options</code> are passed to <code class="language-ruby">#append!</code>.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23add"><code class="language-ruby">def add(resources, options = {})</code></a>
+					
+						<p>Append a list of resources.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23fail%21"><code class="language-ruby">def fail!(rcode)</code></a>
+					
+						<p>This function indicates that there was a failure to resolve the given question. The single argument must be an integer error code, typically given by the constants in <code class="language-ruby">Resolv::DNS::RCode</code>.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23failure%21"><code class="language-ruby">def failure!(*args)</code></a>
+					
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23process"><code class="language-ruby">def process</code></a>
+					
+						<p>A helper method to process the transaction on the given server. Unless the transaction is deferred, it will <code class="language-ruby">#succeed</code> on completion.</p>
+
+					
+									</li><li>
+					<a href="DNS/Transaction/index.html#DNS%3A%3ATransaction%23append_question%21"><code class="language-ruby">def append_question!</code></a>
+					
+						<p>A typical response to a DNS request includes both the question and response. This helper appends the question unless it looks like the user is already managing that aspect of the response.</p>
+
+					
+									</li></ul>				</li><li>
+					<a href="DNS/InvalidProtocolError/index.html"><code class="language-ruby">class InvalidProtocolError &lt; StandardError</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/InvalidResponseError/index.html"><code class="language-ruby">class InvalidResponseError &lt; StandardError</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/ResolutionFailure/index.html"><code class="language-ruby">class ResolutionFailure &lt; StandardError</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/Resolver/index.html"><code class="language-ruby">class Resolver</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%3A%3ADEFAULT_TIMEOUT"><code class="language-ruby">DEFAULT_TIMEOUT = 5.0</code></a>
+					
+						<p>Wait for up to 5 seconds for a response. Override with <code>options[:timeout]</code></p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%3A%3ADEFAULT_DELAY"><code class="language-ruby">DEFAULT_DELAY = 0.01</code></a>
+					
+						<p>10ms wait between making requests. Override with <code>options[:delay]</code></p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%3A%3ADEFAULT_RETRIES"><code class="language-ruby">DEFAULT_RETRIES = 10</code></a>
+					
+						<p>Try a given request 10 times before failing. Override with <code>options[:retries]</code>.</p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%23initialize"><code class="language-ruby">def initialize(endpoints, origin: nil, logger: Console.logger, timeout: DEFAULT_TIMEOUT)</code></a>
+					
+						<p>Servers are specified in the same manor as options[:listen], e.g.</p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%23next_id%21"><code class="language-ruby">def next_id!</code></a>
+					
+						<p>Provides the next sequence identification number which is used to keep track of DNS messages.</p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%23query"><code class="language-ruby">def query(name, resource_class = Resolv::DNS::Resource::IN::A)</code></a>
+					
+						<p>Look up a named resource of the given resource_class.</p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%23addresses_for"><code class="language-ruby">def addresses_for(name, resource_class = Resolv::DNS::Resource::IN::A, options = {})</code></a>
+					
+						<p>Yields a list of <code>Resolv::IPv4</code> and <code>Resolv::IPv6</code> addresses for the given <code>name</code> and <code>resource_class</code>. Raises a ResolutionFailure if no severs respond.</p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%23dispatch_request"><code class="language-ruby">def dispatch_request(message, task: Async::Task.current)</code></a>
+					
+						<p>Send the message to available servers. If no servers respond correctly, nil is returned. This result indicates a failure of the resolver to correctly contact any server and get a valid response.</p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/index.html#DNS%3A%3AResolver%23lookup"><code class="language-ruby">def lookup(name, resource_class = Resolv::DNS::Resource::IN::A, records = {})</code></a>
+					
+						<p>Lookup a name/resource_class record but use the records cache if possible reather than making a new request if possible.</p>
+
+					
+									</li><li>
+					<a href="DNS/Resolver/Request/index.html"><code class="language-ruby">class Request</code></a>
+					
+						<p>Manages a single DNS question message across one or more servers.</p>
+
+					
+					<ul class="index"></ul>				</li></ul>				</li><li>
+					<a href="DNS/index.html#DNS.chunked"><code class="language-ruby">def self.chunked(string, chunk_size = 255)</code></a>
+					
+						<p>Produces an array of arrays of binary data with each sub-array a maximum of chunk_size bytes.</p>
+
+					
+									</li><li>
+					<a href="DNS/System/index.html"><code class="language-ruby">module System</code></a>
+					
+						<p>This module encapsulates system dependent name lookup functionality.</p>
+
+					
+					<ul class="index"><li>
+					<a href="DNS/System/Hosts/index.html"><code class="language-ruby">class Hosts</code></a>
+					
+						<p>This code is very experimental</p>
+
+					
+					<ul class="index"><li>
+					<a href="DNS/System/Hosts/index.html#DNS%3A%3ASystem%3A%3AHosts%23call"><code class="language-ruby">def call(name)</code></a>
+					
+						<p>This is used to match names against the list of known hosts:</p>
+
+					
+									</li></ul>				</li><li>
+					<a href="DNS/System/index.html#DNS%3A%3ASystem.nameservers"><code class="language-ruby">def self.nameservers</code></a>
+					
+						<p>Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with. There is no equivalent facility to use the <code>hosts</code> file at present.</p>
+
+					
+									</li></ul>				</li><li>
+					<a href="DNS/GenericHandler/index.html"><code class="language-ruby">class GenericHandler</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/DatagramHandler/index.html"><code class="language-ruby">class DatagramHandler &lt; GenericHandler</code></a>
+					
+						<p>Handling incoming UDP requests, which are single data packets, and pass them on to the given server.</p>
+
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/StreamHandler/index.html"><code class="language-ruby">class StreamHandler &lt; GenericHandler</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/index.html#DNS%3A%3AMessage"><code class="language-ruby">Message = ::Resolv::DNS::Message</code></a>
+					
+						<p>The DNS message container.</p>
+
+					
+									</li><li>
+					<a href="DNS/index.html#DNS.decode_message"><code class="language-ruby">def self.decode_message(data)</code></a>
+					
+						<p>Decodes binary data into a <a href="DNS/index.html#DNS%3A%3AMessage" title="Message"><code class="language-ruby">Message = ::Resolv::DNS::Message</code></a>.</p>
+
+					
+									</li><li>
+					<a href="DNS/Replace/index.html"><code class="language-ruby">module Replace</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="http://localhost:43503/source/DNS/Replace/(self)/index"><code class="language-ruby">class &lt;&lt; (self)</code></a>
+					
+					
+					<ul class="index"></ul>				</li></ul>				</li><li>
+					<a href="http://localhost:43503/source/DNS/(const%20nil%20:IPSocket)/index"><code class="language-ruby">class &lt;&lt; (const nil :IPSocket)</code></a>
+					
+					
+					<ul class="index"></ul>				</li></ul>				</li><li>
+					<a href="Resolv/index.html"><code class="language-ruby">class Resolv</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="Resolv/DNS/index.html"><code class="language-ruby">class DNS</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="Resolv/DNS/Message/index.html"><code class="language-ruby">class Message</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="Resolv/DNS/Message/index.html#Resolv%3A%3ADNS%3A%3AMessage%23merge%21"><code class="language-ruby">def merge!(other)</code></a>
+					
+						<p>Merge the given message with this message. A number of heuristics are applied in order to ensure that the result makes sense. For example, If the current message is not recursive but is being merged with a message that was recursive, this bit is maintained. If either message is authoritive, then the result is also authoritive.</p>
+
+					
+									</li></ul>				</li><li>
+					<a href="Resolv/DNS/OriginError/index.html"><code class="language-ruby">class OriginError &lt; ArgumentError</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="Resolv/DNS/Name/index.html"><code class="language-ruby">class Name</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="Resolv/DNS/Name/index.html#Resolv%3A%3ADNS%3A%3AName%23with_origin"><code class="language-ruby">def with_origin(origin, absolute = true)</code></a>
+					
+						<p>Return the name, typically absolute, with the specified origin as a suffix. If the origin is nil, don't change the name, but change it to absolute (as specified).</p>
+
+					
+									</li><li>
+					<a href="Resolv/DNS/Name/index.html#Resolv%3A%3ADNS%3A%3AName%23without_origin"><code class="language-ruby">def without_origin(origin, absolute = false)</code></a>
+					
+						<p>Return the name, typically relative, without the specified origin suffix. If the origin is nil, don't change the name, but change it to absolute (as specified).</p>
+
+					
+									</li></ul>				</li></ul>				</li></ul>				</li><li>
+					<a href="String/index.html"><code class="language-ruby">class String</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="String/index.html#String%23chunked"><code class="language-ruby">def chunked(chunk_size = 255)</code></a>
+					
+						<p>Chunk a string which is required for the TEXT <code>resource_class</code>.</p>
+
+					
+									</li></ul>				</li></ul>
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

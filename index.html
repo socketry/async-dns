@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>Async::DNS</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="_static/icon.png"/>
+		<link rel="stylesheet" href="_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="_components/jquery/jquery.min.js"></script>
+		<script src="_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="index.html">Project</a></header>
+		
+		<main>
+			
+	<h1>Async::DNS</h1><p>Async::DNS is a high-performance DNS client resolver and server which can be easily integrated into other projects or used as a stand-alone daemon. It was forked from <a href="https://github.com/ioquatix/rubydns">RubyDNS</a> which is now implemented in terms of this library.</p>
+<p><a href="https://github.com/socketry/async-dns/actions?workflow=Development"><img src="https://github.com/socketry/async-dns/workflows/Development/badge.svg" alt="Development Status"/></a></p>
+<section id="installation"><h2>Installation</h2>
+<p>Add this line to your application's Gemfile:</p>
+<pre><code>gem 'async-dns'
+</code></pre>
+<p>And then execute:</p>
+<pre><code>$ bundle
+</code></pre>
+<p>Or install it yourself as:</p>
+<pre><code>$ gem install async-dns
+</code></pre>
+</section><section id="usage"><h2>Usage</h2>
+<p>Please browse the <a href="source/index.html">source code index</a> or refer to the guides below.</p>
+
+
+</section><section id="resolver"><h3>Resolver</h3>
+<p>Here is a simple example showing how to use the resolver:</p>
+<pre><code class="language-ruby">	Async::Reactor.run do
+		resolver = Async::DNS::Resolver.new([[:udp, &quot;8.8.8.8&quot;, 53], [:tcp, &quot;8.8.8.8&quot;, 53]])
+
+		addresses = resolver.addresses_for(&quot;www.google.com.&quot;)
+
+		puts addresses.inspect
+	end
+	=&gt; [#&lt;Resolv::IPv4 202.124.127.240&gt;, #&lt;Resolv::IPv4 202.124.127.216&gt;, #&lt;Resolv::IPv4 202.124.127.223&gt;, #&lt;Resolv::IPv4 202.124.127.227&gt;, #&lt;Resolv::IPv4 202.124.127.234&gt;, #&lt;Resolv::IPv4 202.124.127.230&gt;, #&lt;Resolv::IPv4 202.124.127.208&gt;, #&lt;Resolv::IPv4 202.124.127.249&gt;, #&lt;Resolv::IPv4 202.124.127.219&gt;, #&lt;Resolv::IPv4 202.124.127.218&gt;, #&lt;Resolv::IPv4 202.124.127.212&gt;, #&lt;Resolv::IPv4 202.124.127.241&gt;, #&lt;Resolv::IPv4 202.124.127.238&gt;, #&lt;Resolv::IPv4 202.124.127.245&gt;, #&lt;Resolv::IPv4 202.124.127.251&gt;, #&lt;Resolv::IPv4 202.124.127.229&gt;]
+</code></pre>
+</section><section id="server"><h3>Server</h3>
+<p>Here is a simple example showing how to use the server:</p>
+<pre><code class="language-ruby">	require 'async/dns'
+	
+	class TestServer &lt; Async::DNS::Server
+		def process(name, resource_class, transaction)
+			@resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
+			
+			transaction.passthrough!(@resolver)
+		end
+	end
+	
+	server = TestServer.new([[:udp, '127.0.0.1', 2346]])
+	
+	server.run
+</code></pre>
+<p>Then to test you could use <code>dig</code> like so:</p>
+<pre><code>dig @localhost -p 2346 google.com
+</code></pre>
+</section><section id="faq"><h2>FAQ</h2>
+</section><section id="file-handle-limitations"><h3>File Handle Limitations</h3>
+<p>I get the error <code>Errno::EMFILE: Too many open files - socket(2) - udp</code> when trying to run a server. What should I do?</p>
+<p>On some platforms (e.g. Mac OS X) the number of file descriptors is relatively low by default and should be increased by calling <code>ulimit -n 10000</code> before running tests or even before starting a server which expects a large number of concurrent incoming connections.</p>
+</section><section id="server"><h3>Server</h3>
+<p>The performance is on the same magnitude as <code>bind9</code>. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using <code>Async::DNS::Resolver</code> gives the following:</p>
+<pre><code>                              user     system      total        real
+Async::DNS::Server         4.280000   0.450000   4.730000 (  4.854862)
+Bind9                         4.970000   0.520000   5.490000 (  5.541213)
+</code></pre>
+<p>These benchmarks are included in the unit tests. To test bind9 performance, it must be installed and <code>which named</code> must return the executable.</p>
+</section><section id="performance"><h2>Performance</h2>
+<p>We welcome additional benchmarks and feedback regarding Async::DNS performance. To check the current performance results, consult the <a href="https://travis-ci.org/socketry/async-dns">travis build job output</a>.</p>
+</section><section id="resolver"><h3>Resolver</h3>
+<p>The <code>Async::DNS::Resolver</code> is highly concurrent and can resolve individual names as fast as the built in <code>Resolv::DNS</code> resolver. Because the resolver is asynchronous, when dealing with multiple names, it can work more efficiently:</p>
+<pre><code>                              user     system      total        real
+Async::DNS::Resolver       0.020000   0.010000   0.030000 (  0.030507)
+Resolv::DNS                   0.070000   0.010000   0.080000 (  1.465975)
+</code></pre>
+<p>These benchmarks are included in the unit tests.</p>
+</section><section id="server"><h3>Server</h3>
+<p>The performance is on the same magnitude as <code>bind9</code>. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using <code>Async::DNS::Resolver</code> gives the following:</p>
+<pre><code>                              user     system      total        real
+Async::DNS::Server         4.280000   0.450000   4.730000 (  4.854862)
+Bind9                         4.970000   0.520000   5.490000 (  5.541213)
+</code></pre>
+<p>These benchmarks are included in the unit tests. To test bind9 performance, it must be installed and <code>which named</code> must return the executable.</p>
+</section><section id="dnssec-support"><h3>DNSSEC support</h3>
+<p>DNSSEC is currently not supported and is <a href="http://sockpuppet.org/blog/2015/01/15/against-dnssec/">unlikely to be supported in the future</a>. Feel free to submit a PR.</p>
+</section><section id="contributing"><h2>Contributing</h2>
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+</section><section id="desired-features"><h3>Desired Features</h3>
+<ul>
+<li>Support for more features of DNS such as zone transfer.</li>
+<li>Some kind of system level integration, e.g. registering a DNS server with the currently running system resolver.</li>
+</ul>
+</section><section id="license"><h2>License</h2>
+<p>Released under the MIT license.</p>
+<p>Copyright, 2015, by <a href="http://www.codeotaku.com/samuel-williams">Samuel G. D. Williams</a>.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+</section>
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

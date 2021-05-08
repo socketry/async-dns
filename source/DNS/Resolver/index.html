@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>DNS::Resolver</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">DNS::Resolver</code></h1>
+	
+		
+	<section>
+	<h2>Nested</h2>
+	
+	<ul>
+		<li><a href="Request/index.html"><code class="language-ruby">DNS::Resolver::Request</code></a></li>
+	</ul>
+	</section>
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="DNS::Resolver::DEFAULT_TIMEOUT"><h3><code class="language-ruby">DEFAULT_TIMEOUT = 5.0</code></h3><p>Wait for up to 5 seconds for a response. Override with <code>options[:timeout]</code></p>
+</section><section id="DNS::Resolver::DEFAULT_DELAY"><h3><code class="language-ruby">DEFAULT_DELAY = 0.01</code></h3><p>10ms wait between making requests. Override with <code>options[:delay]</code></p>
+</section><section id="DNS::Resolver::DEFAULT_RETRIES"><h3><code class="language-ruby">DEFAULT_RETRIES = 10</code></h3><p>Try a given request 10 times before failing. Override with <code>options[:retries]</code>.</p>
+</section><section id="DNS::Resolver#initialize"><h3><code class="language-ruby">def initialize(endpoints, origin: nil, logger: Console.logger, timeout: DEFAULT_TIMEOUT)</code></h3><p>Servers are specified in the same manor as options[:listen], e.g.
+[:tcp/:udp, address, port]
+In the case of multiple servers, they will be checked in sequence.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(endpoints, origin: nil, logger: Console.logger, timeout: DEFAULT_TIMEOUT)
+	@endpoints = endpoints
+	
+	@origin = origin
+	@logger = logger
+	@timeout = timeout
+end</code></pre>
+					</details></section><section id="DNS::Resolver#next_id!"><h3><code class="language-ruby">def next_id!</code></h3><p>Provides the next sequence identification number which is used to keep track of DNS messages.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def next_id!
+	# Using sequential numbers for the query ID is generally a bad thing because over UDP they can be spoofed. 16-bits isn't hard to guess either, but over UDP we also use a random port, so this makes effectively 32-bits of entropy to guess per request.
+	SecureRandom.random_number(2**16)
+end</code></pre>
+					</details></section><section id="DNS::Resolver#query"><h3><code class="language-ruby">def query(name, resource_class = Resolv::DNS::Resource::IN::A)</code></h3><p>Look up a named resource of the given resource_class.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def query(name, resource_class = Resolv::DNS::Resource::IN::A)
+	message = Resolv::DNS::Message.new(next_id!)
+	message.rd = 1
+	message.add_question fully_qualified_name(name), resource_class
+	
+	dispatch_request(message)
+end</code></pre>
+					</details></section><section id="DNS::Resolver#addresses_for"><h3><code class="language-ruby">def addresses_for(name, resource_class = Resolv::DNS::Resource::IN::A, options = {})</code></h3><p>Yields a list of <code>Resolv::IPv4</code> and <code>Resolv::IPv6</code> addresses for the given <code>name</code> and <code>resource_class</code>. Raises a ResolutionFailure if no severs respond.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def addresses_for(name, resource_class = Resolv::DNS::Resource::IN::A, options = {})
+	name = fully_qualified_name(name)
+	
+	cache = options.fetch(:cache, {})
+	retries = options.fetch(:retries, DEFAULT_RETRIES)
+	delay = options.fetch(:delay, DEFAULT_DELAY)
+	
+	records = lookup(name, resource_class, cache) do |lookup_name, lookup_resource_class|
+		response = nil
+		
+		retries.times do |i|
+			# Wait 10ms before trying again:
+			sleep delay if delay and i &gt; 0
+			
+			response = query(lookup_name, lookup_resource_class)
+			
+			break if response
+		end
+		
+		response or raise ResolutionFailure.new(&quot;Could not resolve #{name} after #{retries} attempt(s).&quot;)
+	end
+	
+	addresses = []
+	
+	if records
+		records.each do |record|
+			if record.respond_to? :address
+				addresses &lt;&lt; record.address
+			else
+				# The most common case here is that record.class is IN::CNAME and we need to figure out the address. Usually the upstream DNS server would have replied with this too, and this will be loaded from the response if possible without requesting additional information.
+				addresses += addresses_for(record.name, record.class, options.merge(cache: cache))
+			end
+		end
+	end
+	
+	if addresses.size &gt; 0
+		return addresses
+	else
+		raise ResolutionFailure.new(&quot;Could not find any addresses for #{name}.&quot;)
+	end
+end</code></pre>
+					</details></section><section id="DNS::Resolver#dispatch_request"><h3><code class="language-ruby">def dispatch_request(message, task: Async::Task.current)</code></h3><p>Send the message to available servers. If no servers respond correctly, nil is returned. This result indicates a failure of the resolver to correctly contact any server and get a valid response.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def dispatch_request(message, task: Async::Task.current)
+	request = Request.new(message, @endpoints)
+	
+	request.each do |endpoint|
+		@logger.debug &quot;[#{message.id}] Sending request #{message.question.inspect} to address #{endpoint.inspect}&quot; if @logger
+		
+		begin
+			response = nil
+			
+			task.with_timeout(@timeout) do
+				@logger.debug &quot;[#{message.id}] -&gt; Try address #{endpoint}&quot; if @logger
+				response = try_server(request, endpoint)
+				@logger.debug &quot;[#{message.id}] &lt;- Try address #{endpoint} = #{response}&quot; if @logger
+			end
+			
+			if valid_response(message, response)
+				return response
+			end
+		rescue Async::TimeoutError
+			@logger.debug &quot;[#{message.id}] Request timed out!&quot; if @logger
+		rescue InvalidResponseError
+			@logger.warn &quot;[#{message.id}] Invalid response from network: #{$!}!&quot; if @logger
+		rescue DecodeError
+			@logger.warn &quot;[#{message.id}] Error while decoding data from network: #{$!}!&quot; if @logger
+		rescue IOError, Errno::ECONNRESET
+			@logger.warn &quot;[#{message.id}] Error while reading from network: #{$!}!&quot; if @logger
+		rescue EOFError
+			@logger.warn &quot;[#{message.id}] Could not read complete response from network: #{$!}&quot; if @logger
+		end
+	end
+	
+	return nil
+end</code></pre>
+					</details></section><section id="DNS::Resolver#lookup"><h3><code class="language-ruby">def lookup(name, resource_class = Resolv::DNS::Resource::IN::A, records = {})</code></h3><p>Lookup a name/resource_class record but use the records cache if possible reather than making a new request if possible.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def lookup(name, resource_class = Resolv::DNS::Resource::IN::A, records = {})
+	records.fetch(name) do
+		response = yield(name, resource_class)
+		
+		if response
+			response.answer.each do |name_in_answer, ttl, record|
+				(records[name_in_answer] ||= []) &lt;&lt; record
+			end
+		end
+		
+		records[name]
+	end
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+			<title>DNS::Server</title>
+		
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		
+		<link rel="icon" type="image/png" href="../../../_static/icon.png"/>
+		<link rel="stylesheet" href="../../../_static/site.css" type="text/css" media="screen"/>
+		
+		<script src="../../../_components/jquery/jquery.min.js"></script>
+		<script src="../../../_components/jquery-syntax/jquery.syntax.min.js"></script>
+		
+		<script src="../../../_static/links.js"></script>
+		
+		<script type="text/javascript">
+		//<![CDATA[
+			jQuery(function($) {
+				$.syntax();
+			});
+		//]]>
+		</script>
+	</head>
+
+	<body>
+		<header> › <a class="link" href="../../../index.html">Project</a> › <a class="link" href="../../index.html">Source</a></header>
+		
+		<main>
+			
+	<h1><code class="language-ruby">DNS::Server</code></h1>
+	
+		
+	
+	<section>
+	<h2>Definitions</h2>
+	
+	<section id="DNS::Server::DEFAULT_ENDPOINTS"><h3><code class="language-ruby">DEFAULT_ENDPOINTS = [[:udp, &quot;0.0.0.0&quot;, 53], [:tcp, &quot;0.0.0.0&quot;, 53]]</code></h3><p>The default server interfaces</p>
+</section><section id="DNS::Server#initialize"><h3><code class="language-ruby">def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)</code></h3><p>Instantiate a server with a block</p>
+<p>server = Server.new do
+match(/server.mydomain.com/, IN::A) do |transaction|
+transaction.respond!(&quot;1.2.3.4&quot;)
+end
+end</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)
+	@endpoints = endpoints
+	@origin = origin
+	@logger = logger
+end</code></pre>
+					</details></section><section id="DNS::Server#origin"><h3><code class="language-ruby">attr_accessor :origin</code></h3><p>Records are relative to this origin:</p>
+</section><section id="DNS::Server#fire"><h3><code class="language-ruby">def fire(event_name)</code></h3><p>Fire the named event as part of running the server.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def fire(event_name)
+end</code></pre>
+					</details></section><section id="DNS::Server#process"><h3><code class="language-ruby">def process(name, resource_class, transaction)</code></h3><p>Give a name and a record type, try to match a rule and use it for processing the given arguments.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def process(name, resource_class, transaction)
+	raise NotImplementedError.new
+end</code></pre>
+					</details></section><section id="DNS::Server#process_query"><h3><code class="language-ruby">def process_query(query, options = {}, &amp;block)</code></h3><p>Process an incoming DNS message. Returns a serialized message to be sent back to the client.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def process_query(query, options = {}, &amp;block)
+	start_time = Time.now
+	
+	# Setup response
+	response = Resolv::DNS::Message::new(query.id)
+	response.qr = 1                 # 0 = Query, 1 = Response
+	response.opcode = query.opcode  # Type of Query; copy from query
+	response.aa = 1                 # Is this an authoritative response: 0 = No, 1 = Yes
+	response.rd = query.rd          # Is Recursion Desired, copied from query
+	response.ra = 0                 # Does name server support recursion: 0 = No, 1 = Yes
+	response.rcode = 0              # Response code: 0 = No errors
+	
+	transaction = nil
+	
+	begin
+		query.question.each do |question, resource_class|
+			begin
+				question = question.without_origin(@origin)
+				
+				@logger.debug(query) {&quot;Processing question #{question} #{resource_class}...&quot;}
+				
+				transaction = Transaction.new(self, query, question, resource_class, response, options)
+				
+				transaction.process
+			rescue Resolv::DNS::OriginError
+				# This is triggered if the question is not part of the specified @origin:
+				@logger.debug(query) {&quot;Skipping question #{question} #{resource_class} because #{$!}&quot;}
+			end
+		end
+	rescue StandardError =&gt; error
+		@logger.error(query) {error}
+		
+		response.rcode = Resolv::DNS::RCode::ServFail
+	end
+	
+	end_time = Time.now
+	@logger.debug(query) {&quot;Time to process request: #{end_time - start_time}s&quot;}
+	
+	return response
+end</code></pre>
+					</details></section><section id="DNS::Server#run"><h3><code class="language-ruby">def run(*args)</code></h3><p>Setup all specified interfaces and begin accepting incoming connections.</p>
+<details>
+						<summary><h4>Implementation</h4></summary>
+						<pre><code class="language-ruby">def run(*args)
+	@logger.info &quot;Starting Async::DNS server (v#{Async::DNS::VERSION})...&quot;
+	
+	Async::Reactor.run do |task|
+		fire(:setup)
+		
+		Async::IO::Endpoint.each(@endpoints) do |endpoint|
+			task.async do
+				endpoint.bind do |socket|
+					case socket.type
+					when Socket::SOCK_DGRAM
+						@logger.info &quot;&lt;&gt; Listening for datagrams on #{socket.local_address.inspect}&quot;
+						DatagramHandler.new(self, socket).run
+					when Socket::SOCK_STREAM
+						@logger.info &quot;&lt;&gt; Listening for connections on #{socket.local_address.inspect}&quot;
+						StreamHandler.new(self, socket).run
+					else
+						raise ArgumentError.new(&quot;Don't know how to handle #{address}&quot;)
+					end
+				end
+			end
+		end
+		
+		fire(:start)
+	end
+end</code></pre>
+					</details></section>	</section>
+
+				
+			<footer>Documentation generated by <a href="https://github.com/socketry/utopia-project">Utopia::Project</a>.</footer>
+		</main>
+	</body>
+</html>

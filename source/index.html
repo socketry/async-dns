@@ -48,52 +48,26 @@
 					
 					
 					<ul class="index"><li>
-					<a href="DNS/Server/index.html"><code class="language-ruby">class Server</code></a>
+					<a href="DNS/GenericHandler/index.html"><code class="language-ruby">class GenericHandler</code></a>
 					
 					
-					<ul class="index"><li>
-					<a href="DNS/Server/index.html#DNS%3A%3AServer%3A%3ADEFAULT_ENDPOINTS"><code class="language-ruby">DEFAULT_ENDPOINTS = [[:udp, &quot;0.0.0.0&quot;, 53], [:tcp, &quot;0.0.0.0&quot;, 53]]</code></a>
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/DatagramHandler/index.html"><code class="language-ruby">class DatagramHandler &lt; GenericHandler</code></a>
 					
-						<p>The default server interfaces</p>
+						<p>Handling incoming UDP requests, which are single data packets, and pass them on to the given server.</p>
+
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/StreamHandler/index.html"><code class="language-ruby">class StreamHandler &lt; GenericHandler</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/index.html#DNS.chunked"><code class="language-ruby">def self.chunked(string, chunk_size = 255)</code></a>
+					
+						<p>Produces an array of arrays of binary data with each sub-array a maximum of chunk_size bytes.</p>
 
 					
 									</li><li>
-					<a href="DNS/Server/index.html#DNS%3A%3AServer%23initialize"><code class="language-ruby">def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)</code></a>
-					
-						<p>Instantiate a server with a block</p>
-
-					
-									</li><li>
-					<a href="DNS/Server/index.html#DNS%3A%3AServer%23origin"><code class="language-ruby">attr_accessor :origin</code></a>
-					
-						<p>Records are relative to this origin:</p>
-
-					
-									</li><li>
-					<a href="DNS/Server/index.html#DNS%3A%3AServer%23fire"><code class="language-ruby">def fire(event_name)</code></a>
-					
-						<p>Fire the named event as part of running the server.</p>
-
-					
-									</li><li>
-					<a href="DNS/Server/index.html#DNS%3A%3AServer%23process"><code class="language-ruby">def process(name, resource_class, transaction)</code></a>
-					
-						<p>Give a name and a record type, try to match a rule and use it for processing the given arguments.</p>
-
-					
-									</li><li>
-					<a href="DNS/Server/index.html#DNS%3A%3AServer%23process_query"><code class="language-ruby">def process_query(query, options = {}, &amp;block)</code></a>
-					
-						<p>Process an incoming DNS message. Returns a serialized message to be sent back to the client.</p>
-
-					
-									</li><li>
-					<a href="DNS/Server/index.html#DNS%3A%3AServer%23run"><code class="language-ruby">def run(*args)</code></a>
-					
-						<p>Setup all specified interfaces and begin accepting incoming connections.</p>
-
-					
-									</li></ul>				</li><li>
 					<a href="DNS/Transaction/index.html"><code class="language-ruby">class Transaction</code></a>
 					
 						<p>This class provides all details of a single DNS question and response. This is used by the DSL to provide DNS related functionality.</p>
@@ -200,6 +174,30 @@
 
 					
 									</li></ul>				</li><li>
+					<a href="DNS/System/index.html"><code class="language-ruby">module System</code></a>
+					
+						<p>This module encapsulates system dependent name lookup functionality.</p>
+
+					
+					<ul class="index"><li>
+					<a href="DNS/System/Hosts/index.html"><code class="language-ruby">class Hosts</code></a>
+					
+						<p>This code is very experimental</p>
+
+					
+					<ul class="index"><li>
+					<a href="DNS/System/Hosts/index.html#DNS%3A%3ASystem%3A%3AHosts%23call"><code class="language-ruby">def call(name)</code></a>
+					
+						<p>This is used to match names against the list of known hosts:</p>
+
+					
+									</li></ul>				</li><li>
+					<a href="DNS/System/index.html#DNS%3A%3ASystem.nameservers"><code class="language-ruby">def self.nameservers</code></a>
+					
+						<p>Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with. There is no equivalent facility to use the <code>hosts</code> file at present.</p>
+
+					
+									</li></ul>				</li><li>
 					<a href="DNS/InvalidProtocolError/index.html"><code class="language-ruby">class InvalidProtocolError &lt; StandardError</code></a>
 					
 					
@@ -276,50 +274,64 @@
 
 					
 					<ul class="index"></ul>				</li></ul>				</li><li>
-					<a href="DNS/index.html#DNS.chunked"><code class="language-ruby">def self.chunked(string, chunk_size = 255)</code></a>
+					<a href="DNS/Replace/index.html"><code class="language-ruby">module Replace</code></a>
 					
-						<p>Produces an array of arrays of binary data with each sub-array a maximum of chunk_size bytes.</p>
+					
+					<ul class="index"><li>
+					<a href="http://localhost:35775/source/DNS/Replace/(self)/index"><code class="language-ruby">class &lt;&lt; (self)</code></a>
+					
+					
+					<ul class="index"></ul>				</li></ul>				</li><li>
+					<a href="http://localhost:35775/source/DNS/(const%20nil%20:IPSocket)/index"><code class="language-ruby">class &lt;&lt; (const nil :IPSocket)</code></a>
+					
+					
+					<ul class="index"></ul>				</li><li>
+					<a href="DNS/Server/index.html"><code class="language-ruby">class Server</code></a>
+					
+					
+					<ul class="index"><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%3A%3ADEFAULT_ENDPOINTS"><code class="language-ruby">DEFAULT_ENDPOINTS = [[:udp, &quot;0.0.0.0&quot;, 53], [:tcp, &quot;0.0.0.0&quot;, 53]]</code></a>
+					
+						<p>The default server interfaces</p>
 
 					
 									</li><li>
-					<a href="DNS/System/index.html"><code class="language-ruby">module System</code></a>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23initialize"><code class="language-ruby">def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)</code></a>
 					
-						<p>This module encapsulates system dependent name lookup functionality.</p>
+						<p>Instantiate a server with a block</p>
 
 					
-					<ul class="index"><li>
-					<a href="DNS/System/Hosts/index.html"><code class="language-ruby">class Hosts</code></a>
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23origin"><code class="language-ruby">attr_accessor :origin</code></a>
 					
-						<p>This code is very experimental</p>
+						<p>Records are relative to this origin:</p>
 
 					
-					<ul class="index"><li>
-					<a href="DNS/System/Hosts/index.html#DNS%3A%3ASystem%3A%3AHosts%23call"><code class="language-ruby">def call(name)</code></a>
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23fire"><code class="language-ruby">def fire(event_name)</code></a>
 					
-						<p>This is used to match names against the list of known hosts:</p>
+						<p>Fire the named event as part of running the server.</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23process"><code class="language-ruby">def process(name, resource_class, transaction)</code></a>
+					
+						<p>Give a name and a record type, try to match a rule and use it for processing the given arguments.</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23process_query"><code class="language-ruby">def process_query(query, options = {}, &amp;block)</code></a>
+					
+						<p>Process an incoming DNS message. Returns a serialized message to be sent back to the client.</p>
+
+					
+									</li><li>
+					<a href="DNS/Server/index.html#DNS%3A%3AServer%23run"><code class="language-ruby">def run(*args)</code></a>
+					
+						<p>Setup all specified interfaces and begin accepting incoming connections.</p>
 
 					
 									</li></ul>				</li><li>
-					<a href="DNS/System/index.html#DNS%3A%3ASystem.nameservers"><code class="language-ruby">def self.nameservers</code></a>
-					
-						<p>Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with. There is no equivalent facility to use the <code>hosts</code> file at present.</p>
-
-					
-									</li></ul>				</li><li>
-					<a href="DNS/GenericHandler/index.html"><code class="language-ruby">class GenericHandler</code></a>
-					
-					
-					<ul class="index"></ul>				</li><li>
-					<a href="DNS/DatagramHandler/index.html"><code class="language-ruby">class DatagramHandler &lt; GenericHandler</code></a>
-					
-						<p>Handling incoming UDP requests, which are single data packets, and pass them on to the given server.</p>
-
-					
-					<ul class="index"></ul>				</li><li>
-					<a href="DNS/StreamHandler/index.html"><code class="language-ruby">class StreamHandler &lt; GenericHandler</code></a>
-					
-					
-					<ul class="index"></ul>				</li><li>
 					<a href="DNS/index.html#DNS%3A%3AMessage"><code class="language-ruby">Message = ::Resolv::DNS::Message</code></a>
 					
 						<p>The DNS message container.</p>
@@ -331,19 +343,7 @@
 						<p>Decodes binary data into a <a href="DNS/index.html#DNS%3A%3AMessage" title="Message"><code class="language-ruby">Message = ::Resolv::DNS::Message</code></a>.</p>
 
 					
-									</li><li>
-					<a href="DNS/Replace/index.html"><code class="language-ruby">module Replace</code></a>
-					
-					
-					<ul class="index"><li>
-					<a href="http://localhost:38905/source/DNS/Replace/(self)/index"><code class="language-ruby">class &lt;&lt; (self)</code></a>
-					
-					
-					<ul class="index"></ul>				</li></ul>				</li><li>
-					<a href="http://localhost:38905/source/DNS/(const%20nil%20:IPSocket)/index"><code class="language-ruby">class &lt;&lt; (const nil :IPSocket)</code></a>
-					
-					
-					<ul class="index"></ul>				</li></ul>				</li><li>
+									</li></ul>				</li><li>
 					<a href="Resolv/index.html"><code class="language-ruby">class Resolv</code></a>
 					
 					

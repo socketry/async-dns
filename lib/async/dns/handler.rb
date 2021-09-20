@@ -59,7 +59,7 @@ module Async::DNS
 				
 				return @server.process_query(query, options)
 			rescue StandardError => error
-				@logger.error(self, error)
+				@logger.error(self) { error }
 				
 				return error_response(query)
 			end

@@ -1,4 +1,6 @@
 
+* {box-sizing: border-box;}
+
 html {
 	font-family: "PT Sans", Verdana, Helvetica, Arial, sans-serif;
 	font-size: 16px;
@@ -135,6 +137,11 @@ h1, h2, h3, h4, h5, h6, p, pre, ul, dl, ol {
 	margin: 1rem;
 }
 
+div.giscus {
+	margin: 1rem 0;
+	padding: 0 1rem;
+}
+
 pre {
 	margin: 2rem 1rem;
 }
@@ -258,4 +265,50 @@ table thead {
 
 table tr:hover {
 	background-color: var(--header-color);
+}
+
+ul.pragmas {
+	margin: 0 1rem;
+	padding: 0;
+	
+	font-size: 80%;
+}
+
+ul.pragmas.inline {
+	display: inline;
+}
+
+ul.pragmas li {
+	list-style: none;
+	
+	border: 1px solid #ccf;
+	border-radius: 0.5em;
+	
+	box-shadow: 0 0 2px #eee;
+	padding: 0.1rem 0.2rem;
+	
+	display: inline-block;
+}
+
+ul.pragmas li + li {
+	margin-left: 0.5rem;
+}
+
+ul.pragmas li.public {
+	border-color: #8CFF00;
+	box-shadow: 0 0 0.3rem #8CFF00;
+	color: #8CFF00;
+}
+
+ul.pragmas li.private,
+ul.pragmas li.deprecated {
+	border-color: #FF8C00;
+	box-shadow: 0 0 0.3rem #FF8C00;
+	color: #FF8C00;
+}
+
+ul.pragmas li.asynchronous {
+	border-color: #8C00FF;
+	box-shadow: 0 0 0.3rem #8C00FF;
+	color: #8C00FF;
 }

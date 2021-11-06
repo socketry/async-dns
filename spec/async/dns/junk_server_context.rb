@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 RSpec.shared_context "Junk UDP Server" do
-	let(:server_endpoint) {Async::IO::Endpoint.udp('0.0.0.0', 6060, reuse_port: true)}
+	let!(:server_endpoint) {Async::IO::Endpoint.udp('0.0.0.0', 6060, reuse_port: true)}
 	
 	let!(:server_task) do
 		reactor.async do
@@ -42,7 +42,7 @@ RSpec.shared_context "Junk UDP Server" do
 end
 
 RSpec.shared_context "Junk TCP Server" do
-	let(:server_endpoint) {Async::IO::Endpoint.tcp('0.0.0.0', 6060, reuse_port: true)}
+	let!(:server_endpoint) {Async::IO::Endpoint.tcp('0.0.0.0', 6060, reuse_port: true)}
 	
 	let!(:server_task) do
 		reactor.async do

@@ -62,7 +62,7 @@ module Async::DNS::SlowServerSpec
 			
 			end_time = Time.now
 			
-			expect(end_time - start_time).to be_within(0.1).of(2.0)
+			expect(end_time - start_time).to be_within(1.0).of(2.0)
 		end
 	
 		it "times out after 1 second" do
@@ -77,7 +77,7 @@ module Async::DNS::SlowServerSpec
 			
 			end_time = Time.now
 			
-			expect(end_time - start_time).to be_within(0.1).of(1.0)
+			expect(end_time - start_time).to be_within(0.5).of(1.0)
 		end
 	
 		it "gets no answer immediately" do

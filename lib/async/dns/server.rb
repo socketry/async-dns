@@ -41,15 +41,11 @@ module Async::DNS
 			@origin = origin
 			@logger = logger
 		end
-
+		
 		# Records are relative to this origin:
 		attr_accessor :origin
-
+		
 		attr_accessor :logger
-
-		# Fire the named event as part of running the server.
-		def fire(event_name)
-		end
 		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.
 		def process(name, resource_class, transaction)
@@ -99,12 +95,10 @@ module Async::DNS
 		end
 		
 		# Setup all specified interfaces and begin accepting incoming connections.
-		def run(*args)
+		def run(ready: nil)
 			@logger.info "Starting Async::DNS server (v#{Async::DNS::VERSION})..."
 			
-			Async::Reactor.run do |task|
-				fire(:setup)
-				
+			Async do |task|
 				Async::IO::Endpoint.each(@endpoints) do |endpoint|
 					task.async do
 						endpoint.bind do |socket|
@@ -122,9 +116,8 @@ module Async::DNS
 					end
 				end
 				
-				fire(:start)
+				ready&.signal
 			end
 		end
-		
 	end
 end

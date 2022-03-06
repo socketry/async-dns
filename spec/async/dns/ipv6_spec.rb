@@ -26,6 +26,26 @@ require 'async/dns/system'
 module Async::DNS::IPv6Spec
 	IN = Resolv::DNS::Resource::IN
 	
+	class Trigger
+		def initialize(condition = Async::Condition.new)
+			@triggered = false
+			@condition = condition
+		end
+		
+		def signal
+			unless @triggered
+				@triggered = true
+				@condition.signal
+			end
+		end
+		
+		def wait
+			unless @triggered
+				@condition.wait
+			end
+		end
+	end
+	
 	class TestServer < Async::DNS::Server
 		def process(name, resource_class, transaction)
 			@resolver ||= Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
@@ -39,9 +59,11 @@ module Async::DNS::IPv6Spec
 		
 		let(:server_interfaces) {[[:tcp, '::', 2004]]}
 		let(:server) {TestServer.new(server_interfaces)}
+		let(:trigger) {Trigger.new}
 		
 		it "should connect to the server using TCP via IPv6" do
-			task = server.run
+			task = server.run(ready: trigger)
+			trigger.wait
 			
 			resolver = Async::DNS::Resolver.new([[:tcp, '::1', 2004]])
 			
@@ -60,9 +82,11 @@ module Async::DNS::IPv6Spec
 		
 		let(:server_interfaces) {[[:udp, '::', 2006]]}
 		let(:server) {TestServer.new(server_interfaces)}
+		let(:trigger) {Trigger.new}
 		
 		it "should connect to the server using UDP via IPv6" do
-			task = server.run
+			task = server.run(ready: trigger)
+			trigger.wait
 			
 			resolver = Async::DNS::Resolver.new([[:udp, '::1', 2006]])
 			

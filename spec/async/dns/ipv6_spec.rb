@@ -23,80 +23,56 @@
 require 'async/dns'
 require 'async/dns/system'
 
-module Async::DNS::IPv6Spec
-	IN = Resolv::DNS::Resource::IN
-	
-	class Trigger
-		def initialize(condition = Async::Condition.new)
-			@triggered = false
-			@condition = condition
-		end
+require 'async/io/shared_endpoint'
+
+class IPV6TestServer < Async::DNS::Server
+	def process(name, resource_class, transaction)
+		@resolver ||= Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 		
-		def signal
-			unless @triggered
-				@triggered = true
-				@condition.signal
-			end
-		end
-		
-		def wait
-			unless @triggered
-				@condition.wait
-			end
-		end
+		transaction.passthrough!(@resolver)
 	end
+end
+
+describe Async::DNS::StreamHandler do
+	include_context Async::RSpec::Reactor
 	
-	class TestServer < Async::DNS::Server
-		def process(name, resource_class, transaction)
-			@resolver ||= Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-			
-			transaction.passthrough!(@resolver)
-		end
+	let(:endpoint) {Async::IO::Endpoint.tcp('::', 2004)}
+	
+	it "should connect to the server using TCP via IPv6" do
+		server_endpoint = Async::IO::SharedEndpoint.bound(endpoint)
+		server = IPV6TestServer.new([server_endpoint])
+		task = server.run
+		
+		resolver = Async::DNS::Resolver.new([[:tcp, '::1', 2004]])
+		
+		response = resolver.query('google.com')
+		
+		expect(response.class).to be == Async::DNS::Message
+		expect(response.rcode).to be == 0
+		expect(response.answer).to_not be_empty
+		
+		task.stop
 	end
+end
+
+describe Async::DNS::DatagramHandler do
+	include_context Async::RSpec::Reactor
 	
-	describe Async::DNS::StreamHandler do
-		include_context Async::RSpec::Reactor
-		
-		let(:server_interfaces) {[[:tcp, '::', 2004]]}
-		let(:server) {TestServer.new(server_interfaces)}
-		let(:trigger) {Trigger.new}
-		
-		it "should connect to the server using TCP via IPv6" do
-			task = server.run(ready: trigger)
-			trigger.wait
-			
-			resolver = Async::DNS::Resolver.new([[:tcp, '::1', 2004]])
-			
-			response = resolver.query('google.com')
-			
-			expect(response.class).to be == Async::DNS::Message
-			expect(response.rcode).to be == 0
-			expect(response.answer).to_not be_empty
-			
-			task.stop
-		end
-	end
+	let(:endpoint) {Async::IO::Endpoint.udp('::', 2006)}
 	
-	describe Async::DNS::DatagramHandler do
-		include_context Async::RSpec::Reactor
+	it "should connect to the server using UDP via IPv6" do
+		server_endpoint = Async::IO::SharedEndpoint.bound(endpoint)
+		server = IPV6TestServer.new([server_endpoint])
+		task = server.run
 		
-		let(:server_interfaces) {[[:udp, '::', 2006]]}
-		let(:server) {TestServer.new(server_interfaces)}
-		let(:trigger) {Trigger.new}
+		resolver = Async::DNS::Resolver.new([[:udp, '::1', 2006]])
 		
-		it "should connect to the server using UDP via IPv6" do
-			task = server.run(ready: trigger)
-			trigger.wait
-			
-			resolver = Async::DNS::Resolver.new([[:udp, '::1', 2006]])
-			
-			response = resolver.query('google.com')
-			
-			expect(response.class).to be == Async::DNS::Message
-			expect(response.rcode).to be == 0
-			expect(response.answer).to_not be_empty
-			
-			task.stop
-		end
+		response = resolver.query('google.com')
+		
+		expect(response.class).to be == Async::DNS::Message
+		expect(response.rcode).to be == 0
+		expect(response.answer).to_not be_empty
+		
+		task.stop
 	end
 end

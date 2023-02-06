@@ -153,7 +153,7 @@ module Async::DNS
 			end
 		end
 		
-		# This function indicates that there was a failure to resolve the given question. The single argument must be an integer error code, typically given by the constants in {Resolv::DNS::RCode}.
+		# This function indicates that there was a failure to resolve the given question. The single argument must be an integer error code, typically given by the constants in `Resolv::DNS::RCode`.
 		#
 		# The easiest way to use this function it to simply supply a symbol. Here is a list of the most commonly used ones:
 		#

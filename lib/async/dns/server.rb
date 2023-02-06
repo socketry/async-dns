@@ -24,30 +24,55 @@ require 'async/io'
 require_relative 'transaction'
 
 module Async::DNS
+	#
+	# Base class for defining asynchronous DNS servers.
+	#
+	# ## Example
+	#
+	#     require 'async/dns'
+	#     
+	#     class TestServer < Async::DNS::Server
+	#       def process(name, resource_class, transaction)
+	#         @resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
+	#     
+	#         transaction.passthrough!(@resolver)
+	#       end
+	#     end
+	#     
+	#     server = TestServer.new([[:udp, '127.0.0.1', 2346]])
+	#     server.run
+	#
 	class Server
-		# The default server interfaces
+		# The default server interfaces.
 		DEFAULT_ENDPOINTS = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
 		
-		# Instantiate a server with a block
+		# Instantiate a server with a block.
 		#
-		#	server = Server.new do
-		#		match(/server.mydomain.com/, IN::A) do |transaction|
-		#			transaction.respond!("1.2.3.4")
-		#		end
-		#	end
-		#
+		# @param endpoints [Array<(Symbol, String, Integer)>]  The endpoints to listen on.
+		# @param origin [String] The default origin to resolve domains within.
+		# @param logger [Console::Logger] The logger to use.
 		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)
 			@endpoints = endpoints
 			@origin = origin
 			@logger = logger
 		end
 		
-		# Records are relative to this origin:
+		# Records are relative to this origin.
+		#
+		# @return [String]
 		attr_accessor :origin
 		
+		# The logger to use.
+		#
+		# @return [Console::Logger]
 		attr_accessor :logger
 		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.
+		#
+		# @param name [String] The resource name.
+		# @param resource_class [Class<Resolv::DNS::Resource>] The requested resource class.
+		# @param transaction [Transaction] The transaction object.
+		# @abstract
 		def process(name, resource_class, transaction)
 			raise NotImplementedError.new
 		end

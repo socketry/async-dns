@@ -25,6 +25,8 @@ require_relative 'transaction'
 
 module Async::DNS
 	#
+	# Base class for defining asynchronous DNS servers.
+	#
 	# ## Example
 	#
 	#     require 'async/dns'

@@ -47,6 +47,10 @@ module Async::DNS
 		DEFAULT_ENDPOINTS = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
 		
 		# Instantiate a server with a block
+		#
+		# @param endpoints [Array<(Symbol, String, Integer)>]  The endpoints to listen on.
+		# @param origin [String] The default origin to resolve domains within.
+		# @param logger [Console::Logger] The logger to use.
 		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)
 			@endpoints = endpoints
 			@origin = origin
@@ -54,12 +58,20 @@ module Async::DNS
 		end
 		
 		# Records are relative to this origin:
+		#
+		# @return [String]
 		attr_accessor :origin
 		
+		# The logger to use.
+		#
+		# @return [Console::Logger]
 		attr_accessor :logger
 		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.
 		#
+		# @param name [String] The resource name.
+		# @param resource_class [Class<Resolv::DNS::Resource>] The requested resource class.
+		# @param transaction [Transaction] The transaction object.
 		# @abstract
 		def process(name, resource_class, transaction)
 			raise NotImplementedError.new

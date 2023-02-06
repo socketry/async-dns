@@ -43,10 +43,10 @@ module Async::DNS
 	#     server.run
 	#
 	class Server
-		# The default server interfaces
+		# The default server interfaces.
 		DEFAULT_ENDPOINTS = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
 		
-		# Instantiate a server with a block
+		# Instantiate a server with a block.
 		#
 		# @param endpoints [Array<(Symbol, String, Integer)>]  The endpoints to listen on.
 		# @param origin [String] The default origin to resolve domains within.
@@ -57,7 +57,7 @@ module Async::DNS
 			@logger = logger
 		end
 		
-		# Records are relative to this origin:
+		# Records are relative to this origin.
 		#
 		# @return [String]
 		attr_accessor :origin

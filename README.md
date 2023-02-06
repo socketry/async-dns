@@ -51,7 +51,6 @@ class TestServer < Async::DNS::Server
 end
 
 server = TestServer.new([[:udp, '127.0.0.1', 2346]])
-
 server.run
 ```
 

@@ -24,18 +24,27 @@ require 'async/io'
 require_relative 'transaction'
 
 module Async::DNS
+	#
+	# ## Example
+	#
+	#     require 'async/dns'
+	#     
+	#     class TestServer < Async::DNS::Server
+	#       def process(name, resource_class, transaction)
+	#         @resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
+	#     
+	#         transaction.passthrough!(@resolver)
+	#       end
+	#     end
+	#     
+	#     server = TestServer.new([[:udp, '127.0.0.1', 2346]])
+	#     server.run
+	#
 	class Server
 		# The default server interfaces
 		DEFAULT_ENDPOINTS = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
 		
 		# Instantiate a server with a block
-		#
-		#	server = Server.new do
-		#		match(/server.mydomain.com/, IN::A) do |transaction|
-		#			transaction.respond!("1.2.3.4")
-		#		end
-		#	end
-		#
 		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)
 			@endpoints = endpoints
 			@origin = origin

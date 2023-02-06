@@ -59,6 +59,8 @@ module Async::DNS
 		attr_accessor :logger
 		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.
+		#
+		# @abstract
 		def process(name, resource_class, transaction)
 			raise NotImplementedError.new
 		end

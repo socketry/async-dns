@@ -118,7 +118,7 @@ module Async::DNS::TransactionSpec
 		end
 		
 		it "should return PTR record" do
-			transaction = Async::DNS::Transaction.new(server, query, "8.8.8.8.in-addr.arpa", IN::PTR, response)
+			transaction = Async::DNS::Transaction.new(server, query, "1.1.1.1.in-addr.arpa", IN::PTR, response)
 			
 			expect(transaction.response.answer.size).to be 0
 			

@@ -52,6 +52,8 @@ describe Async::DNS::StreamHandler do
 		expect(response.answer).to_not be_empty
 		
 		task.stop
+	ensure
+		server_endpoint.close
 	end
 end
 
@@ -74,5 +76,7 @@ describe Async::DNS::DatagramHandler do
 		expect(response.answer).to_not be_empty
 		
 		task.stop
+	ensure
+		server_endpoint.close
 	end
 end

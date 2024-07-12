@@ -26,13 +26,23 @@ Here is a simple example showing how to use the resolver:
 
 ``` ruby
 Async::Reactor.run do
-	resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
+	resolver = Async::DNS::Resolver.new()
 
 	addresses = resolver.addresses_for("www.google.com.")
 
 	puts addresses.inspect
 end
 # [#<Resolv::IPv4 202.124.127.240>, #<Resolv::IPv4 202.124.127.216>, #<Resolv::IPv4 202.124.127.223>, #<Resolv::IPv4 202.124.127.227>, #<Resolv::IPv4 202.124.127.234>, #<Resolv::IPv4 202.124.127.230>, #<Resolv::IPv4 202.124.127.208>, #<Resolv::IPv4 202.124.127.249>, #<Resolv::IPv4 202.124.127.219>, #<Resolv::IPv4 202.124.127.218>, #<Resolv::IPv4 202.124.127.212>, #<Resolv::IPv4 202.124.127.241>, #<Resolv::IPv4 202.124.127.238>, #<Resolv::IPv4 202.124.127.245>, #<Resolv::IPv4 202.124.127.251>, #<Resolv::IPv4 202.124.127.229>]
+```
+
+You can also specify custom DNS servers:
+
+``` ruby
+resolver = Async::DNS::Resolver.new(Async::DNS::System.standard_connections(['8.8.8.8']))
+
+# or
+
+resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 ```
 
 ### Server

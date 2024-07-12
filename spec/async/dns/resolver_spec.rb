@@ -101,4 +101,13 @@ RSpec.describe Async::DNS::Resolver do
 		
 		expect(addresses.size).to be > 0
 	end
+
+	it "should default to system resolvers" do
+		resolver = Async::DNS::Resolver.new()
+
+		response = resolver.query('google.com')
+
+		expect(response.class).to be == Async::DNS::Message
+		expect(response.answer.size).to be > 0
+	end
 end

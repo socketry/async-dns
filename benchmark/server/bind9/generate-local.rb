@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Released under the MIT License.
+# Copyright, 2015-2024, by Samuel Williams.
 
 File.open("local.zone", "w") do |f|
 	f.write(DATA.read)

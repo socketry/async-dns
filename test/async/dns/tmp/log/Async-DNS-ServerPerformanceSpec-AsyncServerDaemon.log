@@ -1,0 +1,688 @@
+=== Log Marked @ 2017-05-25 23:45:50 +1200 [6423] ===
+Starting DNS server...
+I, [2017-05-25T23:45:50.718114 #6426]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-05-25T23:45:50.718532 #6426]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Address specification=[:udp, "0.0.0.0", 5300], options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-05-25 23:45:56 +1200 ===
+=== Log Marked @ 2017-05-26 00:23:06 +1200 [6835] ===
+Starting DNS server...
+I, [2017-05-26T00:23:06.550771 #6838]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-05-26T00:23:06.551353 #6838]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Address specification=[:udp, "0.0.0.0", 5300], options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-05-26 00:23:14 +1200 ===
+=== Log Marked @ 2017-05-26 00:23:56 +1200 [6842] ===
+Starting DNS server...
+I, [2017-05-26T00:23:56.077981 #6845]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-05-26T00:23:56.078486 #6845]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Address specification=[:udp, "0.0.0.0", 5300], options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-05-26 00:24:03 +1200 ===
+=== Log Marked @ 2017-05-26 00:24:19 +1200 [6849] ===
+Starting DNS server...
+I, [2017-05-26T00:24:19.480095 #6852]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-05-26T00:24:19.480615 #6852]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Address specification=[:udp, "0.0.0.0", 5300], options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-05-26 00:24:26 +1200 ===
+=== Log Marked @ 2017-05-26 00:24:51 +1200 [6856] ===
+Starting DNS server...
+I, [2017-05-26T00:24:51.039153 #6859]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-05-26T00:24:51.039523 #6859]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Address specification=[:udp, "0.0.0.0", 5300], options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-05-26 00:24:58 +1200 ===
+=== Log Marked @ 2017-07-30 14:34:35 +1200 [4104] ===
+Starting DNS server...
+=== Daemon Exception Backtrace @ 2017-07-30 14:34:35 +1200 ===
+ArgumentError: unknown keyword: listen
+/Users/samuel/Documents/Programming/socketry/async-dns/lib/async/dns/server.rb:40:in `initialize'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:30:in `initialize'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:82:in `new'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:82:in `startup'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon.rb:154:in `spawn'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:84:in `block in spawn'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:67:in `fork'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:67:in `spawn'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:113:in `start'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon.rb:185:in `start'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:121:in `block (3 levels) in <module:ServerPerformanceSpec>'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:350:in `instance_exec'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:350:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:507:in `block in run_owned_hooks_for'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:506:in `each'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:506:in `run_owned_hooks_for'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:459:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:536:in `block in run_before_context_hooks'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/memoized_helpers.rb:186:in `block in isolate_for_context_hook'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/memoized_helpers.rb:182:in `instance_exec'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/memoized_helpers.rb:182:in `isolate_for_context_hook'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:535:in `run_before_context_hooks'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:588:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:590:in `block in run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:590:in `map'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:590:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:118:in `block (3 levels) in run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:118:in `map'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:118:in `block (2 levels) in run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/configuration.rb:1894:in `with_suite_hooks'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:113:in `block in run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/reporter.rb:79:in `report'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:112:in `run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:87:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:71:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:45:in `invoke'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/exe/rspec:4:in `<top (required)>'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/rspec:22:in `load'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/rspec:22:in `<main>'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/ruby_executable_hooks:15:in `eval'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/ruby_executable_hooks:15:in `<main>'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2017-07-30 14:34:35 +1200 ===
+=== Log Marked @ 2017-07-30 14:55:11 +1200 [4188] ===
+Starting DNS server...
+=== Daemon Exception Backtrace @ 2017-07-30 14:55:11 +1200 ===
+ArgumentError: unknown keyword: listen
+/Users/samuel/Documents/Programming/socketry/async-dns/lib/async/dns/server.rb:40:in `initialize'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:30:in `initialize'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:82:in `new'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:82:in `startup'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon.rb:154:in `spawn'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:84:in `block in spawn'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:67:in `fork'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:67:in `spawn'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon/controller.rb:113:in `start'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/process-daemon-1.0.1/lib/process/daemon.rb:185:in `start'
+/Users/samuel/Documents/Programming/socketry/async-dns/spec/async/dns/server_performance_spec.rb:121:in `block (3 levels) in <module:ServerPerformanceSpec>'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:350:in `instance_exec'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:350:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:507:in `block in run_owned_hooks_for'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:506:in `each'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:506:in `run_owned_hooks_for'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/hooks.rb:459:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:536:in `block in run_before_context_hooks'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/memoized_helpers.rb:186:in `block in isolate_for_context_hook'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/memoized_helpers.rb:182:in `instance_exec'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/memoized_helpers.rb:182:in `isolate_for_context_hook'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:535:in `run_before_context_hooks'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:588:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:590:in `block in run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:590:in `map'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/example_group.rb:590:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:118:in `block (3 levels) in run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:118:in `map'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:118:in `block (2 levels) in run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/configuration.rb:1894:in `with_suite_hooks'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:113:in `block in run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/reporter.rb:79:in `report'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:112:in `run_specs'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:87:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:71:in `run'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/lib/rspec/core/runner.rb:45:in `invoke'
+/Users/samuel/.rvm/gems/ruby-2.4.0/gems/rspec-core-3.6.0/exe/rspec:4:in `<top (required)>'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/rspec:22:in `load'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/rspec:22:in `<main>'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/ruby_executable_hooks:15:in `eval'
+/Users/samuel/.rvm/gems/ruby-2.4.0/bin/ruby_executable_hooks:15:in `<main>'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2017-07-30 14:55:11 +1200 ===
+=== Log Marked @ 2017-07-30 14:55:40 +1200 [4218] ===
+Starting DNS server...
+I, [2017-07-30T14:55:40.240288 #4221]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-07-30T14:55:40.240631 #4221]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Endpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-07-30 14:55:40 +1200 ===
+=== Log Marked @ 2017-07-30 15:47:51 +1200 [4268] ===
+Starting DNS server...
+I, [2017-07-30T15:47:51.081394 #4271]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-07-30T15:47:51.081687 #4271]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Endpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-07-30 15:47:51 +1200 ===
+=== Log Marked @ 2017-07-30 15:49:20 +1200 [4292] ===
+Starting DNS server...
+I, [2017-07-30T15:49:20.280484 #4311]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-07-30T15:49:20.280830 #4311]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Endpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-07-30 15:49:20 +1200 ===
+=== Log Marked @ 2017-07-30 16:11:24 +1200 [4409] ===
+Starting DNS server...
+I, [2017-07-30T16:11:24.023518 #4412]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-07-30T16:11:24.023880 #4412]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Endpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-07-30 16:11:24 +1200 ===
+=== Log Marked @ 2017-07-30 16:21:49 +1200 [4458] ===
+Starting DNS server...
+I, [2017-07-30T16:21:49.253305 #4461]  INFO -- : Starting Async::DNS server (v0.12.0)...
+I, [2017-07-30T16:21:49.253700 #4461]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Endpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2017-07-30 16:21:55 +1200 ===
+=== Log Marked @ 2018-02-07 17:01:37 +1300 [26523] ===
+Starting DNS server...
+I, [2018-02-07T17:01:37.085530 #26531]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T17:01:37.086119 #26531]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 17:01:42 +1300 ===
+=== Log Marked @ 2018-02-07 17:02:35 +1300 [26549] ===
+Starting DNS server...
+I, [2018-02-07T17:02:35.800097 #26584]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T17:02:35.800669 #26584]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 17:02:41 +1300 ===
+=== Log Marked @ 2018-02-07 17:21:12 +1300 [27020] ===
+Starting DNS server...
+I, [2018-02-07T17:21:12.738911 #27026]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T17:21:12.739484 #27026]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 17:21:17 +1300 ===
+=== Log Marked @ 2018-02-07 19:31:56 +1300 [27948] ===
+Starting DNS server...
+I, [2018-02-07T19:31:56.224577 #27956]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T19:31:56.225068 #27956]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 19:32:01 +1300 ===
+=== Log Marked @ 2018-02-07 20:03:01 +1300 [28156] ===
+Starting DNS server...
+I, [2018-02-07T20:03:01.504927 #28168]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T20:03:01.505429 #28168]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 20:03:06 +1300 ===
+=== Log Marked @ 2018-02-07 20:09:55 +1300 [28238] ===
+Starting DNS server...
+I, [2018-02-07T20:09:55.779295 #28248]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T20:09:55.779835 #28248]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Endpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 20:10:00 +1300 ===
+=== Log Marked @ 2018-02-07 20:11:09 +1300 [28272] ===
+Starting DNS server...
+I, [2018-02-07T20:11:09.660555 #28277]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T20:11:09.661292 #28277]  INFO -- : <> Listening for datagrams on #<struct Async::IO::Endpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 20:11:14 +1300 ===
+=== Log Marked @ 2018-02-07 20:18:18 +1300 [28352] ===
+Starting DNS server...
+I, [2018-02-07T20:18:18.362676 #28366]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T20:18:18.363238 #28366]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 20:18:23 +1300 ===
+=== Log Marked @ 2018-02-07 20:29:16 +1300 [28697] ===
+Starting DNS server...
+I, [2018-02-07T20:29:16.717548 #28703]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T20:29:16.718098 #28703]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 20:29:21 +1300 ===
+=== Log Marked @ 2018-02-07 20:31:38 +1300 [28746] ===
+Starting DNS server...
+I, [2018-02-07T20:31:38.590578 #28753]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T20:31:38.591165 #28753]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 20:31:44 +1300 ===
+=== Log Marked @ 2018-02-07 20:49:45 +1300 [29076] ===
+Starting DNS server...
+I, [2018-02-07T20:49:45.095731 #29095]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-02-07T20:49:45.096278 #29095]  INFO -- : <> Listening for datagrams on #<struct Async::IO::AddressEndpoint specification=#<Addrinfo: 0.0.0.0:5300 UDP>, options={}>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-02-07 20:49:49 +1300 ===
+=== Log Marked @ 2018-03-15 03:28:12 +1300 [3552] ===
+Starting DNS server...
+I, [2018-03-15T03:28:12.157238 #3555]  INFO -- : Starting Async::DNS server (v1.0.0)...
+=== Daemon Exception Backtrace @ 2018-03-15 03:28:12 +1300 ===
+NoMethodError: undefined method `socket_type' for #<Async::IO::HostEndpoint:0x00007fa5b3922b28>
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:128:in `block in setup_handlers'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:66:in `block in each'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:62:in `each'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:62:in `each'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:127:in `setup_handlers'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:109:in `run'
+/Users/samuel/Documents/socketry/async-dns/spec/async/dns/server_performance_spec.rb:85:in `block in startup'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-1.2.2/lib/async/task.rb:74:in `block in initialize'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2018-03-15 03:28:12 +1300 ===
+=== Log Marked @ 2018-03-15 03:31:33 +1300 [3644] ===
+Starting DNS server...
+I, [2018-03-15T03:31:33.748110 #3648]  INFO -- : Starting Async::DNS server (v1.0.0)...
+=== Daemon Exception Backtrace @ 2018-03-15 03:31:33 +1300 ===
+NoMethodError: undefined method `socket_type' for #<Async::IO::HostEndpoint:0x00007ff3f4c5d290>
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:128:in `block in setup_handlers'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:66:in `block in each'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:62:in `each'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:62:in `each'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:127:in `setup_handlers'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:109:in `run'
+/Users/samuel/Documents/socketry/async-dns/spec/async/dns/server_performance_spec.rb:85:in `block in startup'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-1.2.2/lib/async/task.rb:74:in `block in initialize'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2018-03-15 03:31:33 +1300 ===
+=== Log Marked @ 2018-03-15 03:36:33 +1300 [3756] ===
+Starting DNS server...
+I, [2018-03-15T03:36:33.413804 #3759]  INFO -- : Starting Async::DNS server (v1.0.0)...
+=== Daemon Exception Backtrace @ 2018-03-15 03:36:33 +1300 ===
+NoMethodError: undefined method `socktype' for #<Async::IO::Socket:0x00007ff0131d8390>
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:129:in `block (2 levels) in setup_handlers'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/socket.rb:151:in `bind'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:111:in `block (2 levels) in bind'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-1.2.2/lib/async/task.rb:74:in `block in initialize'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2018-03-15 03:36:33 +1300 ===
+=== Log Marked @ 2018-03-15 03:38:22 +1300 [3827] ===
+Starting DNS server...
+I, [2018-03-15T03:38:22.707239 #3830]  INFO -- : Starting Async::DNS server (v1.0.0)...
+=== Daemon Exception Backtrace @ 2018-03-15 03:38:22 +1300 ===
+NoMethodError: undefined method `socktype' for #<Async::IO::Socket:0x00007fc7ae4540e8>
+Did you mean?  socket_type
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:129:in `block (2 levels) in setup_handlers'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/socket.rb:155:in `bind'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:111:in `block (2 levels) in bind'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-1.2.2/lib/async/task.rb:74:in `block in initialize'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2018-03-15 03:38:22 +1300 ===
+=== Log Marked @ 2018-03-15 03:39:36 +1300 [3876] ===
+Starting DNS server...
+I, [2018-03-15T03:39:36.932399 #3880]  INFO -- : Starting Async::DNS server (v1.0.0)...
+=== Daemon Exception Backtrace @ 2018-03-15 03:39:36 +1300 ===
+NoMethodError: undefined method `local_addresss' for #<Async::IO::Socket:0x00007fb8d99c7dd8>
+Did you mean?  local_address
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/socket.rb:38:in `type'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:129:in `block (2 levels) in setup_handlers'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/socket.rb:155:in `bind'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/endpoint.rb:111:in `block (2 levels) in bind'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-1.2.2/lib/async/task.rb:74:in `block in initialize'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2018-03-15 03:39:36 +1300 ===
+=== Log Marked @ 2018-03-15 03:40:12 +1300 [3903] ===
+Starting DNS server...
+I, [2018-03-15T03:40:12.819248 #3908]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-03-15T03:40:12.819954 #3908]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+=== Daemon Exception Backtrace @ 2018-03-15 03:40:12 +1300 ===
+IOError: closed stream
+/Users/samuel/.rvm/rubies/ruby-2.5.0/lib/ruby/2.5.0/socket.rb:444:in `__recvmsg_nonblock'
+/Users/samuel/.rvm/rubies/ruby-2.5.0/lib/ruby/2.5.0/socket.rb:444:in `recvmsg_nonblock'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/generic.rb:99:in `block in async_send'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/generic.rb:105:in `async'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/generic.rb:98:in `async_send'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.3.0/lib/async/io/generic.rb:43:in `block in wrap_blocking_method'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:72:in `run'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:114:in `block (3 levels) in run'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-1.2.2/lib/async/task.rb:74:in `block in initialize'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2018-03-15 03:40:12 +1300 ===
+=== Log Marked @ 2018-03-15 03:52:12 +1300 [4040] ===
+Starting DNS server...
+I, [2018-03-15T03:52:12.382778 #4044]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-03-15T03:52:12.386740 #4044]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-15 03:52:16 +1300 ===
+=== Log Marked @ 2018-03-15 03:53:01 +1300 [4064] ===
+Starting DNS server...
+I, [2018-03-15T03:53:01.356639 #4071]  INFO -- : Starting Async::DNS server (v1.0.0)...
+I, [2018-03-15T03:53:01.358159 #4071]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-15 03:53:05 +1300 ===
+=== Log Marked @ 2018-03-16 20:18:13 +1300 [16691] ===
+Starting DNS server...
+I, [2018-03-16T20:18:13.663949 #16697]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-16T20:18:13.665247 #16697]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-16 20:18:19 +1300 ===
+=== Log Marked @ 2018-03-18 11:37:10 +1300 [41718] ===
+Starting DNS server...
+I, [2018-03-18T11:37:10.980140 #41727]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-18T11:37:10.980896 #41727]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-18 11:37:15 +1300 ===
+=== Log Marked @ 2018-03-21 20:27:43 +1300 [88630] ===
+Starting DNS server...
+I, [2018-03-21T20:27:43.679995 #88635]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-21T20:27:43.681452 #88635]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-21 20:27:50 +1300 ===
+=== Log Marked @ 2018-03-25 16:19:10 +1300 [1634] ===
+Starting DNS server...
+I, [2018-03-25T16:19:10.713117 #1639]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T16:19:10.713825 #1639]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 16:19:10 +1300 ===
+=== Log Marked @ 2018-03-25 16:39:57 +1300 [1964] ===
+Starting DNS server...
+I, [2018-03-25T16:39:57.433192 #1970]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T16:39:57.434071 #1970]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 16:40:01 +1300 ===
+=== Log Marked @ 2018-03-25 16:40:37 +1300 [1985] ===
+Starting DNS server...
+I, [2018-03-25T16:40:37.115930 #1991]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T16:40:37.116913 #1991]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 16:40:41 +1300 ===
+=== Log Marked @ 2018-03-25 16:41:23 +1300 [2008] ===
+Starting DNS server...
+I, [2018-03-25T16:41:23.403414 #2014]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T16:41:23.404420 #2014]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 16:41:27 +1300 ===
+=== Log Marked @ 2018-03-25 16:42:16 +1300 [2029] ===
+Starting DNS server...
+I, [2018-03-25T16:42:16.832930 #2039]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T16:42:16.833871 #2039]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 16:42:21 +1300 ===
+=== Log Marked @ 2018-03-25 16:43:29 +1300 [2065] ===
+Starting DNS server...
+I, [2018-03-25T16:43:29.760002 #2071]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T16:43:29.761061 #2071]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 16:43:33 +1300 ===
+=== Log Marked @ 2018-03-25 17:27:57 +1300 [2356] ===
+Starting DNS server...
+I, [2018-03-25T17:27:57.662662 #2368]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T17:27:57.663908 #2368]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 17:28:02 +1300 ===
+=== Log Marked @ 2018-03-25 17:30:33 +1300 [2399] ===
+Starting DNS server...
+I, [2018-03-25T17:30:33.293351 #2407]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-25T17:30:33.294562 #2407]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-25 17:30:37 +1300 ===
+=== Log Marked @ 2018-03-26 17:30:30 +1300 [7947] ===
+Starting DNS server...
+I, [2018-03-26T17:30:30.505226 #7950]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T17:30:30.506086 #7950]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 17:30:30 +1300 ===
+=== Log Marked @ 2018-03-26 17:31:11 +1300 [7966] ===
+Starting DNS server...
+I, [2018-03-26T17:31:11.465216 #7969]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T17:31:11.466110 #7969]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 17:31:11 +1300 ===
+=== Log Marked @ 2018-03-26 17:33:22 +1300 [8062] ===
+Starting DNS server...
+I, [2018-03-26T17:33:22.663463 #8067]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T17:33:22.664699 #8067]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 17:33:27 +1300 ===
+=== Log Marked @ 2018-03-26 17:38:59 +1300 [8204] ===
+Starting DNS server...
+I, [2018-03-26T17:38:59.392451 #8210]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T17:38:59.393278 #8210]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 17:39:03 +1300 ===
+=== Log Marked @ 2018-03-26 17:53:12 +1300 [8406] ===
+Starting DNS server...
+I, [2018-03-26T17:53:12.758868 #8414]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T17:53:12.759814 #8414]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 17:53:16 +1300 ===
+=== Log Marked @ 2018-03-26 17:55:27 +1300 [8517] ===
+Starting DNS server...
+I, [2018-03-26T17:55:27.591505 #8522]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T17:55:27.592715 #8522]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 17:55:32 +1300 ===
+=== Log Marked @ 2018-03-26 18:53:20 +1300 [9380] ===
+Starting DNS server...
+I, [2018-03-26T18:53:20.427185 #9386]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T18:53:20.428050 #9386]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 18:53:24 +1300 ===
+=== Log Marked @ 2018-03-26 19:40:50 +1300 [11440] ===
+Starting DNS server...
+I, [2018-03-26T19:40:50.865247 #11446]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T19:40:50.866975 #11446]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 19:40:55 +1300 ===
+=== Log Marked @ 2018-03-26 19:51:06 +1300 [11578] ===
+Starting DNS server...
+I, [2018-03-26T19:51:06.981615 #11585]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-26T19:51:06.982606 #11585]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-26 19:51:11 +1300 ===
+=== Log Marked @ 2018-03-29 01:07:32 +1300 [60716] ===
+Starting DNS server...
+I, [2018-03-29T01:07:32.669169 #60727]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-03-29T01:07:32.670307 #60727]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-03-29 01:07:36 +1300 ===
+=== Log Marked @ 2018-04-11 22:52:18 +1200 [49274] ===
+Starting DNS server...
+I, [2018-04-11T22:52:18.683561 #49281]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-04-11T22:52:18.684441 #49281]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-04-11 22:52:23 +1200 ===
+=== Log Marked @ 2018-04-11 22:56:53 +1200 [49528] ===
+Starting DNS server...
+I, [2018-04-11T22:56:53.499968 #49537]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-04-11T22:56:53.500964 #49537]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-04-11 22:56:58 +1200 ===
+=== Log Marked @ 2018-05-01 00:43:46 +1200 [43732] ===
+Starting DNS server...
+I, [2018-05-01T00:43:46.976498 #43735]  INFO -- : Starting Async::DNS server (v1.1.0)...
+=== Daemon Exception Backtrace @ 2018-05-01 00:43:46 +1200 ===
+NoMethodError: undefined method `udp' for Async::IO::Endpoint:Class
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.9.0/lib/async/io/endpoint.rb:48:in `try_convert'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.9.0/lib/async/io/endpoint.rb:65:in `block in each'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.9.0/lib/async/io/endpoint.rb:64:in `each'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-io-1.9.0/lib/async/io/endpoint.rb:64:in `each'
+/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:110:in `block in run'
+/Users/samuel/.rvm/gems/ruby-2.5.0/gems/async-1.8.0/lib/async/task.rb:74:in `block in initialize'
+=== Daemon Crashed ===
+=== Daemon Stopping @ 2018-05-01 00:43:46 +1200 ===
+=== Log Marked @ 2018-05-01 00:45:20 +1200 [43803] ===
+Starting DNS server...
+I, [2018-05-01T00:45:20.602716 #43811]  INFO -- : Starting Async::DNS server (v1.2.0)...
+I, [2018-05-01T00:45:20.604043 #43811]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-01 00:45:24 +1200 ===
+=== Log Marked @ 2018-05-01 01:01:34 +1200 [44075] ===
+Starting DNS server...
+I, [2018-05-01T01:01:34.234713 #44084]  INFO -- : Starting Async::DNS server (v1.1.1)...
+I, [2018-05-01T01:01:34.235633 #44084]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-01 01:01:38 +1200 ===
+=== Log Marked @ 2018-05-01 01:30:02 +1200 [44543] ===
+Starting DNS server...
+I, [2018-05-01T01:30:02.367362 #44559]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-05-01T01:30:02.368402 #44559]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-01 01:30:06 +1200 ===
+=== Log Marked @ 2018-05-01 02:22:37 +1200 [45485] ===
+Starting DNS server...
+I, [2018-05-01T02:22:37.707214 #45490]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-05-01T02:22:37.708048 #45490]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-01 02:22:42 +1200 ===
+=== Log Marked @ 2018-05-01 02:25:57 +1200 [45595] ===
+Starting DNS server...
+I, [2018-05-01T02:25:57.285081 #45600]  INFO -- : Starting Async::DNS server (v1.1.0)...
+I, [2018-05-01T02:25:57.286140 #45600]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-01 02:26:01 +1200 ===
+=== Log Marked @ 2018-05-03 00:38:58 +1200 [66630] ===
+Starting DNS server...
+I, [2018-05-03T00:38:58.711872 #66636]  INFO -- : Starting Async::DNS server (v1.1.1)...
+I, [2018-05-03T00:38:58.713314 #66636]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-03 00:39:03 +1200 ===
+=== Log Marked @ 2018-05-04 01:55:26 +1200 [82337] ===
+Starting DNS server...
+I, [2018-05-04T01:55:26.762837 #82342]  INFO -- : Starting Async::DNS server (v1.1.1)...
+I, [2018-05-04T01:55:26.764105 #82342]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-04 01:55:30 +1200 ===
+=== Log Marked @ 2018-05-18 00:06:43 +1200 [30425] ===
+Starting DNS server...
+I, [2018-05-18T00:06:43.276422 #30439]  INFO -- : Starting Async::DNS server (v1.2.0)...
+I, [2018-05-18T00:06:43.277289 #30439]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-05-18 00:06:47 +1200 ===
+=== Log Marked @ 2018-06-17 12:35:23 +1200 [49846] ===
+Starting DNS server...
+I, [2018-06-17T12:35:23.103560 #49853]  INFO -- : Starting Async::DNS server (v1.2.0)...
+I, [2018-06-17T12:35:23.104343 #49853]  INFO -- : <> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2018-06-17 12:35:27 +1200 ===
+=== Log Marked @ 2019-01-13 13:14:03 +1300 [30001] ===
+Starting DNS server...
+[36m12.42s: [1mStarting Async::DNS server (v1.2.0)...[0m
+[36m12.42s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+[36m12.64s: [1m<56108> Exception thrown while processing ![0m
+[36m12.64s: [1mArgumentError: wrong number of arguments (given 0, expected 1+)[0m
+[36m12.64s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/logger.rb:30:in `block (2 levels) in <class:Logger>'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:80:in `block in process_query'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:76:in `each'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:76:in `process_query'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:58:in `process_query'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:81:in `respond'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:75:in `block in run'[0m
+[36m12.64s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/task.rb:197:in `block in make_fiber'[0m
+[36m12.64s: [1m<> Error processing request: #<ArgumentError: wrong number of arguments (given 0, expected 1+)>![0m
+[36m12.64s: [1mArgumentError: wrong number of arguments (given 0, expected 1+)[0m
+[36m12.64s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/logger.rb:30:in `block (2 levels) in <class:Logger>'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:98:in `process_query'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:58:in `process_query'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:81:in `respond'[0m
+[36m12.64s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:75:in `block in run'[0m
+[36m12.64s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/task.rb:197:in `block in make_fiber'[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-13 13:14:13 +1300 ===
+=== Log Marked @ 2019-01-13 13:23:28 +1300 [30275] ===
+Starting DNS server...
+[36m 17.0s: [1mStarting Async::DNS server (v1.2.0)...[0m
+[36m17.01s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+[36m17.23s: [1m<45911> Exception thrown while processing ![0m
+[36m17.23s: [1mArgumentError: wrong number of arguments (given 0, expected 1+)[0m
+[36m17.23s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/logger.rb:30:in `block (2 levels) in <class:Logger>'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:80:in `block in process_query'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:76:in `each'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:76:in `process_query'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:58:in `process_query'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:81:in `respond'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:75:in `block in run'[0m
+[36m17.23s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/task.rb:197:in `block in make_fiber'[0m
+[36m17.23s: [1m<> Error processing request: #<ArgumentError: wrong number of arguments (given 0, expected 1+)>![0m
+[36m17.23s: [1mArgumentError: wrong number of arguments (given 0, expected 1+)[0m
+[36m17.23s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/logger.rb:30:in `block (2 levels) in <class:Logger>'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/server.rb:98:in `process_query'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:58:in `process_query'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:81:in `respond'[0m
+[36m17.23s: [1m/Users/samuel/Documents/socketry/async-dns/lib/async/dns/handler.rb:75:in `block in run'[0m
+[36m17.23s: [1m/Users/samuel/.rvm/gems/ruby-2.6.0/gems/async-1.13.0/lib/async/task.rb:197:in `block in make_fiber'[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-13 13:23:38 +1300 ===
+=== Log Marked @ 2019-01-13 13:24:33 +1300 [30310] ===
+Starting DNS server...
+[36m20.74s: [1mStarting Async::DNS server (v1.2.0)...[0m
+[36m20.74s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-13 13:24:37 +1300 ===
+=== Log Marked @ 2019-01-13 13:29:06 +1300 [30619] ===
+Starting DNS server...
+[36m18.92s: [1mStarting Async::DNS server (v1.2.0)...[0m
+[36m18.92s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-13 13:29:06 +1300 ===
+=== Log Marked @ 2019-01-13 13:42:56 +1300 [30668] ===
+Starting DNS server...
+[36m24.68s: [1mStarting Async::DNS server (v1.2.0)...[0m
+[36m24.68s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-13 13:42:56 +1300 ===
+=== Log Marked @ 2019-01-13 13:45:06 +1300 [30686] ===
+Starting DNS server...
+[36m24.49s: [1mStarting Async::DNS server (v1.2.0)...[0m
+[36m24.49s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-13 13:45:11 +1300 ===
+=== Log Marked @ 2019-01-21 14:10:27 +1300 [58724] ===
+Starting DNS server...
+[36m21.11s: [1mStarting Async::DNS server (v1.2.1)...[0m
+[36m21.11s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-21 14:10:32 +1300 ===
+=== Log Marked @ 2019-01-21 14:19:32 +1300 [59066] ===
+Starting DNS server...
+[36m21.65s: [1mStarting Async::DNS server (v1.2.1)...[0m
+[36m21.65s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-21 14:19:36 +1300 ===
+=== Log Marked @ 2019-01-21 14:21:36 +1300 [59081] ===
+Starting DNS server...
+[36m20.33s: [1mStarting Async::DNS server (v1.2.1)...[0m
+[36m20.33s: [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-01-21 14:21:40 +1300 ===
+=== Log Marked @ 2019-04-26 17:35:57 +1200 [9092] ===
+Starting DNS server...
+[32m15.58s:[0m [0mStarting Async::DNS server (v1.2.2)...[0m
+[32m15.58s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:36:02 +1200 ===
+=== Log Marked @ 2019-04-26 17:36:46 +1200 [9106] ===
+Starting DNS server...
+[32m23.75s:[0m [0mStarting Async::DNS server (v1.2.2)...[0m
+[32m23.75s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:36:51 +1200 ===
+=== Log Marked @ 2019-04-26 17:40:56 +1200 [9222] ===
+Starting DNS server...
+[32m 26.0s:[0m [0mStarting Async::DNS server (v1.2.2)...[0m
+[32m26.01s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:41:01 +1200 ===
+=== Log Marked @ 2019-04-26 17:42:34 +1200 [9242] ===
+Starting DNS server...
+[32m23.89s:[0m [0mStarting Async::DNS server (v1.2.2)...[0m
+[32m23.89s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:42:39 +1200 ===
+=== Log Marked @ 2019-04-26 17:46:15 +1200 [9325] ===
+Starting DNS server...
+[32m16.48s:[0m [0mStarting Async::DNS server (v1.2.3)...[0m
+[32m16.48s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:46:22 +1200 ===
+=== Log Marked @ 2019-04-26 17:47:28 +1200 [9341] ===
+Starting DNS server...
+[32m 16.2s:[0m [0mStarting Async::DNS server (v1.2.3)...[0m
+[32m 16.2s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:47:33 +1200 ===
+=== Log Marked @ 2019-04-26 17:48:37 +1200 [9353] ===
+Starting DNS server...
+[32m25.19s:[0m [0mStarting Async::DNS server (v1.2.3)...[0m
+[32m25.19s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:48:44 +1200 ===
+=== Log Marked @ 2019-04-26 17:49:59 +1200 [9371] ===
+Starting DNS server...
+[32m25.71s:[0m [0mStarting Async::DNS server (v1.2.3)...[0m
+[32m25.71s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 17:50:05 +1200 ===
+=== Log Marked @ 2019-04-26 18:11:17 +1200 [10095] ===
+Starting DNS server...
+[32m27.82s:[0m [0mStarting Async::DNS server (v1.2.4)...[0m
+[32m27.82s:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-04-26 18:11:22 +1200 ===
+=== Log Marked @ 2019-12-06 17:00:27 +0900 [3168] ===
+Starting DNS server...
+[32m13.57s     info:[0m [0mStarting Async::DNS server (v1.2.4)...[0m [37;2m[pid=3171] [2019-12-06 17:00:27 +0900][0m
+[32m13.57s     info:[0m [0m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m [37;2m[pid=3171] [2019-12-06 17:00:27 +0900][0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2019-12-06 17:00:31 +0900 ===
+=== Log Marked @ 2021-05-08 16:11:58 +1200 [31601] ===
+Starting DNS server...
+[32m29.16s     info:[0m [1mStarting Async::DNS server (v1.2.5)...[0m [37;2m[ec=0x3497c] [pid=31603] [2021-05-08 16:11:58 +1200][0m
+[32m29.16s     info:[0m [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m [37;2m[ec=0x34990] [pid=31603] [2021-05-08 16:11:58 +1200][0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2021-05-08 16:11:58 +1200 ===
+=== Log Marked @ 2024-01-02 12:45:09 +1300 [9585] ===
+Starting DNS server...
+[32m 9.79s     info:[0m [1mStarting Async::DNS server (v1.3.0)...[0m [37;2m[ec=0x1a838] [pid=9589] [2024-01-02 12:45:09 +1300][0m
+[32m 9.79s     info:[0m [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m: [0mbinding to #<Addrinfo: 0.0.0.0:5300 UDP>[0m [37;2m[ec=0x1a84c] [pid=9589] [2024-01-02 12:45:09 +1300][0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2024-01-02 12:45:09 +1300 ===
+=== Log Marked @ 2024-01-02 12:45:52 +1300 [10352] ===
+Starting DNS server...
+[32m 9.22s     info:[0m [1mStarting Async::DNS server (v1.3.0)...[0m [37;2m[ec=0x1a84c] [pid=10356] [2024-01-02 12:45:52 +1300][0m
+[32m 9.22s     info:[0m [1m<> Listening for datagrams on #<Addrinfo: 0.0.0.0:5300 UDP>[0m: [0mbinding to #<Addrinfo: 0.0.0.0:5300 UDP>[0m [37;2m[ec=0x1a860] [pid=10356] [2024-01-02 12:45:52 +1300][0m
+Daemon interrupted, proceeding to shutdown.
+=== Daemon Stopping @ 2024-01-02 12:45:53 +1300 ===

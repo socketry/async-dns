@@ -1,31 +1,63 @@
 #!/usr/bin/env rspec
+# frozen_string_literal: true
 
-# Copyright, 2012, by Samuel G. D. Williams. <http://www.codeotaku.com>
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+# Released under the MIT License.
+# Copyright, 2015-2024, by Samuel Williams.
+# Copyright, 2024, by Sean Dilda.
 
 require 'async/dns'
 
-require_relative 'junk_server_context'
+require 'sus/fixtures/async'
 
-RSpec.describe Async::DNS::Resolver do
-	include_context Async::RSpec::Reactor
+AJunkUDPServer = Sus::Shared("a junk UDP server") do
+	let(:server_endpoint) {Async::IO::Endpoint.udp('0.0.0.0', 6060, reuse_port: true)}
+	
+	def before
+		super
+		
+		@server_task = reactor.async do
+			server_endpoint.bind do |socket|
+				begin
+					while true
+						data, address = socket.recvfrom(1024)
+						socket.send("foobar", 0, address)
+					end
+				rescue
+					socket.close
+				end
+			end
+		end
+	end
+	
+	def after
+		@server_task&.stop
+	end
+end
+
+AJunkTCPServer = Sus::Shared("a junk TCP server") do
+	let(:server_endpoint) {Async::IO::Endpoint.tcp('0.0.0.0', 6060, reuse_port: true)}
+	
+	def before
+		super
+		
+		@server_task = reactor.async do
+			server_endpoint.accept do |socket|
+				begin
+					socket.write("f\0\0bar")
+				rescue
+					socket.close
+				end
+			end
+		end
+	end
+	
+	def after
+		@server_task&.stop
+	end
+end
+
+describe Async::DNS::Resolver do
+	include Sus::Fixtures::Async::ReactorContext
 	
 	it "should result in non-existent domain" do
 		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
@@ -55,11 +87,11 @@ RSpec.describe Async::DNS::Resolver do
 	it "should fail to get addresses" do
 		resolver = Async::DNS::Resolver.new([])
 
-		expect{resolver.addresses_for('google.com')}.to raise_error(Async::DNS::ResolutionFailure)
+		expect{resolver.addresses_for('google.com')}.to raise_exception(Async::DNS::ResolutionFailure)
 	end
 	
-	context 'with junk UDP server' do
-		include_context 'Junk UDP Server'
+	with 'junk UDP server' do
+		include_context AJunkUDPServer
 		
 		it "should fail with decode error" do
 			resolver = Async::DNS::Resolver.new([[:udp, "0.0.0.0", 6060]])
@@ -70,8 +102,8 @@ RSpec.describe Async::DNS::Resolver do
 		end
 	end
 	
-	context 'with junk TCP server' do
-		include_context 'Junk TCP Server'
+	with 'junk TCP server' do
+		include_context AJunkTCPServer
 		
 		it "should fail with decode error" do
 			resolver = Async::DNS::Resolver.new([[:tcp, "0.0.0.0", 6060]])
@@ -90,7 +122,7 @@ RSpec.describe Async::DNS::Resolver do
 		expect(addresses.size).to be > 0
 
 		addresses.each do |address|
-			expect(address).to be_kind_of(Resolv::IPv4) | be_kind_of(Resolv::IPv6)
+			expect(address).to be_a(Resolv::IPv4) | be_a(Resolv::IPv6)
 		end
 	end
 	

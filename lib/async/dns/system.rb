@@ -108,11 +108,11 @@ module Async::DNS
 			connections = []
 
 			nameservers.each do |host|
-				connections << [:udp, host, 53]
-				connections << [:tcp, host, 53]
+				connections << IO::Endpoint.udp(host, 53)
+				connections << IO::Endpoint.tcp(host, 53)
 			end
 
-			return connections
+			return IO::Endpoint.composite(connections)
 		end
 
 		# Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with. There is no equivalent facility to use the `hosts` file at present.

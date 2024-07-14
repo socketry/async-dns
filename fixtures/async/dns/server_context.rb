@@ -38,6 +38,7 @@ module Async
 				
 				@server = make_server(@bound_endpoint)
 				@server_task = @server.run
+				# @server_task.wait
 			end
 			
 			def after

@@ -35,11 +35,10 @@ module Async::DNS
 		# Servers are specified in the same manor as options[:listen], e.g.
 		#   [:tcp/:udp, address, port]
 		# In the case of multiple servers, they will be checked in sequence.
-		def initialize(endpoints = nil, origin: nil, logger: Console.logger, timeout: DEFAULT_TIMEOUT)
+		def initialize(endpoints = nil, origin: nil, timeout: DEFAULT_TIMEOUT)
 			@endpoints = endpoints || System.nameservers
 			
 			@origin = origin
-			@logger = logger
 			@timeout = timeout
 		end
 		
@@ -62,13 +61,13 @@ module Async::DNS
 				return Resolv::DNS::Name.create(name).with_origin(@origin)
 			end
 		end
-
+		
 		# Provides the next sequence identification number which is used to keep track of DNS messages.
 		def next_id!
 			# Using sequential numbers for the query ID is generally a bad thing because over UDP they can be spoofed. 16-bits isn't hard to guess either, but over UDP we also use a random port, so this makes effectively 32-bits of entropy to guess per request.
 			SecureRandom.random_number(2**16)
 		end
-
+		
 		# Look up a named resource of the given resource_class.
 		def query(name, resource_class = Resolv::DNS::Resource::IN::A)
 			message = Resolv::DNS::Message.new(next_id!)
@@ -78,13 +77,13 @@ module Async::DNS
 			dispatch_request(message)
 		end
 		
-		# Yields a list of `Resolv::IPv4` and `Resolv::IPv6` addresses for the given `name` and `resource_class`. Raises a ResolutionFailure if no severs respond.
-		def addresses_for(name, resource_class = Resolv::DNS::Resource::IN::A, options = {})
-			name = fully_qualified_name(name)
+		def resolve(name, resource_class, transaction)
 			
-			cache = options.fetch(:cache, {})
-			retries = options.fetch(:retries, DEFAULT_RETRIES)
-			delay = options.fetch(:delay, DEFAULT_DELAY)
+		end
+		
+		# Yields a list of `Resolv::IPv4` and `Resolv::IPv6` addresses for the given `name` and `resource_class`. Raises a ResolutionFailure if no severs respond.
+		def addresses_for(name, resource_class = Resolv::DNS::Resource::IN::A, cache: {}, retries: DEFAULT_RETRIES, delay: DEFAULT_DELAY)
+			name = fully_qualified_name(name)
 			
 			records = lookup(name, resource_class, cache) do |lookup_name, lookup_resource_class|
 				response = nil
@@ -98,7 +97,7 @@ module Async::DNS
 					break if response
 				end
 				
-				response or raise ResolutionFailure.new("Could not resolve #{name} after #{retries} attempt(s).")
+				response or raise ResolutionFailure.new("Could not resolve #{name.inspect} after #{retries.inspect} attempt(s)!")
 			end
 			
 			addresses = []
@@ -117,39 +116,39 @@ module Async::DNS
 			if addresses.size > 0
 				return addresses
 			else
-				raise ResolutionFailure.new("Could not find any addresses for #{name}.")
+				raise ResolutionFailure.new("Could not find any addresses for #{name.inspect}!")
 			end
 		end
 		
 		# Send the message to available servers. If no servers respond correctly, nil is returned. This result indicates a failure of the resolver to correctly contact any server and get a valid response.
-		def dispatch_request(message, task: Async::Task.current)
+		def dispatch_request(message, parent: Async::Task.current)
 			request = Request.new(message, @endpoints)
 			
 			request.each do |endpoint|
-				@logger.debug "[#{message.id}] Sending request #{message.question.inspect} to address #{endpoint.inspect}" if @logger
+				Console.debug "[#{message.id}] Sending request #{message.question.inspect} to address #{endpoint.inspect}"
 				
 				begin
 					response = nil
 					
-					task.with_timeout(@timeout) do
-						@logger.debug "[#{message.id}] -> Try address #{endpoint}" if @logger
+					parent.with_timeout(@timeout) do
+						Console.debug("Try address...", message_id: message.id, endpoint: endpoint)
 						response = try_server(request, endpoint)
-						@logger.debug "[#{message.id}] <- Try address #{endpoint} = #{response}" if @logger
+						Console.debug("Response received...", message_id: message.id, response: response)
 					end
 					
 					if valid_response(message, response)
 						return response
 					end
-				rescue Async::TimeoutError
-					@logger.debug "[#{message.id}] Request timed out!" if @logger
-				rescue InvalidResponseError
-					@logger.warn "[#{message.id}] Invalid response from network: #{$!}!" if @logger
-				rescue DecodeError
-					@logger.warn "[#{message.id}] Error while decoding data from network: #{$!}!" if @logger
-				rescue IOError, Errno::ECONNRESET
-					@logger.warn "[#{message.id}] Error while reading from network: #{$!}!" if @logger
+				rescue Async::TimeoutError => error
+					Console::Event::Failure.for(error).emit("Request timed out!", message_id: message.id)
+				rescue InvalidResponseError => error
+					Console::Event::Failure.for(error).emit("Invalid response received!", message_id: message.id)
+				rescue DecodeError => error
+					Console::Event::Failure.for(error).emit("Could not decode response!", message_id: message.id)
+				rescue IOError, Errno::ECONNRESET => error
+					Console::Event::Failure.for(error).emit("Error while reading from network!", message_id: message.id)
 				rescue EOFError
-					@logger.warn "[#{message.id}] Could not read complete response from network: #{$!}" if @logger
+					Console::Event::Failure.for(error).emit("Connection closed while reading from network!", message_id: message.id)
 				end
 			end
 			
@@ -188,11 +187,11 @@ module Async::DNS
 		
 		def valid_response(message, response)
 			if response.tc != 0
-				@logger.warn "[#{message.id}] Received truncated response!" if @logger
+				Console.warn "Received truncated response!", message_id: message.id
 			elsif response.id != message.id
-				@logger.warn "[#{message.id}] Received response with incorrect message id: #{response.id}!" if @logger
+				Console.warn "Received response with incorrect message id: #{response.id}!", message_id: message.id
 			else
-				@logger.debug "[#{message.id}] Received valid response with #{response.answer.size} answer(s)." if @logger
+				Console.debug "Received valid response with #{response.answer.size} answer(s).", message_id: message.id
 				
 				return true
 			end

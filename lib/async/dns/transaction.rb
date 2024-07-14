@@ -63,9 +63,9 @@ module Async::DNS
 		# If recursion is not requested, the result is `fail!(:Refused)`. This check is ignored if an explicit `options[:name]` or `options[:force]` is given.
 		#
 		# If the resolver can't reach upstream servers, `fail!(:ServFail)` is invoked.
-		def passthrough!(resolver, options = {}, &block)
-			if @query.rd || options[:force] || options[:name]
-				response = passthrough(resolver, options)
+		def passthrough!(resolver, force: false, **options, &block)
+			if @query.rd || force || options[:name]
+				response = passthrough(resolver, **options)
 				
 				if response
 					yield response if block_given?
@@ -87,11 +87,8 @@ module Async::DNS
 		# A block must be supplied, and provided a valid response is received from the upstream server, this function yields with the reply and reply_name.
 		#
 		# If `options[:name]` is provided, this overrides the default query name sent to the upstream server. The same logic applies to `options[:resource_class]`.
-		def passthrough(resolver, options = {})
-			query_name = options[:name] || name
-			query_resource_class = options[:resource_class] || resource_class
-			
-			resolver.query(query_name, query_resource_class)
+		def passthrough(resolver, name: self.name, resource_class: self.resource_class)
+			resolver.query(name, resource_class)
 		end
 		
 		# Respond to the given query with a resource record. The arguments to this function depend on the `resource_class` requested. This function instantiates the resource class with the supplied arguments, and then passes it to {#append!}.

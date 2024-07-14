@@ -10,6 +10,7 @@ require_relative 'system'
 
 require 'securerandom'
 require 'async'
+require 'io/endpoint'
 
 module Async::DNS
 	class InvalidProtocolError < StandardError
@@ -174,7 +175,7 @@ module Async::DNS
 		
 		def try_server(request, endpoint)
 			endpoint.connect do |socket|
-				case socket.type
+				case socket.local_address.socktype
 				when Socket::SOCK_DGRAM
 					try_datagram_server(request, socket)
 				when Socket::SOCK_STREAM
@@ -236,7 +237,7 @@ module Async::DNS
 			attr :logger
 			
 			def each(&block)
-				Async::IO::Endpoint.each(@endpoints, &block)
+				@endpoints.each(&block)
 			end
 
 			def update_id!(id)

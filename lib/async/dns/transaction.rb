@@ -5,7 +5,6 @@
 # Copyright, 2023, by Hal Brodigan.
 
 module Async::DNS
-	
 	# This class provides all details of a single DNS question and response. This is used by the DSL to provide DNS related functionality.
 	# 
 	# The main functions to complete the transaction are: {#append!} (evaluate a new query and append the results), {#passthrough!} (pass the query to an upstream server), {#respond!} (compute a specific response) and {#fail!} (fail with an error code).

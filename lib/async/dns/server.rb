@@ -8,9 +8,12 @@
 # Copyright, 2023, by Hal Brodigan.
 
 require 'async'
-require 'async/io'
+
+require 'io/endpoint/composite_endpoint'
+require 'io/endpoint/host_endpoint'
 
 require_relative 'transaction'
+require_relative 'handler'
 
 module Async::DNS
 	#
@@ -33,15 +36,18 @@ module Async::DNS
 	#
 	class Server
 		# The default server interfaces.
-		DEFAULT_ENDPOINTS = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
+		DEFAULT_ENDPOINT = ::IO::Endpoint.composite(
+			::IO::Endpoint.udp('0.0.0.0', 53),
+			::IO::Endpoint.tcp('0.0.0.0', 53)
+		)
 		
 		# Instantiate a server with a block.
 		#
 		# @param endpoints [Array<(Symbol, String, Integer)>]  The endpoints to listen on.
 		# @param origin [String] The default origin to resolve domains within.
 		# @param logger [Console::Logger] The logger to use.
-		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)
-			@endpoints = endpoints
+		def initialize(endpoint = DEFAULT_ENDPOINT, origin: '.', logger: Console.logger)
+			@endpoint = endpoint
 			@origin = origin
 			@logger = logger
 		end
@@ -61,9 +67,8 @@ module Async::DNS
 		# @param name [String] The resource name.
 		# @param resource_class [Class<Resolv::DNS::Resource>] The requested resource class.
 		# @param transaction [Transaction] The transaction object.
-		# @abstract
 		def process(name, resource_class, transaction)
-			raise NotImplementedError.new
+			transaction.fail!(:NXDomain)
 		end
 		
 		# Process an incoming DNS message. Returns a serialized message to be sent back to the client.
@@ -109,28 +114,21 @@ module Async::DNS
 		end
 		
 		# Setup all specified interfaces and begin accepting incoming connections.
-		def run(ready: nil)
+		def run
 			@logger.info "Starting Async::DNS server (v#{Async::DNS::VERSION})..."
 			
 			Async do |task|
-				Async::IO::Endpoint.each(@endpoints) do |endpoint|
-					task.async do
-						endpoint.bind do |socket|
-							case socket.type
-							when Socket::SOCK_DGRAM
-								@logger.info "<> Listening for datagrams on #{socket.local_address.inspect}"
-								DatagramHandler.new(self, socket).run
-							when Socket::SOCK_STREAM
-								@logger.info "<> Listening for connections on #{socket.local_address.inspect}"
-								StreamHandler.new(self, socket).run
-							else
-								raise ArgumentError.new("Don't know how to handle #{address}")
-							end
-						end
+				@endpoint.bind do |server|
+					@logger.info "<> Listening for connections on #{server.local_address.inspect}"
+					case server.local_address.socktype
+					when Socket::SOCK_DGRAM
+						Async{DatagramHandler.new(self, server).run}
+					when Socket::SOCK_STREAM
+						Async{StreamHandler.new(self, server).run}
+					else
+						raise ArgumentError.new("Don't know how to handle #{server}")
 					end
 				end
-				
-				ready&.signal
 			end
 		end
 	end

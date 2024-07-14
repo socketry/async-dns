@@ -5,9 +5,6 @@
 # Copyright, 2015-2024, by Samuel Williams.
 
 require 'async'
-require 'async/io/tcp_socket'
-require 'async/io/udp_socket'
-
 require_relative 'dns/version'
 
 require_relative 'dns/message'

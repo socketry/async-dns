@@ -23,5 +23,5 @@ Gem::Specification.new do |spec|
 	
 	spec.required_ruby_version = ">= 3.1"
 	
-	spec.add_dependency "async-io", "~> 1.15"
+	spec.add_dependency "io-endpoint"
 end

@@ -4,8 +4,6 @@
 # Copyright, 2015-2024, by Samuel Williams.
 # Copyright, 2021, by Mike Perham.
 
-require 'async/io/stream'
-
 require_relative 'transport'
 
 module Async::DNS
@@ -92,11 +90,9 @@ module Async::DNS
 	end
 	
 	class StreamHandler < GenericHandler
-		def run(backlog = Socket::SOMAXCONN)
-			@socket.listen(backlog)
-			
-			@socket.accept_each do |client, address|
-				handle_connection(client)
+		def run(wrapper = ::IO::Endpoint::Wrapper.default, **options)
+			wrapper.accept(@socket, **options) do |peer|
+				handle_connection(peer)
 			end
 		end
 		

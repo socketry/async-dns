@@ -8,7 +8,6 @@ require 'async/dns'
 require 'async/dns/system'
 
 require 'sus/fixtures/async'
-require 'async/io/shared_endpoint'
 
 class IPV6TestServer < Async::DNS::Server
 	def process(name, resource_class, transaction)

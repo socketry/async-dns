@@ -33,7 +33,7 @@ module Async::DNS
 		end
 		
 		def process_query(data, options)
-			Console.debug "<> Receiving incoming query (#{data.bytesize} bytes) to #{self.class.name}..."
+			Console.debug "Receiving incoming query (#{data.bytesize} bytes) to #{self.class.name}..."
 			query = nil
 
 			begin
@@ -41,7 +41,7 @@ module Async::DNS
 				
 				return @server.process_query(query, options)
 			rescue StandardError => error
-				Console.error(self) { error }
+				Console::Event::Failure.for(error).emit "Failed to process query!"
 				
 				return error_response(query)
 			end
@@ -65,10 +65,10 @@ module Async::DNS
 			
 			output_data = response.encode
 			
-			Console.debug "<#{response.id}> Writing #{output_data.bytesize} bytes response to client via UDP..."
+			Console.debug "Writing #{output_data.bytesize} bytes response to client via UDP...", response_id: response.id
 			
 			if output_data.bytesize > UDP_TRUNCATION_SIZE
-				Console.warn "<#{response.id}> Response via UDP was larger than #{UDP_TRUNCATION_SIZE}!"
+				Console.warn "Response via UDP was larger than #{UDP_TRUNCATION_SIZE}!", response_id: response.id
 				
 				# Reencode data with truncation flag marked as true:
 				truncation_error = Resolv::DNS::Message.new(response.id)
@@ -79,11 +79,11 @@ module Async::DNS
 			
 			socket.sendmsg(output_data, 0, remote_address)
 		rescue IOError => error
-			Console.warn "<> UDP response failed: #{error.inspect}!"
+			Console::Event::Failure.for(error).emit "UDP response failed!"
 		rescue EOFError => error
-			Console.warn "<> UDP session ended prematurely: #{error.inspect}!"
-		rescue DecodeError
-			Console.warn "<> Could not decode incoming UDP data!"
+			Console::Event::Failure.for(error).emit "UDP session ended prematurely!"
+		rescue DecodeError => error
+			Console::Event::Failure.for(error).emit "Could not decode incoming UDP data!"
 		end
 	end
 	
@@ -101,16 +101,16 @@ module Async::DNS
 				response = process_query(input_data, remote_address: socket.remote_address)
 				length = transport.write_message(response)
 				
-				Console.debug "<#{response.id}> Wrote #{length} bytes via TCP..."
+				Console.debug "Wrote #{length} bytes via TCP...", response_id: response.id
 			end
 		rescue EOFError => error
-			Console.warn "<> Error: TCP session ended prematurely!"
+			Console::Event::Failure.for(error).emit "TCP session ended prematurely!"
 		rescue Errno::ECONNRESET => error
-			Console.warn "<> Error: TCP connection reset by peer!"
-		rescue Errno::EPIPE
-			Console.warn "<> Error: TCP session failed due to broken pipe!"
-		rescue DecodeError
-			Console.warn "<> Error: Could not decode incoming TCP data!"
+			Console::Event::Failure.for(error).emit "TCP connection reset by peer!"
+		rescue Errno::EPIPE => error
+			Console::Event::Failure.for(error).emit "TCP session failed due to broken pipe!"
+		rescue DecodeError => error
+			Console::Event::Failure.for(error).emit "Could not decode incoming TCP data!"
 		end
 	end
 end

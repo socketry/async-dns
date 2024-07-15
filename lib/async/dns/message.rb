@@ -9,7 +9,12 @@ require 'resolv'
 require_relative 'extensions/resolv'
 
 module Async::DNS
-	UDP_TRUNCATION_SIZE = 512
+	# This is generally a good size for UDP packets that will be sent over the internet, as it is the largest size that will not require fragmentation.
+	# 1500 - 20 (IP header) - 8 (UDP header) = 1472
+	UDP_TRUNCATION_SIZE = 1472
+	
+	# The maximum size of a UDP packet.
+	UDP_MAXIMUM_SIZE = 2**16
 	
 	# The DNS message container.
 	Message = ::Resolv::DNS::Message

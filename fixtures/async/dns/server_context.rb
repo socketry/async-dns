@@ -26,8 +26,12 @@ module Async
 				Async::DNS::Server.new(endpoint)
 			end
 			
+			def make_resolver(endpoint)
+				Async::DNS::Resolver.new(endpoint)
+			end
+			
 			def resolver
-				@resolver ||= Async::DNS::Resolver.new(@resolver_endpoint)
+				@resolver ||= make_resolver(@resolver_endpoint)
 			end
 			
 			def before
@@ -38,7 +42,7 @@ module Async
 				
 				@server = make_server(@bound_endpoint)
 				@server_task = @server.run
-				# @server_task.wait
+				@server_task.wait
 			end
 			
 			def after

@@ -104,19 +104,19 @@ module Async::DNS
 			return nameservers
 		end
 
-		def self.standard_connections(nameservers)
+		def self.standard_connections(nameservers, **options)
 			connections = []
 
 			nameservers.each do |host|
-				connections << IO::Endpoint.udp(host, 53)
-				connections << IO::Endpoint.tcp(host, 53)
+				connections << IO::Endpoint.udp(host, 53, **options)
+				connections << IO::Endpoint.tcp(host, 53, **options)
 			end
 
 			return IO::Endpoint.composite(connections)
 		end
 
 		# Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with. There is no equivalent facility to use the `hosts` file at present.
-		def self.nameservers
+		def self.nameservers(**options)
 			nameservers = []
 
 			if File.exist? RESOLV_CONF
@@ -125,7 +125,11 @@ module Async::DNS
 				search, nameservers = Win32::Resolv.get_resolv_info
 			end
 
-			return standard_connections(nameservers)
+			return standard_connections(nameservers, **options)
+		end
+		
+		def self.default_nameservers
+			self.nameservers(timeout: 5.0)
 		end
 	end
 end

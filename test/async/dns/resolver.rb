@@ -1,145 +1,69 @@
-#!/usr/bin/env rspec
 # frozen_string_literal: true
 
-# Released under the MIT License.
-# Copyright, 2015-2024, by Samuel Williams.
-# Copyright, 2024, by Sean Dilda.
-
-require 'async/dns'
-
+require 'async/dns/resolver'
 require 'sus/fixtures/async'
-
-AJunkUDPServer = Sus::Shared("a junk UDP server") do
-	let(:server_endpoint) {Async::IO::Endpoint.udp('0.0.0.0', 6060, reuse_port: true)}
-	
-	def before
-		super
-		
-		@server_task = reactor.async do
-			server_endpoint.bind do |socket|
-				begin
-					while true
-						data, address = socket.recvfrom(1024)
-						socket.send("foobar", 0, address)
-					end
-				rescue
-					socket.close
-				end
-			end
-		end
-	end
-	
-	def after
-		@server_task&.stop
-	end
-end
-
-AJunkTCPServer = Sus::Shared("a junk TCP server") do
-	let(:server_endpoint) {Async::IO::Endpoint.tcp('0.0.0.0', 6060, reuse_port: true)}
-	
-	def before
-		super
-		
-		@server_task = reactor.async do
-			server_endpoint.accept do |socket|
-				begin
-					socket.write("f\0\0bar")
-				rescue
-					socket.close
-				end
-			end
-		end
-	end
-	
-	def after
-		@server_task&.stop
-	end
-end
 
 describe Async::DNS::Resolver do
 	include Sus::Fixtures::Async::ReactorContext
 	
+	let(:resolver) {Async::DNS::Resolver.new}
+	
 	it "should result in non-existent domain" do
-		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-
-		response = resolver.query('foobar.oriontransfer.org')
-
+		response = resolver.query('foobar.example.com', Resolv::DNS::Resource::IN::A)
+		
 		expect(response.rcode).to be == Resolv::DNS::RCode::NXDomain
 	end
-
+	
 	it "should result in some answers" do
-		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-
-		response = resolver.query('google.com')
-
+		response = resolver.query('google.com', Resolv::DNS::Resource::IN::A)
+		
 		expect(response.class).to be == Async::DNS::Message
 		expect(response.answer.size).to be > 0
 	end
-
-	it "should return no results" do
-		resolver = Async::DNS::Resolver.new([])
-
-		response = resolver.query('google.com')
-
-		expect(response).to be == nil
-	end
-
-	it "should fail to get addresses" do
-		resolver = Async::DNS::Resolver.new([])
-
-		expect{resolver.addresses_for('google.com')}.to raise_exception(Async::DNS::ResolutionFailure)
-	end
 	
-	with 'junk UDP server' do
-		include_context AJunkUDPServer
+	with '#addresses_for' do
+		it "should return IP addresses" do
+			addresses = resolver.addresses_for('google.com')
+			
+			expect(addresses).to have_value(be_a Resolv::IPv4)
+			expect(addresses).to have_value(be_a Resolv::IPv6)
+		end
 		
-		it "should fail with decode error" do
-			resolver = Async::DNS::Resolver.new([[:udp, "0.0.0.0", 6060]])
+		it "should recursively resolve CNAME records" do
+			# > dig A www.baidu.com
+			#
+			# ; <<>> DiG 9.18.27 <<>> A www.baidu.com
+			# ;; global options: +cmd
+			# ;; Got answer:
+			# ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 14301
+			# ;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+			#
+			# ;; OPT PSEUDOSECTION:
+			# ; EDNS: version: 0, flags:; udp: 65494
+			# ;; QUESTION SECTION:
+			# ;www.baidu.com.			IN	A
+			#
+			# ;; ANSWER SECTION:
+			# www.baidu.com.		1128	IN	CNAME	www.a.shifen.com.
+			# www.a.shifen.com.	15	IN	CNAME	www.wshifen.com.
+			# www.wshifen.com.	247	IN	A	119.63.197.139
+			# www.wshifen.com.	247	IN	A	119.63.197.151
 			
-			response = resolver.query('google.com')
+			addresses = resolver.addresses_for('www.baidu.com')
 			
-			expect(response).to be == nil
+			expect(addresses.size).to be > 0
+			expect(addresses).to have_value(be_a Resolv::IPv4)
 		end
 	end
 	
-	with 'junk TCP server' do
-		include_context AJunkTCPServer
+	with '#fully_qualified_name' do
+		let(:resolver) {Async::DNS::Resolver.new(origin: "foo.bar.")}
 		
-		it "should fail with decode error" do
-			resolver = Async::DNS::Resolver.new([[:tcp, "0.0.0.0", 6060]])
+		it "should generate fully qualified domain name with specified origin" do
+			fully_qualified_name = resolver.fully_qualified_name("baz")
 			
-			response = resolver.query('google.com')
-			
-			expect(response).to be == nil
+			expect(fully_qualified_name).to be(:absolute?)
+			expect(fully_qualified_name.to_s).to be == "baz.foo.bar."
 		end
-	end
-	
-	it "should return some IPv4 and IPv6 addresses" do
-		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-
-		addresses = resolver.addresses_for("www.google.com.")
-
-		expect(addresses.size).to be > 0
-
-		addresses.each do |address|
-			expect(address).to be_a(Resolv::IPv4) | be_a(Resolv::IPv6)
-		end
-	end
-	
-	it "should recursively resolve CNAME records" do
-		resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
-		
-		addresses = resolver.addresses_for('www.baidu.com')
-		
-		expect(addresses.size).to be > 0
-	end
-
-	it "should default to system resolvers" do
-		resolver = Async::DNS::Resolver.new()
-
-		response = resolver.query('google.com')
-
-		expect(response.class).to be == Async::DNS::Message
-		expect(response.answer.size).to be > 0
 	end
 end

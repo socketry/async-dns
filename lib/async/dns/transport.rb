@@ -16,7 +16,7 @@ module Async
 		
 		class Transport
 			def initialize(socket)
-				@stream = IO::Stream.new(socket)
+				@socket = socket
 			end
 			
 			def write_message(message)
@@ -24,21 +24,20 @@ module Async
 			end
 			
 			def read_chunk
-				if size_data = @stream.read(2)
+				if size_data = @socket.read(2)
 					# Read in the length, the first two bytes:
 					size = size_data.unpack('n')[0]
 					
-					return @stream.read(size)
+					return @socket.read(size)
 				end
 			end
 			
 			def write_chunk(output_data)
 				size_data = [output_data.bytesize].pack('n')
 				
-				@stream.write(size_data)
-				@stream.write(output_data)
-				
-				@stream.flush
+				@socket.write(size_data)
+				@socket.write(output_data)
+				@socket.flush
 				
 				return output_data.bytesize
 			end

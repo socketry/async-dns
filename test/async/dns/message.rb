@@ -5,11 +5,10 @@
 # Copyright, 2015-2024, by Samuel Williams.
 
 require 'async/dns'
-require 'base64'
 
 describe Async::DNS::Message do
 	it "should be decoded correctly" do
-		data = Base64.decode64(<<-EOF)
+		data = <<~EOF.unpack1("m")
 		HQCBgAABAAgAAAABA3d3dwV5YWhvbwNjb20AAAEAAcAMAAUAAQAAASwADwZm
 		ZC1mcDMDd2cxAWLAEMArAAUAAQAAASwACQZkcy1mcDPAMsBGAAUAAQAAADwA
 		FQ5kcy1hbnktZnAzLWxmYgN3YTHANsBbAAUAAQAAASwAEg9kcy1hbnktZnAz
@@ -28,7 +27,7 @@ describe Async::DNS::Message do
 	end
 
 	it "should fail to decode due to bad AAAA length" do
-		data = Base64.decode64(<<-EOF)
+		data = <<~EOF.unpack1("m")
 		6p6BgAABAAEAAAABCGJhaWNhaWNuA2NvbQAAHAABwAwAHAABAAABHgAEMhd7
 		dwAAKRAAAAAAAAAA
 		EOF

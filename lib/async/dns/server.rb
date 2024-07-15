@@ -35,18 +35,19 @@ module Async::DNS
 	#     server.run
 	#
 	class Server
-		# The default server interfaces.
-		DEFAULT_ENDPOINT = ::IO::Endpoint.composite(
-			::IO::Endpoint.udp('0.0.0.0', 53),
-			::IO::Endpoint.tcp('0.0.0.0', 53)
-		)
+		def self.default_endpoint(port = 53)
+			::IO::Endpoint.composite(
+				::IO::Endpoint.udp('localhost', port),
+				::IO::Endpoint.tcp('localhost', port)
+			)
+		end
 		
 		# Instantiate a server with a block.
 		#
 		# @param endpoints [Array<(Symbol, String, Integer)>]  The endpoints to listen on.
 		# @param origin [String] The default origin to resolve domains within.
 		# @param logger [Console::Logger] The logger to use.
-		def initialize(endpoint = DEFAULT_ENDPOINT, origin: '.')
+		def initialize(endpoint = self.class.default_endpoint, origin: '.')
 			@endpoint = endpoint
 			@origin = origin
 		end
@@ -121,9 +122,9 @@ module Async::DNS
 					Console.info "<> Listening for connections on #{server.local_address.inspect}"
 					case server.local_address.socktype
 					when Socket::SOCK_DGRAM
-						task.async{DatagramHandler.new(self, server).run}
+						DatagramHandler.new(self, server).run
 					when Socket::SOCK_STREAM
-						task.async{StreamHandler.new(self, server).run}
+						StreamHandler.new(self, server).run
 					else
 						raise ArgumentError.new("Don't know how to handle #{server}")
 					end

@@ -52,7 +52,8 @@ module Async::DNS
 	class DatagramHandler < GenericHandler
 		def run(task: Async::Task.current)
 			while true
-				input_data, remote_address = @socket.recvmsg(UDP_TRUNCATION_SIZE)
+				Console.info(self) {"Waiting for incoming UDP requests..."}
+				input_data, remote_address = @socket.recvmsg(UDP_MAXIMUM_SIZE)
 				
 				task.async do
 					respond(@socket, input_data, remote_address)
@@ -67,8 +68,8 @@ module Async::DNS
 			
 			Console.debug "Writing #{output_data.bytesize} bytes response to client via UDP...", response_id: response.id
 			
-			if output_data.bytesize > UDP_TRUNCATION_SIZE
-				Console.warn "Response via UDP was larger than #{UDP_TRUNCATION_SIZE}!", response_id: response.id
+			if output_data.bytesize > UDP_REASONABLE_SIZE
+				Console.warn "Response via UDP was larger than #{UDP_REASONABLE_SIZE}!", response_id: response.id
 				
 				# Reencode data with truncation flag marked as true:
 				truncation_error = Resolv::DNS::Message.new(response.id)

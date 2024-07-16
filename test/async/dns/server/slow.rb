@@ -33,6 +33,8 @@ describe Async::DNS::Server do
 	end
 	
 	it "should fail with timeout" do
+		skip_unless_method_defined(:timeout, IO)
+		
 		expect do
 			resolver.query("example.com", IN::A)
 		end.to raise_exception(IO::TimeoutError)

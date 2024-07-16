@@ -8,19 +8,25 @@ require 'ipaddr'
 
 module Async
 	module DNS
-		def self.address_family(host)
-			return IPAddr.new(host).family
-		end
-		
+		# A simple DNS message stream encoder/decoder.
 		class Transport
+			# Create a new transport.
+			#
+			# @parameter socket [IO] The socket to read/write from.
 			def initialize(socket)
 				@socket = socket
 			end
 			
+			# Write a message to the socket.
+			#
+			# @parameter message [Resolv::DNS::Message] The message to write.
 			def write_message(message)
 				write_chunk(message.encode)
 			end
 			
+			# Read a chunk from the socket.
+			#
+			# @returns [String] The data read from the socket.
 			def read_chunk
 				if size_data = @socket.read(2)
 					# Read in the length, the first two bytes:
@@ -30,6 +36,9 @@ module Async
 				end
 			end
 			
+			# Write a chunk to the socket.
+			#
+			# @parameter data [String] The data to write.
 			def write_chunk(data)
 				size_data = [data.bytesize].pack('n')
 				@socket.write(size_data)

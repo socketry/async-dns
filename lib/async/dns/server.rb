@@ -16,25 +16,11 @@ require_relative 'transaction'
 require_relative 'handler'
 
 module Async::DNS
-	#
-	# Base class for defining asynchronous DNS servers.
-	#
-	# ## Example
-	#
-	#     require 'async/dns'
-	#     
-	#     class TestServer < Async::DNS::Server
-	#       def process(name, resource_class, transaction)
-	#         @resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
-	#     
-	#         transaction.passthrough!(@resolver)
-	#       end
-	#     end
-	#     
-	#     server = TestServer.new([[:udp, '127.0.0.1', 2346]])
-	#     server.run
-	#
+	# A DNS server which can be used to resolve queries.
 	class Server
+		# The default endpoint to listen on.
+		#
+		# @parameter port [Integer] The port to listen on, defaults to 53.
 		def self.default_endpoint(port = 53)
 			::IO::Endpoint.composite(
 				::IO::Endpoint.udp('localhost', port),
@@ -93,7 +79,7 @@ module Async::DNS
 						
 						Console.debug(query) {"Processing question #{question} #{resource_class}..."}
 						
-						transaction = Transaction.new(self, query, question, resource_class, response, options)
+						transaction = Transaction.new(self, query, question, resource_class, response, **options)
 						
 						transaction.process
 					rescue Resolv::DNS::OriginError => error

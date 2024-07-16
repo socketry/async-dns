@@ -5,8 +5,11 @@
 
 require 'resolv'
 
+# @namespace
 class Resolv
+	# @namespace
 	class DNS
+		# Extensions to the `Resolv::DNS::Message` class.
 		class Message
 			# Merge the given message with this message. A number of heuristics are applied in order to ensure that the result makes sense. For example, If the current message is not recursive but is being merged with a message that was recursive, this bit is maintained. If either message is authoritive, then the result is also authoritive.
 			#
@@ -31,19 +34,26 @@ class Resolv
 			end
 		end
 		
+		# Represents a failure to construct a fullly qualified name due to a mismatched origin.
 		class OriginError < ArgumentError
 		end
 		
+		# Extensions to the `Resolv::DNS::Name` class.
 		class Name
+			# Generate a strinng representation of the name.
+			#
+			# If the name is absolute, a trailing dot is added.
+			#
+			# @returns [String] The string representation of the name.
 			def to_s
 				"#{@labels.join('.')}#{@absolute ? '.' : ''}"
 			end
 			
-			def inspect
-				"#<#{self.class}: #{self.to_s}>"
-			end
-			
-			# Return the name, typically absolute, with the specified origin as a suffix. If the origin is nil, don't change the name, but change it to absolute (as specified).
+			# Computes the name, typically absolute, with the specified origin as a suffix. If the origin is nil, don't change the name, but change it to absolute (as specified).
+			#
+			# @parameter origin [Array | String] The origin to append to the name.
+			# @parameter absolute [Boolean] If true, the name will be made absolute.
+			# @returns The name, with the origin suffix.
 			def with_origin(origin, absolute = true)
 				return self.class.new(@labels, absolute) if origin == nil
 				
@@ -52,7 +62,12 @@ class Resolv
 				return self.class.new(@labels + origin, absolute)
 			end
 			
-			# Return the name, typically relative, without the specified origin suffix. If the origin is nil, don't change the name, but change it to absolute (as specified).
+			# Compute the name, typically relative, without the specified origin suffix. If the origin is nil, don't change the name, but change it to absolute (as specified). 
+			#
+			# @parameter origin [Array | String] The origin to remove from the name.
+			# @parameter absolute [Boolean] If true, the name will be made absolute.
+			# @returns The name, without the origin suffix.
+			# @raises [OriginError] If the name does not end with the specified origin.
 			def without_origin(origin, absolute = false)
 				return self.class.new(@labels, absolute) if origin == nil
 				

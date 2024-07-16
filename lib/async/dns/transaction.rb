@@ -12,7 +12,15 @@ module Async::DNS
 		# The default time used for responses (24 hours).
 		DEFAULT_TTL = 86400
 		
-		def initialize(server, query, question, resource_class, response, options = {})
+		# Create a new transaction with the given server, query, question, resource class, response, and options.
+		#
+		# @parameter server [Server] The server to use for processing.
+		# @parameter query [Resolv::DNS::Message] The incoming query.
+		# @parameter question [Resolv::DNS::Name] The question to answer.
+		# @parameter resource_class [Class(Resolv::DNS::Resource)] The resource class to use for responses.
+		# @parameter response [Resolv::DNS::Message] The response to the query.
+		# @parameter options [Hash] Additional options to pass to the transaction.
+		def initialize(server, query, question, resource_class, response, **options)
 			@server = server
 			@query = query
 			@question = question
@@ -22,21 +30,24 @@ module Async::DNS
 			@options = options
 		end
 
-		# The resource_class that was requested. This is typically used to generate a response.
+		# @attribute [Class(Resolv::DNS::Resource)] The resource class to use for responses. This is typically used to generate a response.
 		attr :resource_class
 		
-		# The incoming query which is a set of questions.
+		# @attribute [Resolv::DNS::Message] The incoming query.
 		attr :query
 		
-		# The question that this transaction represents.
+		# @attribute [Resolv::DNS::Name] The question to answer.
 		attr :question
 		
-		# The current full response to the incoming query.
+		# @attribute [Resolv::DNS::Message] The response to the query.
 		attr :response
 		
-		# Any options or configuration associated with the given transaction.
+		# @attribute [Hash] Additional options associated with the transaction.
 		attr :options
 		
+		# Access the options hash.
+		#
+		# @parameter key [Object] The key to lookup.
 		def [] key
 			@options[key]
 		end
@@ -53,7 +64,7 @@ module Async::DNS
 		
 		# Run a new query through the rules with the given name and resource type. The results of this query are appended to the current transaction's `response`.
 		def append!(name, resource_class = nil, options = {})
-			Transaction.new(@server, @query, name, resource_class || @resource_class, @response, options).process
+			Transaction.new(@server, @query, name, resource_class || @resource_class, @response, **options).process
 		end
 		
 		# Use the given resolver to respond to the question. Uses `passthrough` to do the lookup and merges the result.

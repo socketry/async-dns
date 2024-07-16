@@ -16,15 +16,15 @@ require 'io/endpoint/composite_endpoint'
 require 'io/endpoint/host_endpoint'
 
 module Async::DNS
+	# Represents a DNS connection which we don't know how to use.
 	class InvalidProtocolError < StandardError
 	end
 	
-	class InvalidResponseError < StandardError
-	end
-	
+	# Represents a failure to resolve a given name to an address.
 	class ResolutionFailure < StandardError
 	end
 	
+	# Resolve names to addresses using the DNS protocol.
 	class Resolver
 		# 10ms wait between making requests. Override with `options[:delay]`
 		DEFAULT_DELAY = 0.01
@@ -54,6 +54,9 @@ module Async::DNS
 		
 		attr_accessor :origin
 		
+		# Generates a fully qualified name from a given name.
+		#
+		# @parameter name [String | Resolv::DNS::Name] The name to fully qualify.
 		def fully_qualified_name(name)
 			# If we are passed an existing deconstructed name:
 			if Resolv::DNS::Name === name
@@ -222,6 +225,12 @@ module Async::DNS
 		
 		# Manages a single DNS question message across one or more servers.
 		class Request
+			# Create a new request for the given message and endpoint.
+			#
+			# Encodes the message and stores it for later use.
+			#
+			# @parameter message [Resolv::DNS::Message] The message to send.
+			# @parameter endpoint [IO::Endpoint::Generic] The endpoint to send the message to.
 			def initialize(message, endpoint)
 				@message = message
 				@packet = message.encode
@@ -229,7 +238,10 @@ module Async::DNS
 				@endpoint = endpoint
 			end
 			
+			# @attribute [Resolv::DNS::Message] The message to send.
 			attr :message
+			
+			# @attribute [String] The encoded message to send.
 			attr :packet
 			
 			def each(&block)
@@ -241,5 +253,7 @@ module Async::DNS
 				@packet = @message.encode
 			end
 		end
+		
+		private_constant :Request
 	end
 end

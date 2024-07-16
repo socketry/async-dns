@@ -8,42 +8,34 @@
 # Copyright, 2023, by Hal Brodigan.
 
 require 'async'
-require 'async/io'
+
+require 'io/endpoint/composite_endpoint'
+require 'io/endpoint/host_endpoint'
 
 require_relative 'transaction'
+require_relative 'handler'
 
 module Async::DNS
-	#
-	# Base class for defining asynchronous DNS servers.
-	#
-	# ## Example
-	#
-	#     require 'async/dns'
-	#     
-	#     class TestServer < Async::DNS::Server
-	#       def process(name, resource_class, transaction)
-	#         @resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
-	#     
-	#         transaction.passthrough!(@resolver)
-	#       end
-	#     end
-	#     
-	#     server = TestServer.new([[:udp, '127.0.0.1', 2346]])
-	#     server.run
-	#
+	# A DNS server which can be used to resolve queries.
 	class Server
-		# The default server interfaces.
-		DEFAULT_ENDPOINTS = [[:udp, "0.0.0.0", 53], [:tcp, "0.0.0.0", 53]]
+		# The default endpoint to listen on.
+		#
+		# @parameter port [Integer] The port to listen on, defaults to 53.
+		def self.default_endpoint(port = 53)
+			::IO::Endpoint.composite(
+				::IO::Endpoint.udp('localhost', port),
+				::IO::Endpoint.tcp('localhost', port)
+			)
+		end
 		
 		# Instantiate a server with a block.
 		#
 		# @param endpoints [Array<(Symbol, String, Integer)>]  The endpoints to listen on.
 		# @param origin [String] The default origin to resolve domains within.
 		# @param logger [Console::Logger] The logger to use.
-		def initialize(endpoints = DEFAULT_ENDPOINTS, origin: '.', logger: Console.logger)
-			@endpoints = endpoints
+		def initialize(endpoint = self.class.default_endpoint, origin: '.')
+			@endpoint = endpoint
 			@origin = origin
-			@logger = logger
 		end
 		
 		# Records are relative to this origin.
@@ -51,19 +43,18 @@ module Async::DNS
 		# @return [String]
 		attr_accessor :origin
 		
-		# The logger to use.
-		#
-		# @return [Console::Logger]
-		attr_accessor :logger
+		# @deprecated Use {Console} instead.
+		def logger
+			Console
+		end
 		
 		# Give a name and a record type, try to match a rule and use it for processing the given arguments.
 		#
 		# @param name [String] The resource name.
 		# @param resource_class [Class<Resolv::DNS::Resource>] The requested resource class.
 		# @param transaction [Transaction] The transaction object.
-		# @abstract
 		def process(name, resource_class, transaction)
-			raise NotImplementedError.new
+			transaction.fail!(:NXDomain)
 		end
 		
 		# Process an incoming DNS message. Returns a serialized message to be sent back to the client.
@@ -86,51 +77,44 @@ module Async::DNS
 					begin
 						question = question.without_origin(@origin)
 						
-						@logger.debug(query) {"Processing question #{question} #{resource_class}..."}
+						Console.debug(query) {"Processing question #{question} #{resource_class}..."}
 						
-						transaction = Transaction.new(self, query, question, resource_class, response, options)
+						transaction = Transaction.new(self, query, question, resource_class, response, **options)
 						
 						transaction.process
-					rescue Resolv::DNS::OriginError
+					rescue Resolv::DNS::OriginError => error
 						# This is triggered if the question is not part of the specified @origin:
-						@logger.debug(query) {"Skipping question #{question} #{resource_class} because #{$!}"}
+						Console::Event::Failure.for(error).emit("Skipping question #{question} #{resource_class}!")
 					end
 				end
 			rescue StandardError => error
-				@logger.error(query) {error}
+				Console.error(query) {error}
 				
 				response.rcode = Resolv::DNS::RCode::ServFail
 			end
 			
 			end_time = Time.now
-			@logger.debug(query) {"Time to process request: #{end_time - start_time}s"}
+			Console.debug(query) {"Time to process request: #{end_time - start_time}s"}
 			
 			return response
 		end
 		
 		# Setup all specified interfaces and begin accepting incoming connections.
-		def run(ready: nil)
-			@logger.info "Starting Async::DNS server (v#{Async::DNS::VERSION})..."
+		def run
+			Console.info "Starting Async::DNS server (v#{Async::DNS::VERSION})..."
 			
 			Async do |task|
-				Async::IO::Endpoint.each(@endpoints) do |endpoint|
-					task.async do
-						endpoint.bind do |socket|
-							case socket.type
-							when Socket::SOCK_DGRAM
-								@logger.info "<> Listening for datagrams on #{socket.local_address.inspect}"
-								DatagramHandler.new(self, socket).run
-							when Socket::SOCK_STREAM
-								@logger.info "<> Listening for connections on #{socket.local_address.inspect}"
-								StreamHandler.new(self, socket).run
-							else
-								raise ArgumentError.new("Don't know how to handle #{address}")
-							end
-						end
+				@endpoint.bind do |server|
+					Console.info "<> Listening for connections on #{server.local_address.inspect}"
+					case server.local_address.socktype
+					when Socket::SOCK_DGRAM
+						DatagramHandler.new(self, server).run
+					when Socket::SOCK_STREAM
+						StreamHandler.new(self, server).run
+					else
+						raise ArgumentError.new("Don't know how to handle #{server}")
 					end
 				end
-				
-				ready&.signal
 			end
 		end
 	end

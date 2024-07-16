@@ -6,12 +6,13 @@
 
 require 'async/dns'
 require 'async/dns/system'
+require 'sus/fixtures/async'
 
 describe Async::DNS::System do
 	include Sus::Fixtures::Async::ReactorContext
 	
 	it "should have at least one namesever" do
-		expect(Async::DNS::System::nameservers.length).to be > 0
+		expect(Async::DNS::System.nameservers).to have_attributes(size: be > 0)
 	end
 	
 	it "should respond to query for google.com" do
@@ -19,17 +20,19 @@ describe Async::DNS::System do
 		
 		response = resolver.query('google.com')
 		
-		expect(response.class).to be == Async::DNS::Message
+		expect(response.class).to be == Resolv::DNS::Message
 		expect(response.rcode).to be == Resolv::DNS::RCode::NoError
 	end
 end
 
 describe Async::DNS::System::Hosts do
+	let(:hosts_path) {File.expand_path(".system/hosts.txt", __dir__)}
+	
 	it "should parse the hosts file" do
 		hosts = Async::DNS::System::Hosts.new
 	
 		# Load the test hosts data:
-		File.open(File.expand_path("../hosts.txt", __FILE__)) do |file|
+		File.open(hosts_path) do |file|
 			hosts.parse_hosts(file)
 		end
 	

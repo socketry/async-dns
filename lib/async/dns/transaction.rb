@@ -5,7 +5,6 @@
 # Copyright, 2023, by Hal Brodigan.
 
 module Async::DNS
-	
 	# This class provides all details of a single DNS question and response. This is used by the DSL to provide DNS related functionality.
 	# 
 	# The main functions to complete the transaction are: {#append!} (evaluate a new query and append the results), {#passthrough!} (pass the query to an upstream server), {#respond!} (compute a specific response) and {#fail!} (fail with an error code).
@@ -13,7 +12,15 @@ module Async::DNS
 		# The default time used for responses (24 hours).
 		DEFAULT_TTL = 86400
 		
-		def initialize(server, query, question, resource_class, response, options = {})
+		# Create a new transaction with the given server, query, question, resource class, response, and options.
+		#
+		# @parameter server [Server] The server to use for processing.
+		# @parameter query [Resolv::DNS::Message] The incoming query.
+		# @parameter question [Resolv::DNS::Name] The question to answer.
+		# @parameter resource_class [Class(Resolv::DNS::Resource)] The resource class to use for responses.
+		# @parameter response [Resolv::DNS::Message] The response to the query.
+		# @parameter options [Hash] Additional options to pass to the transaction.
+		def initialize(server, query, question, resource_class, response, **options)
 			@server = server
 			@query = query
 			@question = question
@@ -23,21 +30,24 @@ module Async::DNS
 			@options = options
 		end
 
-		# The resource_class that was requested. This is typically used to generate a response.
+		# @attribute [Class(Resolv::DNS::Resource)] The resource class to use for responses. This is typically used to generate a response.
 		attr :resource_class
 		
-		# The incoming query which is a set of questions.
+		# @attribute [Resolv::DNS::Message] The incoming query.
 		attr :query
 		
-		# The question that this transaction represents.
+		# @attribute [Resolv::DNS::Name] The question to answer.
 		attr :question
 		
-		# The current full response to the incoming query.
+		# @attribute [Resolv::DNS::Message] The response to the query.
 		attr :response
 		
-		# Any options or configuration associated with the given transaction.
+		# @attribute [Hash] Additional options associated with the transaction.
 		attr :options
 		
+		# Access the options hash.
+		#
+		# @parameter key [Object] The key to lookup.
 		def [] key
 			@options[key]
 		end
@@ -54,7 +64,7 @@ module Async::DNS
 		
 		# Run a new query through the rules with the given name and resource type. The results of this query are appended to the current transaction's `response`.
 		def append!(name, resource_class = nil, options = {})
-			Transaction.new(@server, @query, name, resource_class || @resource_class, @response, options).process
+			Transaction.new(@server, @query, name, resource_class || @resource_class, @response, **options).process
 		end
 		
 		# Use the given resolver to respond to the question. Uses `passthrough` to do the lookup and merges the result.
@@ -64,9 +74,9 @@ module Async::DNS
 		# If recursion is not requested, the result is `fail!(:Refused)`. This check is ignored if an explicit `options[:name]` or `options[:force]` is given.
 		#
 		# If the resolver can't reach upstream servers, `fail!(:ServFail)` is invoked.
-		def passthrough!(resolver, options = {}, &block)
-			if @query.rd || options[:force] || options[:name]
-				response = passthrough(resolver, options)
+		def passthrough!(resolver, force: false, **options, &block)
+			if @query.rd || force || options[:name]
+				response = passthrough(resolver, **options)
 				
 				if response
 					yield response if block_given?
@@ -88,11 +98,8 @@ module Async::DNS
 		# A block must be supplied, and provided a valid response is received from the upstream server, this function yields with the reply and reply_name.
 		#
 		# If `options[:name]` is provided, this overrides the default query name sent to the upstream server. The same logic applies to `options[:resource_class]`.
-		def passthrough(resolver, options = {})
-			query_name = options[:name] || name
-			query_resource_class = options[:resource_class] || resource_class
-			
-			resolver.query(query_name, query_resource_class)
+		def passthrough(resolver, name: self.name, resource_class: self.resource_class)
+			resolver.query(name, resource_class)
 		end
 		
 		# Respond to the given query with a resource record. The arguments to this function depend on the `resource_class` requested. This function instantiates the resource class with the supplied arguments, and then passes it to {#append!}.

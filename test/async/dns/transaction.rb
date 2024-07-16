@@ -5,19 +5,18 @@
 # Copyright, 2015-2024, by Samuel Williams.
 
 require 'async/dns'
-require 'yaml'
+require 'sus/fixtures/async'
 
-SERVER_PORTS = [[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]]
 IN = Resolv::DNS::Resource::IN
 
 describe Async::DNS::Transaction do
-	let(:server) { Async::DNS::Server.new }
-	let(:query) { Async::DNS::Message.new(0) }
-	let(:question) { Resolv::DNS::Name.create("www.google.com.") }
-	let(:response) { Async::DNS::Message.new(0) }
-	let(:resolver) { Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])}
-	
 	include Sus::Fixtures::Async::ReactorContext
+	
+	let(:server) {Async::DNS::Server.new}
+	let(:query) {Resolv::DNS::Message.new(0)}
+	let(:question) {Resolv::DNS::Name.create("www.google.com.")}
+	let(:response) {Resolv::DNS::Message.new(0)}
+	let(:resolver) {Async::DNS::Resolver.new}
 	
 	it "should append an address" do
 		transaction = Async::DNS::Transaction.new(server, query, question, IN::A, response)

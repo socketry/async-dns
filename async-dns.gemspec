@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
 	spec.name = "async-dns"
 	spec.version = Async::DNS::VERSION
 	
-	spec.summary = "An easy to use DNS client resolver and server for Ruby."
+	spec.summary = "An easy to use DNS client and server for Ruby."
 	spec.authors = ["Samuel Williams", "Tony Arcieri", "Olle Jonsson", "Greg Thornton", "Hal Brodigan", "Hendrik Beskow", "Mike Perham", "Sean Dilda", "Stefan Wrobel"]
 	spec.license = "MIT"
 	

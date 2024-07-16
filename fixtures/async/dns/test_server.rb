@@ -6,15 +6,15 @@
 module Async
 	module DNS
 		class TestServer < Server
-			def initialize(endpoint = DEFAULT_ENDPOINT, resolver: Resolver.new, **options)
+			def initialize(endpoint = DEFAULT_ENDPOINT, client: Client.new, **options)
 				super(endpoint, **options)
 				
-				@resolver = resolver
+				@client = client
 			end
 				
 			def process(name, resource_class, transaction)
 				# This is a simple example of how to pass the query to an upstream server:
-				transaction.passthrough!(@resolver)
+				transaction.passthrough!(@client)
 			end
 		end
 	end

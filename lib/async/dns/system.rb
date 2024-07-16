@@ -36,7 +36,7 @@ module Async::DNS
 		end
 		
 		# An interface for querying the system's hosts file.
-		class Hosts
+		class Hosts < Resolver
 			# Hosts for the local system.
 			def self.local
 				hosts = self.new
@@ -60,7 +60,11 @@ module Async::DNS
 			
 			# This is used to match names against the list of known hosts:
 			def call(name)
-				@names.include?(name)
+				if addresses = @names[name]
+					return addresses
+				else
+					return super
+				end
 			end
 			
 			# Lookup a name in the hosts file.

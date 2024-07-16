@@ -62,7 +62,7 @@ DOMAINS = [
 	"jimdo.com",
 ]
 
-describe Async::DNS::Resolver do
+describe Async::DNS::Client do
 	include Sus::Fixtures::Async::ReactorContext
 	
 	def before
@@ -74,22 +74,22 @@ describe Async::DNS::Resolver do
 		end
 	end
 	
-	it "is consistent with built in resolver" do
+	it "is consistent with built in client" do
 		resolved_a = resolved_b = nil
 		
 		async_dns_performance = Benchmark.measure do
-			resolver = Async::DNS::Resolver.new
+			client = Async::DNS::Client.new
 		
 			resolved_a = DOMAINS.to_h do |domain|
-				[domain, resolver.addresses_for(domain)]
+				[domain, client.addresses_for(domain)]
 			end
 		end
 		
 		resolv_dns_performance = Benchmark.measure do
-			resolver = Resolv::DNS.new
+			client = Resolv::DNS.new
 			
 			resolved_b = DOMAINS.to_h do |domain|
-				[domain, resolver.getaddresses(domain)]
+				[domain, client.getaddresses(domain)]
 			end
 		end
 			

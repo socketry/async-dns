@@ -23,12 +23,12 @@ describe Async::DNS::Server do
 		SlowServer.new(endpoint)
 	end
 	
-	def make_resolver(endpoint)
-		Async::DNS::Resolver.new(endpoint.with(timeout: 0.1))
+	def make_client(endpoint)
+		Async::DNS::Client.new(endpoint: endpoint.with(timeout: 0.1))
 	end
 	
 	it "should fail with non-existent domain" do
-		response = resolver.query("example.net", IN::A)
+		response = client.query("example.net", IN::A)
 		expect(response.rcode).to be == Resolv::DNS::RCode::NXDomain
 	end
 	
@@ -36,7 +36,7 @@ describe Async::DNS::Server do
 		skip_unless_method_defined(:timeout, IO)
 		
 		expect do
-			resolver.query("example.com", IN::A)
+			client.query("example.com", IN::A)
 		end.to raise_exception(IO::TimeoutError)
 	end
 end

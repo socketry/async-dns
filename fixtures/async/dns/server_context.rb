@@ -6,7 +6,7 @@
 require 'sus/fixtures/async/reactor_context'
 
 require 'async/dns/server'
-require 'async/dns/resolver'
+require 'async/dns/client'
 
 require 'io/endpoint'
 
@@ -26,19 +26,19 @@ module Async
 				Async::DNS::Server.new(endpoint)
 			end
 			
-			def make_resolver(endpoint)
-				Async::DNS::Resolver.new(endpoint)
+			def make_client(endpoint)
+				Async::DNS::Client.new(endpoint: endpoint)
 			end
 			
-			def resolver
-				@resolver ||= make_resolver(@resolver_endpoint)
+			def client
+				@client ||= make_client(@client_endpoint)
 			end
 			
 			def before
 				super
 				
 				@bound_endpoint = endpoint.bound
-				@resolver_endpoint = @bound_endpoint.local_address_endpoint
+				@client_endpoint = @bound_endpoint.local_address_endpoint
 				
 				@server = make_server(@bound_endpoint)
 				@server_task = @server.run

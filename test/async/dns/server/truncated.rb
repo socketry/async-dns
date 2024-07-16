@@ -28,7 +28,7 @@ describe Async::DNS::Server do
 	end
 	
 	it "should use tcp because of large response" do
-		response = resolver.query("truncation-100", IN::TXT)
+		response = client.query("truncation-100", IN::TXT)
 		text = response.answer.first
 		expect(text[2].strings.join).to be == ("Hello World! " * 1000)
 	end

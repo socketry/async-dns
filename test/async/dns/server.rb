@@ -11,7 +11,7 @@ describe Async::DNS::Server do
 	include Async::DNS::ServerContext
 	
 	it "can resolve a domain name" do
-		response = resolver.query("example.com")
+		response = client.query("example.com")
 		
 		expect(response).to have_attributes(
 			qr: be == 1,
@@ -21,13 +21,13 @@ describe Async::DNS::Server do
 		)
 	end
 	
-	with 'default resolver' do
+	with 'default client' do
 		def make_server(endpoint)
 			Async::DNS::TestServer.new(endpoint)
 		end
 		
 		it "can resolve a domain name" do
-			response = resolver.query("www.google.com")
+			response = client.query("www.google.com")
 			
 			expect(response).to have_attributes(
 				qr: be == 1,
@@ -38,7 +38,7 @@ describe Async::DNS::Server do
 		end
 		
 		it "can resolve non-existent domain name" do
-			response = resolver.query("foobar.example.com")
+			response = client.query("foobar.example.com")
 			
 			expect(response).to have_attributes(
 				qr: be == 1,

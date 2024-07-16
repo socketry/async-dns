@@ -16,7 +16,7 @@ describe Async::DNS::Transaction do
 	let(:query) {Resolv::DNS::Message.new(0)}
 	let(:question) {Resolv::DNS::Name.create("www.google.com.")}
 	let(:response) {Resolv::DNS::Message.new(0)}
-	let(:resolver) {Async::DNS::Resolver.new}
+	let(:client) {Async::DNS::Client.new}
 	
 	it "should append an address" do
 		transaction = Async::DNS::Transaction.new(server, query, question, IN::A, response)
@@ -32,7 +32,7 @@ describe Async::DNS::Transaction do
 		
 		expect(transaction.response.answer.size).to be == 0
 		
-		transaction.passthrough!(resolver)
+		transaction.passthrough!(client)
 		
 		expect(transaction.response.answer.size).to be > 0
 	end
@@ -42,7 +42,7 @@ describe Async::DNS::Transaction do
 		
 		expect(transaction.response.answer.size).to be == 0
 		
-		response = transaction.passthrough(resolver)
+		response = transaction.passthrough(client)
 		
 		expect(response.answer.length).to be > 0
 	end
@@ -54,7 +54,7 @@ describe Async::DNS::Transaction do
 		
 		passthrough_response = nil
 		
-		transaction.passthrough!(resolver) do |response|
+		transaction.passthrough!(client) do |response|
 			passthrough_response = response
 		end
 		
@@ -74,7 +74,7 @@ describe Async::DNS::Transaction do
 		
 		expect(transaction.response.answer.size).to be == 0
 		
-		transaction.passthrough!(resolver)
+		transaction.passthrough!(client)
 		
 		expect(transaction.response.answer.first[2]).to be_a IN::AAAA
 	end
@@ -84,7 +84,7 @@ describe Async::DNS::Transaction do
 		
 		expect(transaction.response.answer.size).to be == 0
 		
-		transaction.passthrough!(resolver)
+		transaction.passthrough!(client)
 		
 		expect(transaction.response.answer.first[2]).to be_a IN::MX
 	end
@@ -94,7 +94,7 @@ describe Async::DNS::Transaction do
 		
 		expect(transaction.response.answer.size).to be == 0
 		
-		transaction.passthrough!(resolver)
+		transaction.passthrough!(client)
 		
 		expect(transaction.response.answer.first[2]).to be_a IN::NS
 	end
@@ -104,7 +104,7 @@ describe Async::DNS::Transaction do
 		
 		expect(transaction.response.answer.size).to be == 0
 		
-		transaction.passthrough!(resolver)
+		transaction.passthrough!(client)
 		
 		expect(transaction.response.answer.first[2]).to be_a IN::PTR
 	end
@@ -114,7 +114,7 @@ describe Async::DNS::Transaction do
 		
 		expect(transaction.response.answer.size).to be == 0
 		
-		transaction.passthrough!(resolver)
+		transaction.passthrough!(client)
 		
 		expect(transaction.response.answer.first[2]).to be_a IN::SOA
 	end

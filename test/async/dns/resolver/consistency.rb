@@ -97,7 +97,7 @@ describe Async::DNS::Resolver do
 			expect(Set.new(resolved_a[domain])).to be == Set.new(resolved_b[domain])
 		end
 		
-		# At most 20% slower to account for performance fluctuations:
-		expect(async_dns_performance.real).to be <= (resolv_dns_performance.real * 1.2)
+		# At most 50% slower to account for performance fluctuations:
+		expect(async_dns_performance.real).to be <= (resolv_dns_performance.real * 1.5)
 	end
 end

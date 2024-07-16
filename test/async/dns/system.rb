@@ -16,9 +16,9 @@ describe Async::DNS::System do
 	end
 	
 	it "should respond to query for google.com" do
-		resolver = Async::DNS::Resolver.new(Async::DNS::System.nameservers)
+		client = Async::DNS::Client.new(endpoint: Async::DNS::System.nameservers)
 		
-		response = resolver.query('google.com')
+		response = client.query('google.com')
 		
 		expect(response.class).to be == Resolv::DNS::Message
 		expect(response.rcode).to be == Resolv::DNS::RCode::NoError
@@ -36,7 +36,7 @@ describe Async::DNS::System::Hosts do
 			hosts.parse_hosts(file)
 		end
 	
-		expect(hosts.call('testing')).to be == true
+		expect(hosts.call('testing')).to be == ['1.2.3.4']
 		expect(hosts['testing']).to be == '1.2.3.4'
 	end
 end

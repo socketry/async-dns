@@ -67,16 +67,16 @@ module Async::DNS
 			Transaction.new(@server, @query, name, resource_class || @resource_class, @response, **options).process
 		end
 		
-		# Use the given resolver to respond to the question. Uses `passthrough` to do the lookup and merges the result.
+		# Use the given Client to respond to the question. Uses `passthrough` to do the lookup and merges the result.
 		#
 		# If a block is supplied, this function yields with the `response` message if successful. This could be used, for example, to update a cache or modify the reply.
 		#
 		# If recursion is not requested, the result is `fail!(:Refused)`. This check is ignored if an explicit `options[:name]` or `options[:force]` is given.
 		#
-		# If the resolver can't reach upstream servers, `fail!(:ServFail)` is invoked.
-		def passthrough!(resolver, force: false, **options, &block)
+		# If the Client can't reach upstream servers, `fail!(:ServFail)` is invoked.
+		def passthrough!(client, force: false, **options, &block)
 			if @query.rd || force || options[:name]
-				response = passthrough(resolver, **options)
+				response = passthrough(client, **options)
 				
 				if response
 					yield response if block_given?
@@ -93,13 +93,13 @@ module Async::DNS
 			end
 		end
 		
-		# Use the given resolver to respond to the question.
+		# Use the given Client to respond to the question.
 		# 
 		# A block must be supplied, and provided a valid response is received from the upstream server, this function yields with the reply and reply_name.
 		#
 		# If `options[:name]` is provided, this overrides the default query name sent to the upstream server. The same logic applies to `options[:resource_class]`.
-		def passthrough(resolver, name: self.name, resource_class: self.resource_class)
-			resolver.query(name, resource_class)
+		def passthrough(client, name: self.name, resource_class: self.resource_class)
+			client.query(name, resource_class)
 		end
 		
 		# Respond to the given query with a resource record. The arguments to this function depend on the `resource_class` requested. This function instantiates the resource class with the supplied arguments, and then passes it to {#append!}.

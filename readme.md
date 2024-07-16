@@ -1,6 +1,6 @@
 # Async::DNS
 
-Async::DNS is a high-performance DNS client resolver and server which can be easily integrated into other projects or used as a stand-alone daemon. It was forked from [RubyDNS](https://github.com/ioquatix/rubydns) which is now implemented in terms of this library.
+Async::DNS is a high-performance DNS client and server which can be easily integrated into other projects or used as a stand-alone daemon. It was forked from [RubyDNS](https://github.com/ioquatix/rubydns) which is now implemented in terms of this library.
 
 [![Development Status](https://github.com/socketry/async-dns/workflows/Test/badge.svg)](https://github.com/socketry/async-dns/actions?workflow=Test)
 
@@ -20,15 +20,15 @@ Or install it yourself as:
 
 ## Usage
 
-### Resolver
+### Client
 
-Here is a simple example showing how to use the resolver:
+Here is a simple example showing how to use the client:
 
 ``` ruby
 Async::Reactor.run do
-	resolver = Async::DNS::Resolver.new()
+	client = Async::DNS::Client.new
 
-	addresses = resolver.addresses_for("www.google.com.")
+	addresses = client.addresses_for("www.google.com.")
 
 	puts addresses.inspect
 end
@@ -38,11 +38,11 @@ end
 You can also specify custom DNS servers:
 
 ``` ruby
-resolver = Async::DNS::Resolver.new(Async::DNS::System.standard_connections(['8.8.8.8']))
+client = Async::DNS::Client.new(endpoint: Async::DNS::System.standard_connections(['8.8.8.8']))
 
 # or
 
-resolver = Async::DNS::Resolver.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
+client = Async::DNS::Client.new([[:udp, "8.8.8.8", 53], [:tcp, "8.8.8.8", 53]])
 ```
 
 ### Server
@@ -54,9 +54,9 @@ require 'async/dns'
 
 class TestServer < Async::DNS::Server
 	def process(name, resource_class, transaction)
-		@resolver ||= Async::DNS::Resolver.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
+		@client ||= Async::DNS::Client.new([[:udp, '8.8.8.8', 53], [:tcp, '8.8.8.8', 53]])
 		
-		transaction.passthrough!(@resolver)
+		transaction.passthrough!(@client)
 	end
 end
 
@@ -78,7 +78,7 @@ On some platforms (e.g. Mac OS X) the number of file descriptors is relatively l
 
 ### Server
 
-The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Async::DNS::Resolver` gives the following:
+The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Async::DNS::Client` gives the following:
 
 ``` 
                               user     system      total        real
@@ -92,13 +92,13 @@ These benchmarks are included in the unit tests. To test bind9 performance, it m
 
 We welcome additional benchmarks and feedback regarding Async::DNS performance. To check the current performance results, consult the [travis build job output](https://travis-ci.org/socketry/async-dns).
 
-### Resolver
+### Client
 
-The `Async::DNS::Resolver` is highly concurrent and can resolve individual names as fast as the built in `Resolv::DNS` resolver. Because the resolver is asynchronous, when dealing with multiple names, it can work more efficiently:
+The `Async::DNS::Client` is highly concurrent and can resolve individual names as fast as the built in `Resolv::DNS` Client. Because the Client is asynchronous, when dealing with multiple names, it can work more efficiently:
 
 ``` 
                               user     system      total        real
-Async::DNS::Resolver       0.020000   0.010000   0.030000 (  0.030507)
+Async::DNS::Client       0.020000   0.010000   0.030000 (  0.030507)
 Resolv::DNS                   0.070000   0.010000   0.080000 (  1.465975)
 ```
 
@@ -106,7 +106,7 @@ These benchmarks are included in the unit tests.
 
 ### Server
 
-The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Async::DNS::Resolver` gives the following:
+The performance is on the same magnitude as `bind9`. Some basic benchmarks resolving 1000 names concurrently, repeated 5 times, using `Async::DNS::Client` gives the following:
 
 ``` 
                               user     system      total        real

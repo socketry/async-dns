@@ -8,43 +8,46 @@ module Async
 		# Provides a local in-memory cache for DNS resources.
 		class Cache
 			Entry = Struct.new(:timestamp, :name, :resource_class, :resource) do
-				def age
-					Async::Clock.now - timestamp
+				def age(now)
+					now - timestamp
 				end
 				
-				def fresh?
-					age <= resource.ttl
+				def fresh?(now = Async::Clock.now)
+					self.age(now) <= resource.ttl
 				end
 			end
 			
 			def initialize
-				@resources = {}
+				@store = {}
 			end
 			
 			def fetch(name, resource_classes)
-				if entries = @resources[name]
-					# Remove stale entries:
-					entries.delete_if do |resource_class, entry|
-						!entry.fresh?
-					end
-				else
-					entries = (@resources[name] = {})
-				end
+				now = Async::Clock.now
 				
-				resource_classes.filter_map do |resource_class|
-					unless entry = entries[resource_class]
-						yield(name, resource_class)
-						entry = entries[resource_class]
+				resource_classes.map do |resource_class|
+					key = [name, resource_class]
+					
+					if entries = @store[key]
+						entries.delete_if do |entry|
+							!entry.fresh?(now)
+						end
+					else
+						entries = (@store[key] = [])
 					end
 					
-					entry&.resource
-				end
+					if entries.empty?
+						yield(name, resource_class)
+					end
+					
+					entries
+				end.flatten.map(&:resource)
 			end
 			
 			def store(name, resource_class, resource)
-				entries = (@resources[name] ||= {})
+				key = [name, resource_class]
+				entries = (@store[key] ||= [])
 				
-				entries[resource_class] = Entry.new(Async::Clock.now, name, resource_class, resource)
+				entries << Entry.new(Async::Clock.now, name, resource_class, resource)
 			end
 		end
 	end

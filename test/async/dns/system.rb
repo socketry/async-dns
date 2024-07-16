@@ -20,7 +20,7 @@ describe Async::DNS::System do
 		
 		response = resolver.query('google.com')
 		
-		expect(response.class).to be == Async::DNS::Message
+		expect(response.class).to be == Resolv::DNS::Message
 		expect(response.rcode).to be == Resolv::DNS::RCode::NoError
 	end
 end

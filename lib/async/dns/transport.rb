@@ -6,8 +6,6 @@
 require 'stringio'
 require 'ipaddr'
 
-require_relative 'message'
-
 module Async
 	module DNS
 		def self.address_family(host)
@@ -32,14 +30,11 @@ module Async
 				end
 			end
 			
-			def write_chunk(output_data)
-				size_data = [output_data.bytesize].pack('n')
-				
+			def write_chunk(data)
+				size_data = [data.bytesize].pack('n')
 				@socket.write(size_data)
-				@socket.write(output_data)
+				@socket.write(data)
 				@socket.flush
-				
-				return output_data.bytesize
 			end
 		end
 	end

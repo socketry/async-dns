@@ -4,9 +4,19 @@
 # Copyright, 2015-2024, by Samuel Williams.
 # Copyright, 2021, by Mike Perham.
 
+require 'resolv'
+require_relative 'extensions/resolv'
+
 require_relative 'transport'
 
 module Async::DNS
+	# This is generally a good size for UDP packets that will be sent over the internet, as it is the largest size that will not require fragmentation.
+	# 1500 - 20 (IP header) - 8 (UDP header) = 1472
+	UDP_REASONABLE_SIZE = 1472
+	
+	# The maximum size of a UDP packet.
+	UDP_MAXIMUM_SIZE = 2**16
+	
 	class GenericHandler
 		def initialize(server, socket)
 			@server = server
@@ -37,7 +47,7 @@ module Async::DNS
 			query = nil
 
 			begin
-				query = Async::DNS::decode_message(data)
+				query = Resolv::DNS::Message.decode(data)
 				
 				return @server.process_query(query, options)
 			rescue StandardError => error
@@ -52,7 +62,6 @@ module Async::DNS
 	class DatagramHandler < GenericHandler
 		def run(task: Async::Task.current)
 			while true
-				Console.info(self) {"Waiting for incoming UDP requests..."}
 				input_data, remote_address = @socket.recvmsg(UDP_MAXIMUM_SIZE)
 				
 				task.async do
@@ -83,7 +92,7 @@ module Async::DNS
 			Console::Event::Failure.for(error).emit "UDP response failed!"
 		rescue EOFError => error
 			Console::Event::Failure.for(error).emit "UDP session ended prematurely!"
-		rescue DecodeError => error
+		rescue Resolv::DNS::DecodeError => error
 			Console::Event::Failure.for(error).emit "Could not decode incoming UDP data!"
 		end
 	end
@@ -110,7 +119,7 @@ module Async::DNS
 			Console::Event::Failure.for(error).emit "TCP connection reset by peer!"
 		rescue Errno::EPIPE => error
 			Console::Event::Failure.for(error).emit "TCP session failed due to broken pipe!"
-		rescue DecodeError => error
+		rescue Resolv::DNS::DecodeError => error
 			Console::Event::Failure.for(error).emit "Could not decode incoming TCP data!"
 		end
 	end

@@ -49,6 +49,7 @@ module Async::DNS
 			
 			@origin = origin
 			@cache = cache
+			@count = 0
 		end
 		
 		attr_accessor :origin
@@ -88,13 +89,14 @@ module Async::DNS
 		
 		# Look up a named resource of the given resource_class.
 		def records_for(name, resource_classes)
+			Console.debug(self) {"Looking up records for #{name.inspect} with #{resource_classes.inspect}."}
 			name = self.fully_qualified_name(name)
 			resource_classes = Array(resource_classes)
 			
 			@cache.fetch(name, resource_classes) do |name, resource_class|
 				if response = self.dispatch_query(name, resource_class)
 					response.answer.each do |name, ttl, record|
-						Console.info(self) {"Caching record for #{name.inspect} with #{record.class} and TTL #{ttl}."}
+						Console.debug(self) {"Caching record for #{name.inspect} with #{record.class} and TTL #{ttl}."}
 						@cache.store(name, resource_class, record)
 					end
 				end
@@ -201,7 +203,7 @@ module Async::DNS
 			
 			data, peer = socket.recvfrom(UDP_MAXIMUM_SIZE)
 			
-			return Async::DNS.decode_message(data)
+			return ::Resolv::DNS::Message.decode(data)
 		end
 		
 		def try_stream_server(request, socket)
@@ -209,9 +211,9 @@ module Async::DNS
 			
 			transport.write_chunk(request.packet)
 			
-			input_data = transport.read_chunk
+			data = transport.read_chunk
 			
-			return Async::DNS.decode_message(input_data)
+			return ::Resolv::DNS::Message.decode(data)
 		end
 		
 		# Manages a single DNS question message across one or more servers.
@@ -225,7 +227,6 @@ module Async::DNS
 			
 			attr :message
 			attr :packet
-			attr :logger
 			
 			def each(&block)
 				@endpoint.each(&block)

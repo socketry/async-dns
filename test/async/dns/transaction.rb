@@ -13,9 +13,9 @@ describe Async::DNS::Transaction do
 	include Sus::Fixtures::Async::ReactorContext
 	
 	let(:server) {Async::DNS::Server.new}
-	let(:query) {Async::DNS::Message.new(0)}
+	let(:query) {Resolv::DNS::Message.new(0)}
 	let(:question) {Resolv::DNS::Name.create("www.google.com.")}
-	let(:response) {Async::DNS::Message.new(0)}
+	let(:response) {Resolv::DNS::Message.new(0)}
 	let(:resolver) {Async::DNS::Resolver.new}
 	
 	it "should append an address" do

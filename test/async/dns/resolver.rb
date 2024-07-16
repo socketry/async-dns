@@ -21,7 +21,7 @@ describe Async::DNS::Resolver do
 	it "should result in some answers" do
 		response = resolver.query('google.com', Resolv::DNS::Resource::IN::A)
 		
-		expect(response.class).to be == Async::DNS::Message
+		expect(response.class).to be == Resolv::DNS::Message
 		expect(response.answer.size).to be > 0
 	end
 	

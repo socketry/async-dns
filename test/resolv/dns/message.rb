@@ -6,7 +6,7 @@
 
 require 'async/dns'
 
-describe Async::DNS::Message do
+describe Resolv::DNS::Message do
 	it "should be decoded correctly" do
 		data = <<~EOF.unpack1("m")
 		HQCBgAABAAgAAAABA3d3dwV5YWhvbwNjb20AAAEAAcAMAAUAAQAAASwADwZm
@@ -16,8 +16,8 @@ describe Async::DNS::Message do
 		AAAAPAAEYou3GMB8AAEAAQAAADwABGKK/W0AACkQAAAAAAAAAA==
 		EOF
 
-		message = Async::DNS::decode_message(data)
-		expect(message.class).to be == Async::DNS::Message
+		message = subject.decode(data)
+		expect(message.class).to be == Resolv::DNS::Message
 		expect(message.id).to be == 0x1d00
 
 		expect(message.question.size).to be == 1
@@ -32,6 +32,6 @@ describe Async::DNS::Message do
 		dwAAKRAAAAAAAAAA
 		EOF
 
-		expect{Async::DNS::decode_message(data)}.to raise_exception(Async::DNS::DecodeError)
+		expect{subject.decode(data)}.to raise_exception(Resolv::DNS::DecodeError)
 	end
 end

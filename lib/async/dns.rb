@@ -7,7 +7,6 @@
 require 'async'
 require_relative 'dns/version'
 
-require_relative 'dns/message'
 require_relative 'dns/server'
 require_relative 'dns/resolver'
 require_relative 'dns/handler'

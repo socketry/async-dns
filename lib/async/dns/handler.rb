@@ -10,9 +10,8 @@ require_relative 'extensions/resolv'
 require_relative 'transport'
 
 module Async::DNS
-	# This is generally a good size for UDP packets that will be sent over the internet, as it is the largest size that will not require fragmentation.
-	# 1500 - 20 (IP header) - 8 (UDP header) = 1472
-	UDP_REASONABLE_SIZE = 1472
+	# The maximum size of a normal DNS packet (excluding EDNS).
+	UDP_REASONABLE_SIZE = 512
 	
 	# The maximum size of a UDP packet.
 	UDP_MAXIMUM_SIZE = 2**16

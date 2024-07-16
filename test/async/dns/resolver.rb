@@ -30,7 +30,10 @@ describe Async::DNS::Resolver do
 			addresses = resolver.addresses_for('google.com')
 			
 			expect(addresses).to have_value(be_a Resolv::IPv4)
-			expect(addresses).to have_value(be_a Resolv::IPv6)
+			
+			if Async::DNS::System.ipv6?
+				expect(addresses).to have_value(be_a Resolv::IPv6)
+			end
 		end
 		
 		it "should recursively resolve CNAME records" do

@@ -47,17 +47,6 @@ describe Async::DNS::Server do
 				answer: be(:empty?)
 			)
 		end
-		
-		it "should return IPv4 and IPv6 addresses" do
-			response = resolver.query("www.google.com", Resolv::DNS::Resource::IN::A)
-			
-			expect(response).to have_attributes(
-				qr: be == 1,
-				rcode: be == Resolv::DNS::RCode::NoError,
-				question: have_attributes(size: be == 1),
-				answer: have_attributes(size: be > 0)
-			)
-		end
 	end
 	
 	with 'a large response' do

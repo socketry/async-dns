@@ -23,7 +23,7 @@ module Async::DNS
 			end
 		end
 		
-		def self.use_ipv6?
+		def self.ipv6?
 			begin
 				list = Socket.ip_address_list
 			rescue NotImplementedError

@@ -103,7 +103,7 @@ module Async::DNS
 			end
 		end
 		
-		if System.use_ipv6?
+		if System.ipv6?
 			ADDRESS_RESOURCE_CLASSES = [Resolv::DNS::Resource::IN::A, Resolv::DNS::Resource::IN::AAAA]
 		else
 			ADDRESS_RESOURCE_CLASSES = [Resolv::DNS::Resource::IN::A]

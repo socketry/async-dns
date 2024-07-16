@@ -103,7 +103,11 @@ module Async::DNS
 			end
 		end
 		
-		ADDRESS_RESOURCE_CLASSES = [Resolv::DNS::Resource::IN::A, Resolv::DNS::Resource::IN::AAAA]
+		if System.use_ipv6?
+			ADDRESS_RESOURCE_CLASSES = [Resolv::DNS::Resource::IN::A, Resolv::DNS::Resource::IN::AAAA]
+		else
+			ADDRESS_RESOURCE_CLASSES = [Resolv::DNS::Resource::IN::A]
+		end
 		
 		# Yields a list of `Resolv::IPv4` and `Resolv::IPv6` addresses for the given `name` and `resource_class`. Raises a ResolutionFailure if no severs respond.
 		def addresses_for(name, resource_classes = ADDRESS_RESOURCE_CLASSES)

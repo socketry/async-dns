@@ -34,23 +34,8 @@ module Async::DNS
 		# Servers are specified in the same manor as options[:listen], e.g.
 		#   [:tcp/:udp, address, port]
 		# In the case of multiple servers, they will be checked in sequence.
-		def initialize(endpoint, timeout: nil, ndots: 1, search: nil, origin: nil, cache: Cache.new, **options) 
+		def initialize(endpoint, ndots: 1, search: nil, origin: nil, cache: Cache.new, **options) 
 			@endpoint = endpoint
-			
-			# Legacy support for multiple endpoints:
-			if @endpoint.is_a?(Array)
-				warn "Using Array specifications for endpoint is deprecated. Please use IO::Endpoint::CompositeEndpoint instead.", uplevel: 1
-				
-				endpoints = @endpoint.map do |specification|
-					::IO::Endpoint.public_send(specification[0], *specification[1..-1])
-				end
-				
-				@endpoint = ::IO::Endpoint.composite(*endpoints)
-			end
-			
-			if timeout
-				@endpoint = @endpoint.with(timeout: timeout)
-			end
 			
 			@ndots = ndots
 			if search
@@ -65,8 +50,6 @@ module Async::DNS
 			
 			@cache = cache
 			@options = options
-			
-			@count = 0
 		end
 		
 		# The search domains, which are used to generate fully qualified names if required.

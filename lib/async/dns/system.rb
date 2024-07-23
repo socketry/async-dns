@@ -37,6 +37,8 @@ module Async::DNS
 			list.any? {|a| a.ipv6? && !a.ipv6_loopback? && !a.ipv6_linklocal? }
 		end
 		
+		Resource = Struct.new(:address, :ttl)
+		
 		# An interface for querying the system's hosts file.
 		class Hosts
 			# Hosts for the local system.
@@ -84,9 +86,15 @@ module Async::DNS
 				@addresses[address] += names
 				
 				names.each do |name|
+					name = Resolv::DNS::Name.create(name).with_origin(nil)
+					
 					@names[name] ||= []
 					@names[name] << address
 				end
+			end
+			
+			def each(&block)
+				@names.each(&block)
 			end
 			
 			# Parse a hosts file and add the entries.
@@ -94,6 +102,14 @@ module Async::DNS
 				io.each do |line|
 					line.sub!(/#.*/, '')
 					address, hostname, *aliases = line.split(/\s+/)
+					
+					if address =~ Resolv::IPv4::Regex
+						address = Resolv::IPv4.create(address)
+					elsif address =~ Resolv::IPv6::Regex
+						address = Resolv::IPv6.create(address)
+					else
+						next
+					end
 					
 					add(address, [hostname] + aliases)
 				end
@@ -167,6 +183,24 @@ module Async::DNS
 				end
 			else
 				options[:search] = [nil]
+			end
+			
+			if hosts = Hosts.local
+				cache = options.fetch(:cache) do
+					options[:cache] = Cache.new
+				end
+				
+				hosts.each do |name, addresses|
+					addresses.each do |address|
+						resource = Resource.new(address, nil)
+						case address
+						when Resolv::IPv4
+							cache.store(name, Resolv::DNS::Resource::IN::A, resource)
+						when Resolv::IPv6
+							cache.store(name, Resolv::DNS::Resource::IN::AAAA, resource)
+						end
+					end
+				end
 			end
 			
 			timeout = options.delete(:timeout) || DEFAULT_TIMEOUT

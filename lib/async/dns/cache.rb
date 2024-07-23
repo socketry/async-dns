@@ -13,7 +13,11 @@ module Async
 				end
 				
 				def fresh?(now = Async::Clock.now)
-					self.age(now) <= resource.ttl
+					if ttl = resource.ttl
+						self.age(now) <= ttl
+					else
+						true
+					end
 				end
 			end
 			

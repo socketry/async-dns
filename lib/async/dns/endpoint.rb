@@ -7,6 +7,7 @@
 
 module Async
 	module DNS
+		# DNS endpoint helpers.
 		module Endpoint
 			# Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with.
 			def self.for(nameservers, port: 53, **options)

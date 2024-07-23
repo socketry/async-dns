@@ -185,7 +185,7 @@ module Async::DNS
 		end
 		
 		# Send the message to available servers. If no servers respond correctly, nil is returned. This result indicates a failure of the resolver to correctly contact any server and get a valid response.
-		def dispatch_request(message, parent: Async::Task.current)
+		def dispatch_request(message)
 			request = Request.new(message, @endpoint)
 			error = nil
 			

@@ -3,6 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
+require_relative 'endpoint'
+
 begin
 	require 'win32/resolv'
 rescue LoadError
@@ -147,18 +149,6 @@ module Async::DNS
 			}
 		end
 		
-		# Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with.
-		def self.endpoint_for(nameservers, **options)
-			connections = []
-			
-			nameservers.each do |host|
-				connections << IO::Endpoint.udp(host, 53, **options)
-				connections << IO::Endpoint.tcp(host, 53, **options)
-			end
-			
-			return IO::Endpoint.composite(connections)
-		end
-		
 		# Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with. There is no equivalent facility to use the `hosts` file at present.
 		def self.resolver(**options)
 			nameservers = []
@@ -180,7 +170,7 @@ module Async::DNS
 			end
 			
 			timeout = options.delete(:timeout) || DEFAULT_TIMEOUT
-			endpoint = self.endpoint_for(nameservers, timeout: timeout)
+			endpoint = Endpoint.for(nameservers, timeout: timeout)
 			
 			if block_given?
 				yield endpoint, **options

@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
 	spec.homepage = "https://github.com/socketry/async-dns"
 	
 	spec.metadata = {
+		"documentation_uri" => "https://socketry.github.io/async-dns/",
+		"funding_uri" => "https://github.com/sponsors/ioquatix/",
 		"source_code_uri" => "https://github.com/socketry/async-dns.git",
 	}
 	

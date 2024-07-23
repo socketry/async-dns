@@ -19,7 +19,7 @@ describe Resolv::DNS::Name do
 			
 			expect(fully_qualified_name.to_a.size).to be == 3
 			expect(fully_qualified_name).to be(:absolute?)
-			expect(fully_qualified_name.to_s).to be == "foo.bar.org."
+			expect(fully_qualified_name.to_s).to be == "foo.bar.org"
 		end
 		
 		it "should handle nil origin as absolute" do
@@ -27,7 +27,7 @@ describe Resolv::DNS::Name do
 			
 			expect(fully_qualified_name.to_a.size).to be == 2
 			expect(fully_qualified_name).to be(:absolute?)
-			expect(fully_qualified_name.to_s).to be == "foo.bar."
+			expect(fully_qualified_name.to_s).to be == "foo.bar"
 		end
 		
 		it "should handle empty origin as absolute" do
@@ -35,7 +35,7 @@ describe Resolv::DNS::Name do
 			
 			expect(fully_qualified_name.to_a.size).to be == 2
 			expect(fully_qualified_name).to be(:absolute?)
-			expect(fully_qualified_name.to_s).to be == "foo.bar."
+			expect(fully_qualified_name.to_s).to be == "foo.bar"
 		end
 	end
 	
@@ -44,7 +44,7 @@ describe Resolv::DNS::Name do
 		
 		it "should be absolute" do
 			expect(name).to be(:absolute?)
-			expect(name.to_s).to be == "foo.bar."
+			expect(name.to_s).to be == "foo.bar"
 		end
 		
 		it "should remove the specified origin" do

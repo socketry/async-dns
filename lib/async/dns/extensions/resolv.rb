@@ -40,15 +40,6 @@ class Resolv
 		
 		# Extensions to the `Resolv::DNS::Name` class.
 		class Name
-			# Generate a strinng representation of the name.
-			#
-			# If the name is absolute, a trailing dot is added.
-			#
-			# @returns [String] The string representation of the name.
-			def to_s
-				"#{@labels.join('.')}#{@absolute ? '.' : ''}"
-			end
-			
 			# Computes the name, typically absolute, with the specified origin as a suffix. If the origin is nil, don't change the name, but change it to absolute (as specified).
 			#
 			# @parameter origin [Array | String] The origin to append to the name.

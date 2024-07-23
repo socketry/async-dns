@@ -26,17 +26,15 @@ module Async::DNS
 	
 	# Resolve names to addresses using the DNS protocol.
 	class Resolver
-		# 10ms wait between making requests. Override with `options[:delay]`
-		DEFAULT_DELAY = 0.01
-		
-		# Try a given request 10 times before failing. Override with `options[:retries]`.
-		DEFAULT_RETRIES = 10
-		
 		# Servers are specified in the same manor as options[:listen], e.g.
 		#   [:tcp/:udp, address, port]
 		# In the case of multiple servers, they will be checked in sequence.
-		def initialize(endpoint = nil, origin: nil, cache: Cache.new)
+		def initialize(endpoint = nil, origin: nil, cache: Cache.new, timeout: nil, ndots: 1, search: [nil]) 
 			@endpoint = endpoint || System.default_nameservers
+			
+			if timeout
+				@endpoint = @endpoint.with(timeout: timeout)
+			end
 			
 			# Legacy support for multiple endpoints:
 			if @endpoint.is_a?(Array)
@@ -47,7 +45,14 @@ module Async::DNS
 				@endpoint = ::IO::Endpoint.composite(*endpoints)
 			end
 			
-			@origin = origin
+			@ndots = ndots
+			
+			@search = search
+			
+			if origin
+				@search = [origin] + @search
+			end
+			
 			@cache = cache
 			@count = 0
 		end
@@ -57,21 +62,21 @@ module Async::DNS
 		# Generates a fully qualified name from a given name.
 		#
 		# @parameter name [String | Resolv::DNS::Name] The name to fully qualify.
-		def fully_qualified_name(name)
-			# If we are passed an existing deconstructed name:
-			if Resolv::DNS::Name === name
-				if name.absolute?
-					return name
-				else
-					return name.with_origin(@origin)
-				end
-			end
+		def fully_qualified_names(name)
+			return to_enum(:fully_qualified_names, name) unless block_given?
 			
-			# ..else if we have a string, we need to do some basic processing:
-			if name.end_with? '.'
-				return Resolv::DNS::Name.create(name)
+			name = Resolv::DNS::Name.create(name)
+			
+			if name.absolute?
+				yield name
 			else
-				return Resolv::DNS::Name.create(name).with_origin(@origin)
+				if @ndots <= name.length - 1
+					yield name
+				end
+				
+				@search.each do |domain|
+					yield name.with_origin(domain)
+				end
 			end
 		end
 		
@@ -87,23 +92,37 @@ module Async::DNS
 		#
 		# @returns [Resolv::DNS::Message] The response from the server.
 		def query(name, resource_class = Resolv::DNS::Resource::IN::A)
-			self.dispatch_query(self.fully_qualified_name(name), resource_class)
+			response = nil
+			
+			self.fully_qualified_names(name) do |fully_qualified_name|
+				response = self.dispatch_query(fully_qualified_name, resource_class)
+				
+				break if response.rcode == Resolv::DNS::RCode::NoError
+			end
+			
+			return response
 		end
 		
 		# Look up a named resource of the given resource_class.
 		def records_for(name, resource_classes)
 			Console.debug(self) {"Looking up records for #{name.inspect} with #{resource_classes.inspect}."}
-			name = self.fully_qualified_name(name)
 			resource_classes = Array(resource_classes)
+			resources = nil
 			
-			@cache.fetch(name, resource_classes) do |name, resource_class|
-				if response = self.dispatch_query(name, resource_class)
-					response.answer.each do |name, ttl, record|
-						Console.debug(self) {"Caching record for #{name.inspect} with #{record.class} and TTL #{ttl}."}
-						@cache.store(name, resource_class, record)
+			self.fully_qualified_names(name) do |fully_qualified_name|
+				resources = @cache.fetch(fully_qualified_name, resource_classes) do |name, resource_class|
+					if response = self.dispatch_query(name, resource_class)
+						response.answer.each do |name, ttl, record|
+							Console.debug(self) {"Caching record for #{name.inspect} with #{record.class} and TTL #{ttl}."}
+							@cache.store(name, resource_class, record)
+						end
 					end
 				end
+				
+				break if resources.any?
 			end
+			
+			return resources
 		end
 		
 		if System.ipv6?

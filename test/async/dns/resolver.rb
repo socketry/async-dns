@@ -67,10 +67,12 @@ describe Async::DNS::Resolver do
 		let(:resolver) {Async::DNS::Resolver.new(origin: "foo.bar.")}
 		
 		it "should generate fully qualified domain name with specified origin" do
-			fully_qualified_name = resolver.fully_qualified_name("baz")
+			fully_qualified_names = resolver.fully_qualified_names("baz").to_a
 			
-			expect(fully_qualified_name).to be(:absolute?)
-			expect(fully_qualified_name.to_s).to be == "baz.foo.bar."
+			expect(fully_qualified_names).to be == [
+				Resolv::DNS::Name.create("baz.foo.bar."),
+				Resolv::DNS::Name.create("baz."),
+			]
 		end
 	end
 end

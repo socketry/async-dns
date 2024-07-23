@@ -10,7 +10,7 @@ require 'sus/fixtures/async'
 describe Async::DNS::Resolver do
 	include Sus::Fixtures::Async::ReactorContext
 	
-	let(:resolver) {Async::DNS::Resolver.new}
+	let(:resolver) {Async::DNS::Resolver.default}
 	
 	it "should result in non-existent domain" do
 		response = resolver.query('foobar.example.com', Resolv::DNS::Resource::IN::A)
@@ -64,7 +64,7 @@ describe Async::DNS::Resolver do
 	end
 	
 	with '#fully_qualified_name' do
-		let(:resolver) {Async::DNS::Resolver.new(origin: "foo.bar.")}
+		let(:resolver) {Async::DNS::Resolver.new(::IO::Endpoint::Generic.new, origin: "foo.bar.")}
 		
 		it "should generate fully qualified domain name with specified origin" do
 			fully_qualified_names = resolver.fully_qualified_names("baz").to_a

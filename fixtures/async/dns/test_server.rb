@@ -6,7 +6,7 @@
 module Async
 	module DNS
 		class TestServer < Server
-			def initialize(endpoint = DEFAULT_ENDPOINT, resolver: Resolver.new, **options)
+			def initialize(endpoint = DEFAULT_ENDPOINT, resolver: Resolver.default, **options)
 				super(endpoint, **options)
 				
 				@resolver = resolver

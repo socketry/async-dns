@@ -26,7 +26,7 @@ Here is a simple example showing how to use the resolver:
 
 ``` ruby
 Async::Reactor.run do
-	resolver = Async::DNS::Resolver.new()
+	resolver = Async::DNS::System.resolver
 
 	addresses = resolver.addresses_for("www.google.com.")
 

@@ -16,7 +16,7 @@ describe Async::DNS::Transaction do
 	let(:query) {Resolv::DNS::Message.new(0)}
 	let(:question) {Resolv::DNS::Name.create("www.google.com.")}
 	let(:response) {Resolv::DNS::Message.new(0)}
-	let(:resolver) {Async::DNS::Resolver.new}
+	let(:resolver) {Async::DNS::Resolver.default}
 	
 	it "should append an address" do
 		transaction = Async::DNS::Transaction.new(server, query, question, IN::A, response)

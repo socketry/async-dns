@@ -78,7 +78,7 @@ describe Async::DNS::Resolver do
 		resolved_a = resolved_b = nil
 		
 		async_dns_performance = Benchmark.measure do
-			resolver = Async::DNS::Resolver.new
+			resolver = Async::DNS::Resolver.default
 		
 			resolved_a = DOMAINS.to_h do |domain|
 				[domain, resolver.addresses_for(domain)]

@@ -11,12 +11,8 @@ require 'sus/fixtures/async'
 describe Async::DNS::System do
 	include Sus::Fixtures::Async::ReactorContext
 	
-	it "should have at least one namesever" do
-		expect(Async::DNS::System.nameservers).to have_attributes(size: be > 0)
-	end
-	
 	it "should respond to query for google.com" do
-		resolver = Async::DNS::Resolver.new(Async::DNS::System.nameservers)
+		resolver = Async::DNS::Resolver.default
 		
 		response = resolver.query('google.com')
 		

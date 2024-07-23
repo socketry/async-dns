@@ -26,18 +26,21 @@ module Async::DNS
 	
 	# Resolve names to addresses using the DNS protocol.
 	class Resolver
+		# The default resolver for the system.
+		def self.default(**options)
+			System.resolver(**options)
+		end
+		
 		# Servers are specified in the same manor as options[:listen], e.g.
 		#   [:tcp/:udp, address, port]
 		# In the case of multiple servers, they will be checked in sequence.
-		def initialize(endpoint = nil, origin: nil, cache: Cache.new, timeout: nil, ndots: 1, search: [nil]) 
-			@endpoint = endpoint || System.default_nameservers
-			
-			if timeout
-				@endpoint = @endpoint.with(timeout: timeout)
-			end
+		def initialize(endpoint, timeout: nil, ndots: 1, search: nil, origin: nil, cache: Cache.new, **options) 
+			@endpoint = endpoint
 			
 			# Legacy support for multiple endpoints:
 			if @endpoint.is_a?(Array)
+				warn "Using Array specifications for endpoint is deprecated. Please use IO::Endpoint::CompositeEndpoint instead.", uplevel: 1
+				
 				endpoints = @endpoint.map do |specification|
 					::IO::Endpoint.public_send(specification[0], *specification[1..-1])
 				end
@@ -45,19 +48,29 @@ module Async::DNS
 				@endpoint = ::IO::Endpoint.composite(*endpoints)
 			end
 			
-			@ndots = ndots
+			if timeout
+				@endpoint = @endpoint.with(timeout: timeout)
+			end
 			
-			@search = search
+			@ndots = ndots
+			if search
+				@search = search
+			else
+				@search = [nil]
+			end
 			
 			if origin
 				@search = [origin] + @search
 			end
 			
 			@cache = cache
+			@options = options
+			
 			@count = 0
 		end
 		
-		attr_accessor :origin
+		# The search domains, which are used to generate fully qualified names if required.
+		attr :search
 		
 		# Generates a fully qualified name from a given name.
 		#

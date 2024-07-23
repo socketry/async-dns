@@ -98,29 +98,57 @@ module Async::DNS
 			end
 		end
 		
+		DEFAULT_TIMEOUT = 5.0
+		
 		# Parse the `resolv.conf` file and return a list of nameservers.
 		def self.parse_resolv_configuration(path)
 			nameservers = []
+			search = nil
+			ndots = 1
+			edns = nil
+			timeout = DEFAULT_TIMEOUT
+			
 			File.open(path) do |file|
 				file.each do |line|
 					# Remove any comments:
 					line.sub!(/[#;].*/, '')
 					
 					# Extract resolv.conf command:
-					keyword, *args = line.split(/\s+/)
+					keyword, *arguments = line.split(/\s+/)
 					
 					case keyword
 					when 'nameserver'
-						nameservers += args
+						nameservers.concat(arguments)
+					when 'domain', 'search'
+						search = arguments
+					when 'options'
+						arguments.each do |argument|
+							key, value = argument.split(':', 2)
+							
+							case key
+							when 'ndots'
+								ndots = value.to_i
+							when 'edns0'
+								edns = 0
+							when 'timeout'
+								timeout = value.to_f
+							end
+						end
 					end
 				end
 			end
 			
-			return nameservers
+			return {
+				nameservers: nameservers,
+				search: search,
+				ndots: ndots,
+				edns: edns,
+				timeout: timeout,
+			}
 		end
 		
 		# Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with.
-		def self.standard_connections(nameservers, **options)
+		def self.endpoint_for(nameservers, **options)
 			connections = []
 			
 			nameservers.each do |host|
@@ -132,21 +160,33 @@ module Async::DNS
 		end
 		
 		# Get a list of standard nameserver connections which can be used for querying any standard servers that the system has been configured with. There is no equivalent facility to use the `hosts` file at present.
-		def self.nameservers(**options)
+		def self.resolver(**options)
 			nameservers = []
 			
 			if File.exist? RESOLV_CONF
-				nameservers = parse_resolv_configuration(RESOLV_CONF)
+				options.update(parse_resolv_configuration(RESOLV_CONF))
+				nameservers = options.delete(:nameservers)
 			elsif defined?(Win32::Resolv) and RUBY_PLATFORM =~ /mswin32|cygwin|mingw|bccwin/
 				search, nameservers = Win32::Resolv.get_resolv_info
+				options.update(search: search)
 			end
 			
-			return standard_connections(nameservers, **options)
-		end
-		
-		# Get a list of default nameservers.
-		def self.default_nameservers
-			self.nameservers(timeout: 5.0)
+			if search = options[:search]
+				unless search.include?('.')
+					search << nil
+				end
+			else
+				options[:search] = [nil]
+			end
+			
+			timeout = options.delete(:timeout) || DEFAULT_TIMEOUT
+			endpoint = self.endpoint_for(nameservers, timeout: timeout)
+			
+			if block_given?
+				yield endpoint, **options
+			else
+				return Resolver.new(endpoint, **options)
+			end
 		end
 	end
 end

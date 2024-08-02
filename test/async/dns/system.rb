@@ -26,13 +26,12 @@ describe Async::DNS::System::Hosts do
 	
 	it "should parse the hosts file" do
 		hosts = Async::DNS::System::Hosts.new
-	
+		
 		# Load the test hosts data:
 		File.open(hosts_path) do |file|
 			hosts.parse_hosts(file)
 		end
-	
-		expect(hosts.call('testing')).to be == true
-		expect(hosts['testing']).to be == '1.2.3.4'
+		
+		expect(hosts['testing']).to be == Resolv::IPv4.create("1.2.3.4")
 	end
 end

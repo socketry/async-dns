@@ -62,13 +62,10 @@ module Async::DNS
 				@names = {}
 			end
 			
-			# This is used to match names against the list of known hosts:
-			def call(name)
-				@names.include?(name)
-			end
-			
 			# Lookup a name in the hosts file.
-			def lookup(name)
+			def lookup(name, origin: nil)
+				name = Resolv::DNS::Name.create(name).with_origin(origin)
+				
 				addresses = @names[name]
 				
 				if addresses

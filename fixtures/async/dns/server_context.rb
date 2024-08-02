@@ -45,7 +45,7 @@ module Async
 				@server_task.wait
 			end
 			
-			def after
+			def after(error = nil)
 				@server_task&.stop
 				@bound_endpoint&.close
 				

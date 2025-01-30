@@ -22,6 +22,7 @@ group :test do
 	gem "decode"
 	
 	gem "sus-fixtures-async"
+	gem "benchmark"
 	
 	gem "bake-test"
 	gem "bake-test-external"

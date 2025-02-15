@@ -104,13 +104,15 @@ module Async::DNS
 			Console.info "Starting Async::DNS server (v#{Async::DNS::VERSION})..."
 			
 			Async do |task|
+				wrapper = @endpoint.wrapper
+				
 				@endpoint.bind do |server|
 					Console.info "<> Listening for connections on #{server.local_address.inspect}"
 					case server.local_address.socktype
 					when Socket::SOCK_DGRAM
-						DatagramHandler.new(self, server).run
+						DatagramHandler.new(self, server).run(wrapper)
 					when Socket::SOCK_STREAM
-						StreamHandler.new(self, server).run
+						StreamHandler.new(self, server).run(wrapper)
 					else
 						raise ArgumentError.new("Don't know how to handle #{server}")
 					end

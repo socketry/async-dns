@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
 	spec.authors = ["Samuel Williams", "Tony Arcieri", "Olle Jonsson", "Greg Thornton", "Hal Brodigan", "Hendrik Beskow", "Mike Perham", "Sean Dilda", "Stefan Wrobel"]
 	spec.license = "MIT"
 	
-	spec.cert_chain  = ['release.cert']
-	spec.signing_key = File.expand_path('~/.gem/release.pem')
+	spec.cert_chain  = ["release.cert"]
+	spec.signing_key = File.expand_path("~/.gem/release.pem")
 	
 	spec.homepage = "https://github.com/socketry/async-dns"
 	
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 		"source_code_uri" => "https://github.com/socketry/async-dns.git",
 	}
 	
-	spec.files = Dir.glob(['{lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
+	spec.files = Dir.glob(["{lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
 	
 	spec.required_ruby_version = ">= 3.1"
 	

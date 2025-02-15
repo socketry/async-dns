@@ -3,12 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
-require 'async/dns/server_context'
-require 'async/dns/extensions/string'
+require "async/dns/server_context"
+require "async/dns/extensions/string"
 
 class SlowServer < Async::DNS::Server
 	def process(name, resource_class, transaction)
-		sleep(1) if name.end_with?('.com')
+		sleep(1) if name.end_with?(".com")
 		
 		transaction.fail!(:NXDomain)
 	end

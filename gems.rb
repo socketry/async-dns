@@ -2,7 +2,7 @@
 
 # Released under the MIT License.
 # Copyright, 2012-2013, by Tony Arcieri.
-# Copyright, 2015-2024, by Samuel Williams.
+# Copyright, 2015-2025, by Samuel Williams.
 
 source "https://rubygems.org"
 
@@ -12,6 +12,7 @@ gemspec
 group :maintenance, optional: true do
 	gem "bake-modernize"
 	gem "bake-gem"
+	gem "bake-releases"
 	
 	gem "utopia-project"
 end
@@ -20,6 +21,7 @@ group :test do
 	gem "sus"
 	gem "covered"
 	gem "decode"
+	gem "rubocop"
 	
 	gem "sus-fixtures-async"
 	gem "benchmark"

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2024, by Samuel Williams.
+# Copyright, 2015-2025, by Samuel Williams.
 
-require 'sus/fixtures/async/reactor_context'
+require "sus/fixtures/async/reactor_context"
 
-require 'async/dns/server'
-require 'async/dns/resolver'
+require "async/dns/server"
+require "async/dns/resolver"
 
-require 'io/endpoint'
+require "io/endpoint"
 
 module Async
 	module DNS
@@ -17,8 +17,8 @@ module Async
 			
 			def endpoint
 				IO::Endpoint.composite(
-					IO::Endpoint.udp('localhost', 0),
-					IO::Endpoint.tcp('localhost', 0),
+					IO::Endpoint.udp("localhost", 0),
+					IO::Endpoint.tcp("localhost", 0),
 				)
 			end
 			

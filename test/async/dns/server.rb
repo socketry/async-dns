@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'async/dns/server'
-require 'async/dns/server_context'
-require 'async/dns/test_server'
+require "async/dns/server"
+require "async/dns/server_context"
+require "async/dns/test_server"
 
 describe Async::DNS::Server do
 	include Async::DNS::ServerContext
@@ -21,7 +21,7 @@ describe Async::DNS::Server do
 		)
 	end
 	
-	with 'default resolver' do
+	with "default resolver" do
 		def make_server(endpoint)
 			Async::DNS::TestServer.new(endpoint)
 		end
@@ -49,7 +49,7 @@ describe Async::DNS::Server do
 		end
 	end
 	
-	with 'a large response' do
+	with "a large response" do
 		def make_server(endpoint)
 			Async::DNS::TestServer.new(endpoint)
 		end

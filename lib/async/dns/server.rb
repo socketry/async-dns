@@ -4,16 +4,16 @@
 # Copyright, 2012-2014, by Tony Arcieri.
 # Copyright, 2013, by Greg Thornton.
 # Copyright, 2014, by Hendrik Beskow.
-# Copyright, 2015-2024, by Samuel Williams.
+# Copyright, 2015-2025, by Samuel Williams.
 # Copyright, 2023, by Hal Brodigan.
 
-require 'async'
+require "async"
 
-require 'io/endpoint/composite_endpoint'
-require 'io/endpoint/host_endpoint'
+require "io/endpoint/composite_endpoint"
+require "io/endpoint/host_endpoint"
 
-require_relative 'transaction'
-require_relative 'handler'
+require_relative "transaction"
+require_relative "handler"
 
 module Async::DNS
 	# A DNS server which can be used to resolve queries.
@@ -23,8 +23,8 @@ module Async::DNS
 		# @parameter port [Integer] The port to listen on, defaults to 53.
 		def self.default_endpoint(port = 53)
 			::IO::Endpoint.composite(
-				::IO::Endpoint.udp('localhost', port),
-				::IO::Endpoint.tcp('localhost', port)
+				::IO::Endpoint.udp("localhost", port),
+				::IO::Endpoint.tcp("localhost", port)
 			)
 		end
 		
@@ -33,7 +33,7 @@ module Async::DNS
 		# @param endpoints [Array<(Symbol, String, Integer)>]  The endpoints to listen on.
 		# @param origin [String] The default origin to resolve domains within.
 		# @param logger [Console::Logger] The logger to use.
-		def initialize(endpoint = self.class.default_endpoint, origin: '.')
+		def initialize(endpoint = self.class.default_endpoint, origin: ".")
 			@endpoint = endpoint
 			@origin = origin
 		end

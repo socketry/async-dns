@@ -3,10 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
-require_relative 'endpoint'
+require_relative "endpoint"
 
 begin
-	require 'win32/resolv'
+	require "win32/resolv"
 rescue LoadError
 	# Ignore this - we aren't running on windows.
 end
@@ -97,7 +97,7 @@ module Async::DNS
 			# Parse a hosts file and add the entries.
 			def parse_hosts(io)
 				io.each do |line|
-					line.sub!(/#.*/, '')
+					line.sub!(/#.*/, "")
 					address, hostname, *aliases = line.split(/\s+/)
 					
 					if address =~ Resolv::IPv4::Regex
@@ -126,26 +126,26 @@ module Async::DNS
 			File.open(path) do |file|
 				file.each do |line|
 					# Remove any comments:
-					line.sub!(/[#;].*/, '')
+					line.sub!(/[#;].*/, "")
 					
 					# Extract resolv.conf command:
 					keyword, *arguments = line.split(/\s+/)
 					
 					case keyword
-					when 'nameserver'
+					when "nameserver"
 						nameservers.concat(arguments)
-					when 'domain', 'search'
+					when "domain", "search"
 						search = arguments
-					when 'options'
+					when "options"
 						arguments.each do |argument|
-							key, value = argument.split(':', 2)
+							key, value = argument.split(":", 2)
 							
 							case key
-							when 'ndots'
+							when "ndots"
 								ndots = value.to_i
-							when 'edns0'
+							when "edns0"
 								edns = 0
-							when 'timeout'
+							when "timeout"
 								timeout = value.to_f
 							end
 						end
@@ -175,7 +175,7 @@ module Async::DNS
 			end
 			
 			if search = options[:search]
-				unless search.include?('.')
+				unless search.include?(".")
 					search << nil
 				end
 			else

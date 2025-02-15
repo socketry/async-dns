@@ -4,12 +4,12 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'cgi'
-require 'json'
+require "cgi"
+require "json"
 
-require 'async/http'
-require 'async/dns/server'
-require 'async/dns/extensions/string'
+require "async/http"
+require "async/dns/server"
+require "async/dns/extensions/string"
 
 # Encapsulates the logic for fetching information from Wikipedia.
 module Wikipedia
@@ -22,9 +22,9 @@ module Wikipedia
 		response = client.get(url, headers: {"user-agent" => "RubyDNS"})
 		
 		if response.status == 301
-			return lookup(response.headers['location'])
+			return lookup(response.headers["location"])
 		else
-			return self.extract_summary(response.body.read).force_encoding('ASCII-8BIT')
+			return self.extract_summary(response.body.read).force_encoding("ASCII-8BIT")
 		end
 	ensure
 		response&.close
@@ -38,9 +38,9 @@ module Wikipedia
 	def self.extract_summary(json_text)
 		document = JSON.parse(json_text)
 		
-		return document['extract']
+		return document["extract"]
 	rescue
-		return 'Invalid Article.'
+		return "Invalid Article."
 	end
 end
 

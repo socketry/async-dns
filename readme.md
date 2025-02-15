@@ -10,6 +10,8 @@ Please see the [project documentation](https://socketry.github.io/async-dns/) fo
 
   - [Getting Started](https://socketry.github.io/async-dns/guides/getting-started/index) - This guide explains how to get started with the `async-dns` gem.
 
+## Releases
+
 ## Contributing
 
 We welcome contributions to this project.

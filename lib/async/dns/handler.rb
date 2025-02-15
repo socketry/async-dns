@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2015-2024, by Samuel Williams.
+# Copyright, 2015-2025, by Samuel Williams.
 # Copyright, 2021, by Mike Perham.
 
-require 'resolv'
-require_relative 'extensions/resolv'
+require "resolv"
+require_relative "extensions/resolv"
 
-require_relative 'transport'
+require_relative "transport"
 
 module Async::DNS
 	# The maximum size of a normal DNS packet (excluding EDNS).

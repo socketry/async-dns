@@ -4,9 +4,9 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
-require 'async/dns'
-require 'async/dns/system'
-require 'sus/fixtures/async'
+require "async/dns"
+require "async/dns/system"
+require "sus/fixtures/async"
 
 describe Async::DNS::System do
 	include Sus::Fixtures::Async::ReactorContext
@@ -14,7 +14,7 @@ describe Async::DNS::System do
 	it "should respond to query for google.com" do
 		resolver = Async::DNS::Resolver.default
 		
-		response = resolver.query('google.com')
+		response = resolver.query("google.com")
 		
 		expect(response.class).to be == Resolv::DNS::Message
 		expect(response.rcode).to be == Resolv::DNS::RCode::NoError
@@ -32,6 +32,6 @@ describe Async::DNS::System::Hosts do
 			hosts.parse_hosts(file)
 		end
 		
-		expect(hosts['testing']).to be == Resolv::IPv4.create("1.2.3.4")
+		expect(hosts["testing"]).to be == Resolv::IPv4.create("1.2.3.4")
 	end
 end

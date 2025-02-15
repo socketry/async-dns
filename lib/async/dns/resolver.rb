@@ -5,15 +5,15 @@
 # Copyright, 2017, by Olle Jonsson.
 # Copyright, 2024, by Sean Dilda.
 
-require_relative 'handler'
-require_relative 'system'
-require_relative 'cache'
+require_relative "handler"
+require_relative "system"
+require_relative "cache"
 
-require 'securerandom'
-require 'async'
+require "securerandom"
+require "async"
 
-require 'io/endpoint/composite_endpoint'
-require 'io/endpoint/host_endpoint'
+require "io/endpoint/composite_endpoint"
+require "io/endpoint/host_endpoint"
 
 module Async::DNS
 	# Represents a DNS connection which we don't know how to use.

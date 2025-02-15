@@ -3,10 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
-require 'async/dns'
+require "async/dns"
 
 describe Resolv::DNS::Name do
-	with 'a relative name' do
+	with "a relative name" do
 		let(:name) {Resolv::DNS::Name.create("foo.bar")}
 		
 		it "should be relative" do
@@ -31,7 +31,7 @@ describe Resolv::DNS::Name do
 		end
 		
 		it "should handle empty origin as absolute" do
-			fully_qualified_name = name.with_origin('')
+			fully_qualified_name = name.with_origin("")
 			
 			expect(fully_qualified_name.to_a.size).to be == 2
 			expect(fully_qualified_name).to be(:absolute?)
@@ -39,7 +39,7 @@ describe Resolv::DNS::Name do
 		end
 	end
 	
-	with 'an absolute name' do
+	with "an absolute name" do
 		let(:name) {Resolv::DNS::Name.create("foo.bar.")}
 		
 		it "should be absolute" do
@@ -64,7 +64,7 @@ describe Resolv::DNS::Name do
 		end
 		
 		it "should not remove empty string origin but become relative" do
-			relative_name = name.without_origin('')
+			relative_name = name.without_origin("")
 			
 			expect(relative_name.to_a.size).to be == 2
 			expect(relative_name).not.to be(:absolute?)
@@ -72,7 +72,7 @@ describe Resolv::DNS::Name do
 		end
 		
 		it "should not raise an exception when origin isn't valid" do
-			expect{name.without_origin('bob')}.to raise_exception(Resolv::DNS::OriginError)
+			expect{name.without_origin("bob")}.to raise_exception(Resolv::DNS::OriginError)
 		end
 	end
 end

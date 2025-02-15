@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
-require_relative '../chunked'
+require_relative "../chunked"
 
 # Extensions for the String class.
 class String

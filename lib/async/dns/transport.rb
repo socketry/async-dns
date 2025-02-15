@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
-require 'stringio'
-require 'ipaddr'
+require "stringio"
+require "ipaddr"
 
 module Async
 	module DNS
@@ -30,7 +30,7 @@ module Async
 			def read_chunk
 				if size_data = @socket.read(2)
 					# Read in the length, the first two bytes:
-					size = size_data.unpack('n')[0]
+					size = size_data.unpack("n")[0]
 					
 					return @socket.read(size)
 				end
@@ -40,7 +40,7 @@ module Async
 			#
 			# @parameter data [String] The data to write.
 			def write_chunk(data)
-				size_data = [data.bytesize].pack('n')
+				size_data = [data.bytesize].pack("n")
 				@socket.write(size_data)
 				@socket.write(data)
 				@socket.flush

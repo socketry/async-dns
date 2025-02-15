@@ -3,7 +3,7 @@
 Copyright, 2012-2017, by Tony Arcieri.  
 Copyright, 2013, by Greg Thornton.  
 Copyright, 2014, by Hendrik Beskow.  
-Copyright, 2015-2024, by Samuel Williams.  
+Copyright, 2015-2025, by Samuel Williams.  
 Copyright, 2017-2020, by Olle Jonsson.  
 Copyright, 2019, by Stefan Wrobel.  
 Copyright, 2021, by Mike Perham.  

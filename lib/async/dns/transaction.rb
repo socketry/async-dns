@@ -136,7 +136,7 @@ module Async::DNS
 			ttl = options[:ttl] || DEFAULT_TTL
 			name = options[:name] || @question.to_s + "."
 			
-			section = (options[:section] || 'answer').to_sym
+			section = (options[:section] || "answer").to_sym
 			method = "add_#{section}".to_sym
 			
 			resources.each do |resource|

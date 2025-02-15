@@ -4,7 +4,7 @@
 # Released under the MIT License.
 # Copyright, 2015-2024, by Samuel Williams.
 
-require 'async/dns'
+require "async/dns"
 
 describe Resolv::DNS::Message do
 	it "should be decoded correctly" do

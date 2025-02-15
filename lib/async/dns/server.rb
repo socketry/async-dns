@@ -84,7 +84,7 @@ module Async::DNS
 						transaction.process
 					rescue Resolv::DNS::OriginError => error
 						# This is triggered if the question is not part of the specified @origin:
-						Console::Event::Failure.for(error).emit("Skipping question #{question} #{resource_class}!")
+						Console.error(self, "Failed to process question #{question} #{resource_class}!", error: error)
 					end
 				end
 			rescue StandardError => error

@@ -66,7 +66,7 @@ module Async::DNS
 				
 				return @server.process_query(query, **options)
 			rescue => error
-				Console::Event::Failure.for(error).emit "Failed to process query!"
+				Console.error(self, "Failed to process query!", error: error)
 				
 				return error_response(query)
 			end
@@ -108,11 +108,11 @@ module Async::DNS
 			
 			socket.sendmsg(output_data, 0, remote_address)
 		rescue IOError => error
-			Console::Event::Failure.for(error).emit "UDP response failed!"
+			Console.error(self, "UDP response failed!", error: error)
 		rescue EOFError => error
-			Console::Event::Failure.for(error).emit "UDP session ended prematurely!"
+			Console.error(self, "UDP session ended prematurely!", error: error)
 		rescue Resolv::DNS::DecodeError => error
-			Console::Event::Failure.for(error).emit "Could not decode incoming UDP data!"
+			Console.error(self, "Could not decode incoming UDP data!", error: error)
 		end
 	end
 	
@@ -142,13 +142,13 @@ module Async::DNS
 				Console.debug "Wrote #{length} bytes via TCP...", response_id: response.id
 			end
 		rescue EOFError => error
-			Console::Event::Failure.for(error).emit "TCP session ended prematurely!"
+			Console.error(self, "TCP session ended prematurely!", error: error)
 		rescue Errno::ECONNRESET => error
-			Console::Event::Failure.for(error).emit "TCP connection reset by peer!"
+			Console.error(self, "TCP connection reset by peer!", error: error)
 		rescue Errno::EPIPE => error
-			Console::Event::Failure.for(error).emit "TCP session failed due to broken pipe!"
+			Console.error(self, "TCP session failed due to broken pipe!", error: error)
 		rescue Resolv::DNS::DecodeError => error
-			Console::Event::Failure.for(error).emit "Could not decode incoming TCP data!"
+			Console.error(self, "Could not decode incoming TCP data!", error: error)
 		end
 	end
 end

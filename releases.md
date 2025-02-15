@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v1.4.0
 
   - Minimum Ruby version is now v3.1.
   - Drop dependency on `Async::IO` and refactor internal network code to use `IO::Endpoint` and `Socket` directly.

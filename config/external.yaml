@@ -1,0 +1,3 @@
+rubydns:
+  url: http://github.com/socketry/rubydns
+  command: bundle exec bake test

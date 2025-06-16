@@ -2,7 +2,7 @@
 
 # Released under the MIT License.
 # Copyright, 2012-2013, by Tony Arcieri.
-# Copyright, 2015-2024, by Samuel Williams.
+# Copyright, 2015-2025, by Samuel Williams.
 
 module Async
 	module DNS

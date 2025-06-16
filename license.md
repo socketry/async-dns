@@ -7,7 +7,7 @@ Copyright, 2015-2025, by Samuel Williams.
 Copyright, 2017-2020, by Olle Jonsson.  
 Copyright, 2019, by Stefan Wrobel.  
 Copyright, 2021, by Mike Perham.  
-Copyright, 2023, by Hal Brodigan.  
+Copyright, 2023-2025, by Hal Brodigan.  
 Copyright, 2024, by Sean Dilda.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

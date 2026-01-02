@@ -38,7 +38,7 @@ describe Async::DNS::Server do
 		end
 		
 		it "can resolve non-existent domain name" do
-			response = resolver.query("foobar.example.com")
+			response = resolver.query("example.invalid")
 			
 			expect(response).to have_attributes(
 				qr: be == 1,

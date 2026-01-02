@@ -13,7 +13,7 @@ describe Async::DNS::Resolver do
 	let(:resolver) {Async::DNS::Resolver.default}
 	
 	it "should result in non-existent domain" do
-		response = resolver.query("foobar.example.com", Resolv::DNS::Resource::IN::A)
+		response = resolver.query("example.invalid", Resolv::DNS::Resource::IN::A)
 		
 		expect(response.rcode).to be == Resolv::DNS::RCode::NXDomain
 	end
